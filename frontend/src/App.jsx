@@ -4,21 +4,25 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import DashboardLayout from './components/layout/DashboardLayout';
 
-// Pages
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import PlaceholderPage from './pages/PlaceholderPage';
+import WorkspaceViews from './pages/WorkspaceViews';
+import ProfilePage from './pages/ProfilePage';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
-  if (loading) return (
-    <div className="min-h-screen bg-base flex flex-col items-center justify-center">
-      <div className="w-12 h-12 border-4 border-accent-primary/20 border-t-accent-primary rounded-full animate-spin"></div>
-      <p className="text-xs font-bold uppercase tracking-widest text-secondary mt-6">Initializing Secure Connection</p>
-    </div>
-  );
-  
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-base">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent-primary/20 border-t-accent-primary" />
+        <p className="mt-4 text-[10px] font-medium uppercase tracking-wider text-secondary">
+          Loading
+        </p>
+      </div>
+    );
+  }
+
   if (!user) return <Navigate to="/login" replace />;
   return children;
 };
@@ -29,24 +33,27 @@ const App = () => {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            {/* Public Entry */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage />} />
-            
-            {/* Protected SaaS App */}
-            <Route path="/app" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<Navigate to="/app/dashboard" replace />} />
               <Route path="dashboard" element={<DashboardPage />} />
-              
-              {/* Sidebar Placeholder Routes */}
-              <Route path="navigator" element={<PlaceholderPage title="Life Navigator" />} />
-              <Route path="benefits" element={<PlaceholderPage title="Benefit Discovery" />} />
-              <Route path="opportunities" element={<PlaceholderPage title="Opportunity Engine" />} />
-              <Route path="vault" element={<PlaceholderPage title="Identity Vault" />} />
-              <Route path="alerts" element={<PlaceholderPage title="Smart Alerts" />} />
-              <Route path="settings" element={<PlaceholderPage title="Accessibility settings" />} />
-              <Route path="admin" element={<PlaceholderPage title="Admin Hub" />} />
-              
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="navigator" element={<WorkspaceViews moduleKey="navigator" />} />
+              <Route path="benefits" element={<WorkspaceViews moduleKey="benefits" />} />
+              <Route path="opportunities" element={<WorkspaceViews moduleKey="opportunities" />} />
+              <Route path="vault" element={<WorkspaceViews moduleKey="vault" />} />
+              <Route path="alerts" element={<WorkspaceViews moduleKey="alerts" />} />
+              <Route path="settings" element={<WorkspaceViews moduleKey="settings" />} />
+              <Route path="admin" element={<WorkspaceViews moduleKey="admin" />} />
               <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
             </Route>
 

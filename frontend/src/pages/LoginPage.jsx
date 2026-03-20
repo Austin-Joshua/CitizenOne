@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, ShieldCheck, ArrowRight, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Button, Input, Card, Badge } from '../components/ui';
+import { Button, Input, Card, Badge, cn } from '../components/ui';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,116 +18,117 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Slight artificial delay for the sleek V2 animation
-    setTimeout(async () => {
-      try {
-        await login(email || 'admin@citizenone.gov', password || 'adminpassword');
-        navigate('/app/dashboard');
-      } catch (error) {
-        alert(error.message);
-        setIsLoading(false);
-      }
-    }, 600);
+    try {
+      await new Promise((r) => setTimeout(r, 280));
+      await login(
+        email.trim() || 'admin@citizenone.gov',
+        password || 'adminpassword'
+      );
+      navigate('/app/dashboard');
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base px-6 py-12 relative overflow-hidden">
-      
-      {/* V2 Enhanced Background Blur Orbs */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-accent-primary/10 blur-[150px] rounded-full animate-pulse -z-10 mix-blend-screen"></div>
-      <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-accent-secondary/15 blur-[120px] rounded-full animate-pulse -z-10 mix-blend-screen" style={{ animationDelay: '2s' }}></div>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-base px-4 py-10">
+      <div className="pointer-events-none absolute -right-40 -top-40 h-[420px] w-[420px] rounded-full bg-accent-primary/10 blur-[100px]" />
+      <div className="pointer-events-none absolute -bottom-32 -left-32 h-[360px] w-[360px] rounded-full bg-accent-secondary/10 blur-[90px]" />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-[500px] relative"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-[400px]"
       >
-        {/* Theme Toggle Utility */}
-        <div className="absolute -top-16 right-0">
-          <button 
+        <div className="absolute -top-12 right-0">
+          <button
+            type="button"
             onClick={toggleTheme}
-            className="w-12 h-12 rounded-xl glass-panel flex items-center justify-center text-secondary hover:text-primary transition-all shadow-md group"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-light bg-surface/80 text-secondary shadow-sm backdrop-blur-sm transition-colors hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40 active:scale-[0.97]"
           >
-            {theme === 'dark' ? <Sun size={20} className="group-hover:rotate-45 transition-transform" /> : <Moon size={20} className="group-hover:-rotate-12 transition-transform" />}
+            <span className="relative flex h-[18px] w-[18px] items-center justify-center">
+              <Sun
+                size={17}
+                className={cn(
+                  'absolute transition-all duration-200',
+                  theme === 'dark' ? 'scale-0 rotate-90 opacity-0' : 'scale-100 opacity-100'
+                )}
+                aria-hidden
+              />
+              <Moon
+                size={17}
+                className={cn(
+                  'absolute transition-all duration-200',
+                  theme === 'dark' ? 'scale-100 opacity-100' : 'scale-0 -rotate-90 opacity-0'
+                )}
+                aria-hidden
+              />
+            </span>
           </button>
         </div>
 
-        {/* Branding & Welcome */}
-        <div className="flex flex-col items-center mb-10 text-center">
-          <div className="w-20 h-20 glass-elevated rounded-[2rem] flex items-center justify-center mb-6 relative group border border-accent-primary/20">
-            <div className="absolute inset-0 bg-accent-primary/20 rounded-[2rem] blur-md group-hover:bg-accent-primary/40 transition-colors"></div>
-            <span className="text-primary font-black text-4xl tracking-tighter relative z-10">C1</span>
+        <div className="mb-6 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-accent-primary/20 glass-elevated">
+            <span className="text-lg font-bold tracking-tight text-primary">C1</span>
           </div>
-          <Badge variant="primary" className="mb-4">SYSTEM AUTH</Badge>
-          <h1 className="text-4xl font-black text-primary tracking-tight mb-3">
-            Citizen One
-          </h1>
-          <p className="text-secondary font-medium text-base">
-            Intelligent Infrastructure & Governance Node
-          </p>
+          <Badge variant="primary" className="mb-2">
+            Sign in
+          </Badge>
+          <h1 className="text-2xl font-semibold tracking-tight text-primary">Citizen One</h1>
+          <p className="mt-1 text-xs text-secondary sm:text-[13px]">Infrastructure & governance console</p>
         </div>
 
-        {/* Main Glass Form Container */}
-        <Card elevated className="p-10 md:p-14">
-          <form className="space-y-8" onSubmit={handleLogin}>
-            
-            <Input 
-              label="Citizen Email"
+        <Card elevated className="!p-5 sm:!p-6">
+          <form className="space-y-4" onSubmit={handleLogin}>
+            <Input
+              label="Email"
               type="email"
-              icon={<Mail />}
+              icon={<Mail strokeWidth={2} />}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@citizenone.gov"
               required
             />
 
-            <Input 
-              label="Secure Access Key"
+            <Input
+              label="Password"
               type="password"
-              icon={<Lock />}
+              icon={<Lock strokeWidth={2} />}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
             />
 
-            <div className="flex items-center justify-between text-sm pt-2">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  className="w-5 h-5 rounded border border-border-light bg-surface/50 text-accent-primary focus:ring-accent-primary/40 focus:ring-2 appearance-none checked:bg-accent-primary checked:border-transparent transition-all" 
-                />
-                <span className="font-bold text-secondary group-hover:text-primary transition-colors">Remember device</span>
-              </label>
-            </div>
+            <label className="flex cursor-pointer items-center gap-2 text-xs text-secondary">
+              <input
+                type="checkbox"
+                className="h-3.5 w-3.5 rounded border-border-light text-accent-primary focus:ring-accent-primary/30"
+              />
+              Remember this device
+            </label>
 
-            <Button 
-              type="submit" 
-              disabled={isLoading}
-              className="w-full py-6 text-sm mt-4 overflow-hidden relative"
-            >
-              <div className="relative z-10 flex items-center">
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                ) : (
-                  <>
-                    Initialize Connection
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </>
-                )}
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-accent-primary to-accent-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <Button type="submit" disabled={isLoading} className="mt-1 w-full">
+              {isLoading ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              ) : (
+                <>
+                  Continue
+                  <ArrowRight className="ml-1.5 h-4 w-4" strokeWidth={2} />
+                </>
+              )}
             </Button>
           </form>
         </Card>
 
-        {/* Security Indicator */}
-        <div className="mt-12 flex justify-center">
-          <div className="flex items-center gap-3 px-6 py-3 rounded-full glass-panel text-[11px] font-bold text-secondary uppercase tracking-widest border-emerald-500/20 shadow-sm">
-            <ShieldCheck className="w-4 h-4 text-emerald-500" />
-            End-to-End Encryption Active
+        <div className="mt-6 flex justify-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 glass-panel px-4 py-2 text-[10px] font-medium uppercase tracking-wider text-secondary">
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" strokeWidth={2} />
+            Encrypted session
           </div>
         </div>
       </motion.div>

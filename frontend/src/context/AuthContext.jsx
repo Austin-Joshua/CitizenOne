@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { apiFetch } from '../lib/api';
 
 const AuthContext = createContext();
 
@@ -6,42 +7,60 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Check local session
-    const storedUser = localStorage.getItem('citizen-auth');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, []);
-
-  const login = async (email, password) => {
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      setUser(data.user);
-      localStorage.setItem('citizen-auth', JSON.stringify(data.user));
-      localStorage.setItem('citizen-token', data.token);
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
-    }
-  };
-
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('citizen-auth');
     localStorage.removeItem('citizen-token');
+  }, []);
+
+  const hydrateSession = useCallback(async () => {
+    const token = localStorage.getItem('citizen-token');
+    if (!token) {
+      localStorage.removeItem('citizen-auth');
+      setUser(null);
+      return;
+    }
+    try {
+      const res = await apiFetch('/api/auth/me');
+      if (!res.ok) {
+        logout();
+        return;
+      }
+      const profile = await res.json();
+      setUser(profile);
+      localStorage.setItem('citizen-auth', JSON.stringify(profile));
+    } catch {
+      logout();
+    }
+  }, [logout]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await hydrateSession();
+      if (!cancelled) setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrateSession]);
+
+  const login = async (email, password) => {
+    const response = await apiFetch('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Login failed');
+    }
+
+    const nextUser = data.user;
+    setUser(nextUser);
+    localStorage.setItem('citizen-auth', JSON.stringify(nextUser));
+    localStorage.setItem('citizen-token', data.token);
   };
 
   return (

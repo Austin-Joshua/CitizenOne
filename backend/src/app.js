@@ -10,12 +10,23 @@ const aiRoutes = require('./routes/ai');
 const schemeRoutes = require('./routes/schemes');
 const opportunityRoutes = require('./routes/opportunities');
 const documentRoutes = require('./routes/documents');
+const notificationRoutes = require('./routes/notifications');
 
 const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+const corsOrigin = process.env.CORS_ORIGIN;
+if (corsOrigin) {
+  app.use(
+    cors({
+      origin: corsOrigin.split(',').map((s) => s.trim()),
+      credentials: true,
+    })
+  );
+} else {
+  app.use(cors());
+}
 app.use(express.json());
 app.use(morgan('dev'));
 
@@ -26,6 +37,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/schemes', schemeRoutes);
 app.use('/api/opportunities', opportunityRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {

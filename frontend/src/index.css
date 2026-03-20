@@ -63,18 +63,24 @@
   }
 
   body {
-    @apply bg-base text-primary antialiased selection:bg-accent-primary/20 selection:text-accent-primary transition-colors duration-500 ease-in-out;
+    @apply bg-base text-primary antialiased selection:bg-accent-primary/20 selection:text-accent-primary;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  html.theme-switching body {
+    transition: background-color 0.2s ease, color 0.15s ease;
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-glass-base backdrop-blur-xl border border-border-light shadow-sm rounded-2xl;
+    @apply bg-glass-base/95 backdrop-blur-md border border-border-light shadow-sm rounded-xl;
   }
-  
+
   .glass-elevated {
-    @apply bg-glass-base backdrop-blur-2xl border border-glass-stroke rounded-3xl;
+    @apply bg-glass-base/95 backdrop-blur-lg border border-glass-stroke rounded-2xl;
     box-shadow: var(--shadow-liquid);
   }
 

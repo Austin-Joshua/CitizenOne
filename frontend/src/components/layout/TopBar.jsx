@@ -1,59 +1,259 @@
-import React from 'react';
-import { Search, Bell, Sun, Moon, User } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Bell, Sun, Moon, Menu, LogOut, Settings, IdCard } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationContext';
+import { cn } from '../ui';
 
-const TopBar = () => {
+const iconBtn =
+  'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-transparent text-secondary transition-colors hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/45 active:scale-[0.97]';
+
+const panelMotion = {
+  initial: { opacity: 0, y: -6, scale: 0.98 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: -4, scale: 0.99 },
+  transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] },
+};
+
+const TopBar = ({ onMobileMenuClick }) => {
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const {
+    items,
+    unreadCount,
+    panelOpen,
+    setPanelOpen,
+    lastUpdated,
+    markAsRead,
+    markAllRead,
+  } = useNotifications();
+
+  const [profileOpen, setProfileOpen] = React.useState(false);
+  const notifRef = useRef(null);
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    const onDoc = (e) => {
+      const t = e.target;
+      if (notifRef.current?.contains(t)) return;
+      if (profileRef.current?.contains(t)) return;
+      setPanelOpen(false);
+      setProfileOpen(false);
+    };
+    if (panelOpen || profileOpen) {
+      document.addEventListener('mousedown', onDoc);
+      return () => document.removeEventListener('mousedown', onDoc);
+    }
+    return undefined;
+  }, [panelOpen, profileOpen, setPanelOpen]);
+
+  const timeLabel =
+    lastUpdated &&
+    lastUpdated.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+
+  const handleLogout = () => {
+    setProfileOpen(false);
+    logout();
+    navigate('/login', { replace: true });
+  };
+
+  const initial = (user?.name || user?.email || 'U').slice(0, 1).toUpperCase();
 
   return (
-    <header className="h-[80px] px-8 flex items-center justify-between z-30 mb-8 border-b border-border-light bg-surface shadow-sm rounded-2xl mx-4 mt-4">
-      
-      {/* Search Bar - Global Centric */}
-      <div className="flex-1 max-w-xl">
-        <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-tertiary group-focus-within:text-accent-primary transition-colors">
-            <Search size={18} />
-          </div>
+    <header className="sticky top-0 z-30 flex min-h-[56px] shrink-0 items-center gap-3 border-b border-border-light bg-base/85 px-3 py-2.5 backdrop-blur-md sm:min-h-[60px] sm:px-5 sm:py-3">
+      <button
+        type="button"
+        className={cn(iconBtn, 'lg:hidden')}
+        aria-label="Open menu"
+        onClick={onMobileMenuClick}
+      >
+        <Menu size={20} strokeWidth={2} aria-hidden />
+      </button>
+
+      <div className="flex min-w-0 flex-1 justify-center px-1 sm:px-4">
+        <div className="relative w-full max-w-lg">
+          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-tertiary">
+            <Search size={18} strokeWidth={2} aria-hidden />
+          </span>
           <input
-            type="text"
-            placeholder="Search citizens, benefits, routes..."
-            className="w-full bg-base border border-border-light rounded-full pl-12 pr-6 py-2.5 text-sm text-primary placeholder-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary/20 focus:border-accent-primary transition-all"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+            className="h-10 w-full rounded-lg border border-border-light bg-transparent py-2 pl-10 pr-3 text-[15px] text-primary placeholder:text-tertiary shadow-none transition-[border-color,box-shadow] focus:border-accent-primary/40 focus:outline-none focus:ring-2 focus:ring-accent-primary/20"
           />
-          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-            <span className="text-[10px] font-black uppercase text-tertiary border border-border-light px-2 py-0.5 rounded-md bg-surface">CTRL+K</span>
-          </div>
         </div>
       </div>
 
-      {/* Action Icons */}
-      <div className="flex items-center gap-4 ml-8">
-        <button 
+      <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+        <button
+          type="button"
+          className={iconBtn}
           onClick={toggleTheme}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-base transition-colors border border-transparent hover:border-border-light"
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          <span className="relative flex h-5 w-5 items-center justify-center">
+            <Sun
+              size={19}
+              strokeWidth={2}
+              className={cn(
+                'absolute transition-all duration-200 ease-out',
+                theme === 'dark' ? 'scale-50 rotate-90 opacity-0' : 'scale-100 rotate-0 opacity-100'
+              )}
+              aria-hidden
+            />
+            <Moon
+              size={19}
+              strokeWidth={2}
+              className={cn(
+                'absolute transition-all duration-200 ease-out',
+                theme === 'dark' ? 'scale-100 rotate-0 opacity-100' : 'scale-50 -rotate-90 opacity-0'
+              )}
+              aria-hidden
+            />
+          </span>
         </button>
 
-        <button className="w-10 h-10 rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-base transition-colors border border-transparent hover:border-border-light relative">
-          <Bell size={18} />
-          <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full bg-accent-primary border-2 border-surface"></span>
-        </button>
+        <div className="relative" ref={notifRef}>
+          <button
+            type="button"
+            className={cn(iconBtn, 'relative')}
+            aria-expanded={panelOpen}
+            aria-haspopup="dialog"
+            aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ''}`}
+            onClick={() => {
+              setProfileOpen(false);
+              setPanelOpen((o) => !o);
+            }}
+          >
+            <Bell size={19} strokeWidth={2} aria-hidden />
+            {unreadCount > 0 && (
+              <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-primary px-1 text-[10px] font-bold leading-none text-white">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
 
-        <div className="h-6 w-px bg-border-light mx-2"></div>
+          <AnimatePresence>
+            {panelOpen && (
+              <motion.div
+                {...panelMotion}
+                className="absolute right-0 top-[calc(100%+8px)] z-50 w-[min(100vw-1rem,340px)] overflow-hidden rounded-xl border border-border-light bg-surface shadow-lg"
+                role="dialog"
+                aria-label="Notifications"
+              >
+                <div className="flex items-center justify-between border-b border-border-light px-3 py-2.5">
+                  <div>
+                    <p className="text-sm font-semibold text-primary">Notifications</p>
+                    <p className="text-xs text-tertiary">
+                      {timeLabel ? `Updated ${timeLabel}` : 'Loading…'}
+                    </p>
+                  </div>
+                  {items.length > 0 && (
+                    <button
+                      type="button"
+                      className="rounded px-1 text-xs font-medium text-accent-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35"
+                      onClick={markAllRead}
+                    >
+                      Mark all read
+                    </button>
+                  )}
+                </div>
+                <ul className="max-h-80 overflow-y-auto py-1">
+                  {items.length === 0 ? (
+                    <li className="px-3 py-8 text-center text-sm text-secondary">No notifications</li>
+                  ) : (
+                    items.map((n) => (
+                      <li key={n.id}>
+                        <button
+                          type="button"
+                          className={cn(
+                            'w-full border-b border-border-light/70 px-3 py-3 text-left transition-colors last:border-0 hover:bg-base/80',
+                            n.clientUnread && 'bg-accent-primary/[0.05]'
+                          )}
+                          onClick={() => markAsRead(n.stableId)}
+                        >
+                          <p className="text-[11px] font-medium uppercase tracking-wide text-tertiary">
+                            {n.type}
+                          </p>
+                          <p className="text-[15px] font-medium text-primary">{n.title}</p>
+                          <p className="mt-1 text-sm leading-snug text-secondary">{n.body}</p>
+                        </button>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-        <button className="pl-2 pr-4 py-1.5 rounded-full border border-border-light hover:bg-base transition-colors flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-full bg-accent-primary/10 flex items-center justify-center text-accent-primary group-hover:bg-accent-primary group-hover:text-white transition-colors">
-            <User size={16} />
-          </div>
-          <div className="flex flex-col items-start leading-none">
-            <span className="text-xs font-bold text-primary">{user?.name || "Admin"}</span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-secondary mt-1">{user?.role || "System"}</span>
-          </div>
-        </button>
+        <div className="relative" ref={profileRef}>
+          <button
+            type="button"
+            className={cn(
+              iconBtn,
+              'overflow-hidden rounded-full border-border-light bg-surface/60 hover:bg-surface'
+            )}
+            aria-expanded={profileOpen}
+            aria-haspopup="menu"
+            aria-label="Account menu"
+            onClick={() => {
+              setPanelOpen(false);
+              setProfileOpen((o) => !o);
+            }}
+          >
+            <span className="text-sm font-semibold text-accent-primary">{initial}</span>
+          </button>
+
+          <AnimatePresence>
+            {profileOpen && (
+              <motion.div
+                {...panelMotion}
+                className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[200px] overflow-hidden rounded-xl border border-border-light bg-surface py-1 shadow-lg"
+                role="menu"
+              >
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[15px] text-primary transition-colors hover:bg-base focus:outline-none focus-visible:bg-base"
+                  onClick={() => {
+                    setProfileOpen(false);
+                    navigate('/app/profile');
+                  }}
+                >
+                  <IdCard size={17} aria-hidden />
+                  Profile
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[15px] text-primary transition-colors hover:bg-base focus:outline-none focus-visible:bg-base"
+                  onClick={() => {
+                    setProfileOpen(false);
+                    navigate('/app/settings');
+                  }}
+                >
+                  <Settings size={17} aria-hidden />
+                  Settings
+                </button>
+                <div className="my-1 h-px bg-border-light" />
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[15px] text-red-600 transition-colors hover:bg-red-500/10 focus:outline-none focus-visible:bg-red-500/10 dark:text-red-400"
+                  onClick={handleLogout}
+                >
+                  <LogOut size={17} aria-hidden />
+                  Log out
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
-
     </header>
   );
 };

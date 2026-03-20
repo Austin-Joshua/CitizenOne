@@ -1,5 +1,5 @@
 import React from 'react';
-import { clsx, type ClassValue } from 'clsx';
+import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs) {
@@ -7,19 +7,20 @@ export function cn(...inputs) {
 }
 
 export const Button = React.forwardRef(({ className, variant = "primary", size = "default", children, ...props }, ref) => {
-  const baseStyles = "inline-flex items-center justify-center font-bold tracking-wide uppercase transition-all focus:outline-none focus:ring-2 focus:ring-accent-primary/50 disabled:opacity-50 disabled:pointer-events-none rounded-xl";
-  
+  const baseStyles =
+    "inline-flex items-center justify-center font-semibold tracking-wide uppercase transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/45 disabled:opacity-50 disabled:pointer-events-none rounded-lg active:scale-[0.98]";
+
   const variants = {
-    primary: "bg-accent-primary text-white hover:bg-accent-primary/90 shadow-md shadow-accent-primary/20",
+    primary: "bg-accent-primary text-white hover:bg-accent-primary/90 shadow-sm shadow-accent-primary/15",
     secondary: "bg-glass-base border border-border-light text-primary hover:bg-surface shadow-sm",
-    ghost: "bg-transparent text-secondary hover:text-primary hover:bg-glass-base",
-    glass: "glass-button"
+    ghost: "bg-transparent text-secondary hover:text-primary hover:bg-base/80",
+    glass: "glass-button",
   };
 
   const sizes = {
-    sm: "h-9 px-4 text-[10px]",
-    default: "h-11 px-6 text-xs",
-    lg: "h-14 px-8 text-sm"
+    sm: "h-9 px-3.5 text-[11px]",
+    default: "h-10 px-5 text-xs",
+    lg: "h-11 px-6 text-sm",
   };
 
   return (
@@ -30,7 +31,10 @@ export const Button = React.forwardRef(({ className, variant = "primary", size =
 });
 
 export const Card = ({ className, children, elevated = false, ...props }) => (
-  <div className={cn(elevated ? "glass-elevated py-8 px-10" : "glass-panel p-6", className)} {...props}>
+  <div
+    className={cn(elevated ? "glass-elevated py-5 px-5 sm:px-6" : "glass-panel p-4 sm:p-5", className)}
+    {...props}
+  >
     {children}
   </div>
 );
@@ -43,26 +47,28 @@ export const Badge = ({ className, variant = "default", children, ...props }) =>
     danger: "bg-red-500/10 text-red-600 dark:text-red-400 border-none",
   };
   return (
-    <span className={cn("inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest", variants[variant], className)} {...props}>
+    <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider", variants[variant], className)} {...props}>
       {children}
     </span>
   );
 };
 
 export const Input = React.forwardRef(({ className, icon, label, ...props }, ref) => (
-  <div className="space-y-2">
-    {label && <label className="text-[11px] font-black uppercase tracking-widest text-secondary ml-1">{label}</label>}
+  <div className="space-y-1.5">
+    {label && (
+      <label className="ml-0.5 text-[11px] font-semibold uppercase tracking-wider text-secondary">{label}</label>
+    )}
     <div className="relative">
       {icon && (
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-tertiary">
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-tertiary [&_svg]:size-[15px]">
           {icon}
         </div>
       )}
       <input
         ref={ref}
         className={cn(
-          "w-full bg-surface border border-border-light rounded-xl text-[15px] text-primary placeholder-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary/20 focus:border-accent-primary transition-all",
-          icon ? "pl-12 pr-4 py-3.5" : "px-4 py-3.5",
+          'w-full rounded-lg border border-border-light bg-surface text-[15px] text-primary placeholder:text-tertiary transition-[border-color,box-shadow] focus:border-accent-primary/35 focus:outline-none focus:ring-2 focus:ring-accent-primary/20',
+          icon ? 'py-2.5 pl-10 pr-3' : 'px-3 py-2.5',
           className
         )}
         {...props}

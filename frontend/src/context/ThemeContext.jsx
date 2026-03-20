@@ -1,16 +1,26 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 const ThemeContext = createContext();
 
+function armThemeTransition(transitionRef) {
+  if (transitionRef.current) window.clearTimeout(transitionRef.current);
+  document.documentElement.classList.add('theme-switching');
+  transitionRef.current = window.setTimeout(() => {
+    document.documentElement.classList.remove('theme-switching');
+    transitionRef.current = null;
+  }, 200);
+}
+
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    // Check local storage or prefer dark mode by default for the premium feel
     const stored = localStorage.getItem('citizen-one-v2-theme');
-    return stored ? stored : 'dark';
+    return stored === 'light' || stored === 'dark' ? stored : 'dark';
   });
+  const transitionRef = useRef(null);
 
   useEffect(() => {
-    const root = window.document.documentElement;
+    const root = document.documentElement;
+    root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
     if (theme === 'dark') {
       root.classList.add('dark');
     } else {
@@ -20,11 +30,21 @@ export const ThemeProvider = ({ children }) => {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    armThemeTransition(transitionRef);
+    setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+  };
+
+  const setThemeMode = (mode) => {
+    if (mode !== 'light' && mode !== 'dark') return;
+    setTheme((t) => {
+      if (t === mode) return t;
+      armThemeTransition(transitionRef);
+      return mode;
+    });
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setThemeMode }}>
       {children}
     </ThemeContext.Provider>
   );
