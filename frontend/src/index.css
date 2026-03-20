@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --color-base: var(--base);
+  --color-surface: var(--surface);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-tertiary: var(--text-tertiary);
+  
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-tertiary: var(--accent-tertiary);
+  --color-border-light: var(--border-light);
+  --color-glass-base: var(--glass-base);
+  --color-glass-stroke: var(--glass-stroke);
+}
+
+@layer base {
+  :root {
+    /* LIGHT MODE (Civic-Tech Teal & White) */
+    --base: #F8FAFC; 
+    --surface: #FFFFFF;
+    
+    /* Text */
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-tertiary: #94A3B8;
+    
+    /* Accents */
+    --accent-primary: #0F766E; /* Teal 700 */
+    --accent-secondary: #06B6D4; /* Cyan 500 */
+    --accent-tertiary: #10B981; /* Emerald 500 */
+    
+    /* Structural */
+    --border-light: rgba(15, 23, 42, 0.08);
+    --glass-base: rgba(255, 255, 255, 0.7);
+    --glass-stroke: rgba(255, 255, 255, 0.4);
+    
+    --shadow-liquid: 0 8px 32px 0 rgba(15, 118, 110, 0.08);
+  }
+
+  .dark {
+    /* DARK MODE (Deep Neutral Dark) */
+    --base: #0B0E14;
+    --surface: #11151C;
+    
+    /* Text */
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-tertiary: #475569;
+    
+    /* Accents */
+    --accent-primary: #14B8A6; /* Teal 400 */
+    --accent-secondary: #22D3EE; /* Cyan 400 */
+    --accent-tertiary: #34D399; /* Emerald 400 */
+    
+    /* Structural */
+    --border-light: rgba(248, 250, 252, 0.08);
+    --glass-base: rgba(17, 21, 28, 0.7);
+    --glass-stroke: rgba(248, 250, 252, 0.08);
+    
+    --shadow-liquid: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  }
+
+  body {
+    @apply bg-base text-primary antialiased selection:bg-accent-primary/20 selection:text-accent-primary transition-colors duration-500 ease-in-out;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-glass-base backdrop-blur-xl border border-border-light shadow-sm rounded-2xl;
+  }
+  
+  .glass-elevated {
+    @apply bg-glass-base backdrop-blur-2xl border border-glass-stroke rounded-3xl;
+    box-shadow: var(--shadow-liquid);
+  }
+
+  .glass-button {
+    @apply bg-glass-base backdrop-blur-md border border-border-light hover:bg-surface transition-all text-primary font-bold shadow-sm rounded-xl;
+  }
+}
