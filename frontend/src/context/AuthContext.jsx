@@ -11,10 +11,11 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('citizen-auth');
     localStorage.removeItem('citizen-token');
+    sessionStorage.removeItem('citizen-token');
   }, []);
 
   const hydrateSession = useCallback(async () => {
-    const token = localStorage.getItem('citizen-token');
+    const token = localStorage.getItem('citizen-token') || sessionStorage.getItem('citizen-token');
     if (!token) {
       localStorage.removeItem('citizen-auth');
       setUser(null);
@@ -45,26 +46,70 @@ export const AuthProvider = ({ children }) => {
     };
   }, [hydrateSession]);
 
-  const login = async (email, password) => {
+  useEffect(() => {
+    const root = document.documentElement;
+    const prefs = user?.preferences || {};
+    root.classList.toggle('a11y-large-text', Boolean(prefs.largeText));
+    root.classList.toggle('a11y-high-contrast', Boolean(prefs.highContrast));
+    root.classList.toggle('a11y-simple-language', Boolean(prefs.simpleLanguage));
+  }, [user]);
+
+  const rememberSession = (nextUser, token, remember = true) => {
+    setUser(nextUser);
+    localStorage.setItem('citizen-auth', JSON.stringify(nextUser));
+    sessionStorage.removeItem('citizen-token');
+    if (remember) {
+      localStorage.setItem('citizen-token', token);
+    } else {
+      sessionStorage.setItem('citizen-token', token);
+      localStorage.removeItem('citizen-token');
+    }
+  };
+
+  const login = async (email, password, remember = true) => {
     const response = await apiFetch('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json().catch(() => ({}));
-
     if (!response.ok) {
       throw new Error(data.message || 'Login failed');
     }
 
-    const nextUser = data.user;
-    setUser(nextUser);
-    localStorage.setItem('citizen-auth', JSON.stringify(nextUser));
-    localStorage.setItem('citizen-token', data.token);
+    rememberSession(data.user, data.token, remember);
+  };
+
+  const signup = async ({ name, email, password, role = 'citizen', plan = 'free', remember = true }) => {
+    const response = await apiFetch('/api/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password, role, plan }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.message || 'Signup failed');
+    }
+
+    rememberSession(data.user, data.token, remember);
+  };
+
+  const updateProfile = async (patch) => {
+    const response = await apiFetch('/api/auth/me', {
+      method: 'PUT',
+      body: JSON.stringify(patch),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.message || 'Unable to update profile');
+    }
+    setUser(data);
+    localStorage.setItem('citizen-auth', JSON.stringify(data));
+    return data;
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

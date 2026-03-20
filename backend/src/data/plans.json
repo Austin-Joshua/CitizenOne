@@ -1,0 +1,25 @@
+[
+  {
+    "id": "free",
+    "name": "Free",
+    "priceMonthly": 0,
+    "features": [
+      "Core dashboard",
+      "Basic scheme discovery",
+      "Standard alerts",
+      "Document vault"
+    ]
+  },
+  {
+    "id": "premium",
+    "name": "Premium",
+    "priceMonthly": 29,
+    "features": [
+      "AI assistant copilots",
+      "Predictive insights",
+      "Priority support",
+      "Org-level controls",
+      "Advanced analytics"
+    ]
+  }
+]

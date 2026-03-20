@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Bot,
@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Card, Button, Badge, cn } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
+import { apiFetch } from '../lib/api';
 
 const METRIC_ACCENTS = {
   primary: {
@@ -73,6 +74,27 @@ const MetricBlock = ({ title, value, change, icon: Icon, accent }) => {
 const DashboardPage = () => {
   const { user } = useAuth();
   const firstName = user?.name?.split(/\s+/)[0] || 'Operator';
+  const roleLabel = user?.role || 'citizen';
+  const isAdmin = roleLabel === 'admin';
+  const isOrg = roleLabel === 'organization';
+  const [summary, setSummary] = useState({ applications: 0, documents: 0, completedTasks: 0, activities: [] });
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await apiFetch('/api/activity/summary');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (mounted) setSummary(data);
+      } catch {
+        // keep dashboard usable with fallback metrics
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const container = {
     hidden: { opacity: 0 },
@@ -87,14 +109,11 @@ const DashboardPage = () => {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <motion.div variants={item} className="space-y-1">
-          <Badge variant="primary" className="mb-0.5">
-            Operational
-          </Badge>
           <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
             Welcome back, <span className="text-accent-primary">{firstName}</span>
           </h1>
           <p className="max-w-xl text-sm text-secondary sm:text-[15px]">
-            AI sweeps complete · 12 insights queued for review
+            Your command center is up to date with the latest recommendations and activity.
           </p>
         </motion.div>
         <motion.div variants={item} className="flex flex-wrap gap-2">
@@ -106,11 +125,28 @@ const DashboardPage = () => {
       </div>
 
       <motion.div variants={item} className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricBlock title="Citizen reach" value="2.4M" change="12.4" icon={TrendingUp} accent="primary" />
-        <MetricBlock title="Benefits deployed" value="$42M" change="8.1" icon={Award} accent="secondary" />
-        <MetricBlock title="Identity security" value="100%" change="0.0" icon={Shield} accent="tertiary" />
+        <MetricBlock title="Applications" value={String(summary.applications)} change="6.1" icon={TrendingUp} accent="primary" />
+        <MetricBlock title="Documents" value={String(summary.documents)} change="3.7" icon={Award} accent="secondary" />
+        <MetricBlock title="Completed tasks" value={String(summary.completedTasks)} change="4.4" icon={Shield} accent="tertiary" />
         <MetricBlock title="Active anomalies" value="3" change="-2" icon={AlertCircle} accent="amber" />
       </motion.div>
+
+      {(isAdmin || isOrg) && (
+        <motion.div variants={item} className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Card elevated className="!p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Program Management</p>
+            <p className="mt-2 text-sm text-secondary">
+              Manage schemes, publish updates, and monitor moderation queues with role-based governance controls.
+            </p>
+          </Card>
+          <Card elevated className="!p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">System Health</p>
+            <p className="mt-2 text-sm text-secondary">
+              API uptime 99.98% · AI inference stable · Notification delivery latency 1.2s.
+            </p>
+          </Card>
+        </motion.div>
+      )}
 
       <motion.div variants={item} className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
@@ -199,6 +235,9 @@ const DashboardPage = () => {
               ))}
             </div>
             <div className="mt-4 border-t border-border-light pt-3">
+              {summary.activities?.slice(0, 2).map((a) => (
+                <p key={a.id} className="mb-2 text-xs text-secondary">{a.message}</p>
+              ))}
               <button
                 type="button"
                 className="flex w-full items-center justify-between rounded-lg border border-border-light bg-base/30 px-3 py-2 text-left transition-colors hover:border-accent-primary/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/25"

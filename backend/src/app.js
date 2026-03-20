@@ -11,6 +11,9 @@ const schemeRoutes = require('./routes/schemes');
 const opportunityRoutes = require('./routes/opportunities');
 const documentRoutes = require('./routes/documents');
 const notificationRoutes = require('./routes/notifications');
+const applicationRoutes = require('./routes/applications');
+const planRoutes = require('./routes/plans');
+const activityRoutes = require('./routes/activity');
 
 const app = express();
 
@@ -38,6 +41,9 @@ app.use('/api/schemes', schemeRoutes);
 app.use('/api/opportunities', opportunityRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/plans', planRoutes);
+app.use('/api/activity', activityRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {

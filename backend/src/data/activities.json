@@ -1,0 +1,37 @@
+[
+  {
+    "id": "act-5-1774018208287",
+    "userId": "1",
+    "type": "application",
+    "message": "Submitted SME Innovation Grant",
+    "createdAt": "2026-03-20T14:50:08.287Z"
+  },
+  {
+    "id": "act-4-1774018208264",
+    "userId": "1",
+    "type": "document",
+    "message": "Uploaded Audit Persisted Doc",
+    "createdAt": "2026-03-20T14:50:08.264Z"
+  },
+  {
+    "id": "act-1",
+    "userId": "1",
+    "type": "application",
+    "message": "Submitted National Scholarship 2026",
+    "createdAt": "2026-03-18T08:30:00.000Z"
+  },
+  {
+    "id": "act-2",
+    "userId": "1",
+    "type": "document",
+    "message": "Uploaded Passport Copy",
+    "createdAt": "2026-03-12T11:30:00.000Z"
+  },
+  {
+    "id": "act-3",
+    "userId": "2",
+    "type": "admin",
+    "message": "Reviewed integration health report",
+    "createdAt": "2026-03-19T10:00:00.000Z"
+  }
+]

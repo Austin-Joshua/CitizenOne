@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1",
+    "name": "John Citizen",
+    "email": "john@example.com",
+    "password": "password123",
+    "role": "citizen",
+    "plan": "free",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  },
+  {
+    "id": "2",
+    "name": "Admin One",
+    "email": "admin@citizenone.gov",
+    "password": "adminpassword",
+    "role": "admin",
+    "plan": "premium",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  },
+  {
+    "id": "3",
+    "name": "Community NGO",
+    "email": "ngo@citizenone.org",
+    "password": "ngopassword",
+    "role": "organization",
+    "plan": "premium",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  },
+  {
+    "id": "4",
+    "name": "Audit User Updated",
+    "email": "audit.user@example.com",
+    "password": "auditpass123",
+    "role": "service_provider",
+    "plan": "premium",
+    "preferences": {
+      "largeText": true,
+      "highContrast": true,
+      "simpleLanguage": true,
+      "notifyEmailDigest": true
+    }
+  }
+]

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, ShieldCheck, ArrowRight, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -13,6 +13,7 @@ const LoginPage = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e) => {
@@ -22,7 +23,8 @@ const LoginPage = () => {
       await new Promise((r) => setTimeout(r, 280));
       await login(
         email.trim() || 'admin@citizenone.gov',
-        password || 'adminpassword'
+        password || 'adminpassword',
+        remember
       );
       navigate('/app/dashboard');
     } catch (error) {
@@ -108,6 +110,8 @@ const LoginPage = () => {
               <input
                 type="checkbox"
                 className="h-3.5 w-3.5 rounded border-border-light text-accent-primary focus:ring-accent-primary/30"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
               />
               Remember this device
             </label>
@@ -131,6 +135,12 @@ const LoginPage = () => {
             Encrypted session
           </div>
         </div>
+        <p className="mt-4 text-center text-sm text-secondary">
+          Need an account?{' '}
+          <Link to="/signup" className="text-accent-primary hover:underline">Sign up</Link>
+          {' · '}
+          <Link to="/" className="text-accent-primary hover:underline">Back to landing</Link>
+        </p>
       </motion.div>
     </div>
   );

@@ -8,7 +8,7 @@ export function getApiBase() {
 }
 
 export function getAuthToken() {
-  return localStorage.getItem('citizen-token');
+  return localStorage.getItem('citizen-token') || sessionStorage.getItem('citizen-token');
 }
 
 /**

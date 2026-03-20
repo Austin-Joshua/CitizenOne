@@ -63,7 +63,7 @@ export const NotificationProvider = ({ children }) => {
   }, [rawItems]);
 
   const fetchNotifications = useCallback(async () => {
-    if (!user || !localStorage.getItem('citizen-token')) return;
+    if (!user || !(localStorage.getItem('citizen-token') || sessionStorage.getItem('citizen-token'))) return;
     try {
       const res = await apiFetch('/api/notifications');
       if (!res.ok) {

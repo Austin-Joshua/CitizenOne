@@ -1,24 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const { auth, authorize } = require('../middlewares/auth');
+const { getUsers, findUserById } = require('../lib/userStore');
+const { readCollection } = require('../lib/dataStore');
 
-// Mock User Data
-const users = [
-  { id: '1', name: 'John Citizen', email: 'john@example.com', role: 'citizen' },
-  { id: '2', name: 'Admin One', email: 'admin@citizenone.gov', role: 'admin' }
-];
-
-// @route   GET api/users
-// @desc    Get all users (Admin only)
 router.get('/', [auth, authorize('admin')], (req, res) => {
+  const users = getUsers().map(({ password, ...safe }) => safe);
   res.json(users);
 });
 
-// @route   GET api/users/profile
-// @desc    Get my profile
 router.get('/profile', auth, (req, res) => {
-  const user = users.find(u => u.id === req.user.id);
-  res.json(user);
+  const user = findUserById(req.user.id);
+  if (!user) return res.status(404).json({ message: 'User not found' });
+  const { password, ...safe } = user;
+  res.json(safe);
+});
+
+router.get('/admin/metrics', [auth, authorize(['admin', 'organization'])], (req, res) => {
+  const users = getUsers();
+  const applications = readCollection('applications');
+  const documents = readCollection('documents');
+  const activities = readCollection('activities');
+  res.json({
+    totalUsers: users.length,
+    totalApplications: applications.length,
+    totalDocuments: documents.length,
+    recentActivity: activities.slice(0, 10),
+  });
 });
 
 module.exports = router;

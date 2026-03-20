@@ -1,0 +1,32 @@
+[
+  {
+    "id": "app-3-1774018208283",
+    "userId": "1",
+    "type": "scheme",
+    "targetId": "scheme-2",
+    "title": "SME Innovation Grant",
+    "status": "submitted",
+    "deadline": null,
+    "updatedAt": "2026-03-20T14:50:08.283Z"
+  },
+  {
+    "id": "app-1",
+    "userId": "1",
+    "type": "scheme",
+    "targetId": "scheme-1",
+    "title": "National Scholarship 2026",
+    "status": "submitted",
+    "deadline": "2026-04-15",
+    "updatedAt": "2026-03-18T08:30:00.000Z"
+  },
+  {
+    "id": "app-2",
+    "userId": "1",
+    "type": "opportunity",
+    "targetId": "opp-2",
+    "title": "Data Analyst",
+    "status": "in_review",
+    "deadline": "2026-03-28",
+    "updatedAt": "2026-03-19T11:40:00.000Z"
+  }
+]

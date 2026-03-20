@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Bell, Sun, Moon, Menu, LogOut, Settings, IdCard } from 'lucide-react';
+import { Search, Bell, Sun, Moon, Menu, LogOut, Settings, IdCard, CreditCard } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
 import { cn } from '../ui';
+import { querySearchItems } from '../../lib/searchIndex';
 
 const iconBtn =
   'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-transparent text-secondary transition-colors hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/45 active:scale-[0.97]';
@@ -32,23 +33,29 @@ const TopBar = ({ onMobileMenuClick }) => {
   } = useNotifications();
 
   const [profileOpen, setProfileOpen] = React.useState(false);
+  const [search, setSearch] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
   const notifRef = useRef(null);
   const profileRef = useRef(null);
+  const searchRef = useRef(null);
+  const searchResults = useMemo(() => querySearchItems(search), [search]);
 
   useEffect(() => {
     const onDoc = (e) => {
       const t = e.target;
       if (notifRef.current?.contains(t)) return;
       if (profileRef.current?.contains(t)) return;
+      if (searchRef.current?.contains(t)) return;
       setPanelOpen(false);
       setProfileOpen(false);
+      setSearchOpen(false);
     };
-    if (panelOpen || profileOpen) {
+    if (panelOpen || profileOpen || searchOpen) {
       document.addEventListener('mousedown', onDoc);
       return () => document.removeEventListener('mousedown', onDoc);
     }
     return undefined;
-  }, [panelOpen, profileOpen, setPanelOpen]);
+  }, [panelOpen, profileOpen, searchOpen, setPanelOpen]);
 
   const timeLabel =
     lastUpdated &&
@@ -74,7 +81,7 @@ const TopBar = ({ onMobileMenuClick }) => {
       </button>
 
       <div className="flex min-w-0 flex-1 justify-center px-1 sm:px-4">
-        <div className="relative w-full max-w-lg">
+        <div className="relative w-full max-w-lg" ref={searchRef}>
           <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-tertiary">
             <Search size={18} strokeWidth={2} aria-hidden />
           </span>
@@ -83,7 +90,45 @@ const TopBar = ({ onMobileMenuClick }) => {
             placeholder="Search"
             aria-label="Search"
             className="h-10 w-full rounded-lg border border-border-light bg-transparent py-2 pl-10 pr-3 text-[15px] text-primary placeholder:text-tertiary shadow-none transition-[border-color,box-shadow] focus:border-accent-primary/40 focus:outline-none focus:ring-2 focus:ring-accent-primary/20"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setSearchOpen(true);
+            }}
+            onFocus={() => setSearchOpen(true)}
           />
+          <AnimatePresence>
+            {searchOpen && search.trim() && (
+              <motion.div
+                {...panelMotion}
+                className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-xl border border-border-light bg-surface shadow-lg"
+              >
+                {searchResults.length === 0 ? (
+                  <div className="px-4 py-3 text-sm text-secondary">No results found.</div>
+                ) : (
+                  <ul className="max-h-80 overflow-y-auto py-1">
+                    {searchResults.map((result) => (
+                      <li key={result.id}>
+                        <button
+                          type="button"
+                          className="w-full border-b border-border-light/70 px-4 py-3 text-left transition-colors last:border-0 hover:bg-base/75"
+                          onClick={() => {
+                            navigate(result.path);
+                            setSearch('');
+                            setSearchOpen(false);
+                          }}
+                        >
+                          <p className="text-[11px] font-medium uppercase tracking-wide text-tertiary">{result.category}</p>
+                          <p className="text-[15px] font-medium text-primary">{result.title}</p>
+                          <p className="text-sm text-secondary">{result.subtitle}</p>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -238,6 +283,18 @@ const TopBar = ({ onMobileMenuClick }) => {
                 >
                   <Settings size={17} aria-hidden />
                   Settings
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[15px] text-primary transition-colors hover:bg-base focus:outline-none focus-visible:bg-base"
+                  onClick={() => {
+                    setProfileOpen(false);
+                    navigate('/app/subscription');
+                  }}
+                >
+                  <CreditCard size={17} aria-hidden />
+                  Subscription
                 </button>
                 <div className="my-1 h-px bg-border-light" />
                 <button

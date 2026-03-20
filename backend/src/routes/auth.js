@@ -1,61 +1,104 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const { auth } = require('../middlewares/auth');
+const { getUsers, findUserById, findUserByEmail, createUser, updateUser } = require('../lib/userStore');
 
-// Mock User Database
-const users = [
-  { id: '1', name: 'John Citizen', email: 'john@example.com', password: 'password123', role: 'citizen' },
-  { id: '2', name: 'Admin One', email: 'admin@citizenone.gov', password: 'adminpassword', role: 'admin' }
-];
+function safeUser(user) {
+  const { password, ...rest } = user;
+  return rest;
+}
 
-// @route   POST api/auth/login
-// @desc    Authenticate user & get token
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+function signToken(user, res) {
+  const payload = { user: { id: user.id, role: user.role } };
+  jwt.sign(payload, process.env.JWT_SECRET || 'secret', { expiresIn: '24h' }, (err, token) => {
+    if (err) throw err;
+    res.json({ token, user: safeUser(user) });
+  });
+}
+
+router.post('/signup', (req, res) => {
+  const { name, email, password, role = 'citizen', plan = 'free' } = req.body || {};
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Name, email, and password are required' });
+  }
+  if (String(password).length < 8) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters' });
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+  if (findUserByEmail(normalizedEmail)) {
+    return res.status(409).json({ message: 'Email already in use' });
+  }
+
+  const allowedRole = ['citizen', 'organization', 'service_provider', 'admin'].includes(role) ? role : 'citizen';
+  const allowedPlan = ['free', 'premium'].includes(plan) ? plan : 'free';
+
+  const user = {
+    id: String(getUsers().length + 1),
+    name: String(name).trim(),
+    email: normalizedEmail,
+    password: String(password),
+    role: allowedRole,
+    plan: allowedPlan,
+    preferences: {
+      largeText: false,
+      highContrast: false,
+      simpleLanguage: false,
+      notifyEmailDigest: true,
+    },
+  };
+  createUser(user);
+
+  return signToken(user, res);
+});
+
+router.post('/login', (req, res) => {
+  const { email, password } = req.body || {};
 
   try {
-    const user = users.find(u => u.email === email);
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid Credentials' });
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const user = findUserByEmail(normalizedEmail);
+    if (!user || user.password !== password) {
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // In real app: const isMatch = await bcrypt.compare(password, user.password);
-    const isMatch = password === user.password;
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid Credentials' });
-    }
-
-    const payload = {
-      user: {
-        id: user.id,
-        role: user.role
-      }
-    };
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '24h' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
-      }
-    );
+    return signToken(user, res);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    return res.status(500).send('Server Error');
   }
 });
 
-// @route   GET api/auth/me
-// @desc    Get current user
-const { auth } = require('../middlewares/auth');
 router.get('/me', auth, (req, res) => {
-  const user = users.find(u => u.id === req.user.id);
+  const user = findUserById(req.user.id);
   if (!user) return res.status(404).json({ message: 'User not found' });
-  const { password, ...userWithoutPassword } = user;
-  res.json(userWithoutPassword);
+  return res.json(safeUser(user));
+});
+
+router.put('/me', auth, (req, res) => {
+  const user = findUserById(req.user.id);
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  const { name, preferences, plan } = req.body || {};
+  const patch = {};
+
+  if (typeof name === 'string' && name.trim()) {
+    patch.name = name.trim();
+  }
+  if (plan && ['free', 'premium'].includes(plan)) {
+    patch.plan = plan;
+  }
+  if (preferences && typeof preferences === 'object') {
+    patch.preferences = {
+      ...(user.preferences || {}),
+      ...preferences,
+    };
+  }
+
+  const updated = updateUser(user.id, patch);
+  return res.json(safeUser(updated));
 });
 
 module.exports = router;

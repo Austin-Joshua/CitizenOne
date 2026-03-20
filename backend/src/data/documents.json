@@ -1,0 +1,42 @@
+[
+  {
+    "id": "doc-1",
+    "userId": "1",
+    "name": "Degree Certificate",
+    "category": "Education",
+    "type": "PDF",
+    "size": "1.2MB",
+    "expiresAt": "2027-04-10",
+    "uploadedAt": "2026-03-10T10:00:00.000Z"
+  },
+  {
+    "id": "doc-2",
+    "userId": "1",
+    "name": "Passport Copy",
+    "category": "Identity",
+    "type": "JPG",
+    "size": "500KB",
+    "expiresAt": "2029-08-21",
+    "uploadedAt": "2026-03-12T11:30:00.000Z"
+  },
+  {
+    "id": "doc-3",
+    "userId": "2",
+    "name": "Organization Registration",
+    "category": "Business",
+    "type": "PDF",
+    "size": "760KB",
+    "expiresAt": "2028-01-01",
+    "uploadedAt": "2026-03-09T09:00:00.000Z"
+  },
+  {
+    "id": "doc-4-1774018208262",
+    "userId": "1",
+    "name": "Audit Persisted Doc",
+    "category": "Identity",
+    "type": "PDF",
+    "size": "111KB",
+    "expiresAt": null,
+    "uploadedAt": "2026-03-20T14:50:08.262Z"
+  }
+]
