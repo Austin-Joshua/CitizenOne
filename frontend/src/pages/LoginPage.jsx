@@ -150,7 +150,7 @@ const LoginPage = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-base">
+      <div className="flex min-h-screen items-center justify-center bg-canvas">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent-primary/20 border-t-accent-primary" aria-hidden />
         <span className="sr-only">{t('auth.loadingSession')}</span>
       </div>
@@ -164,7 +164,7 @@ const LoginPage = () => {
       footer={
         <div className="space-y-4 text-sm text-secondary">
           <p>
-            <ShieldCheck className="mr-1 inline-block h-4 w-4 text-emerald-600 dark:text-emerald-400" strokeWidth={2} aria-hidden />
+            <ShieldCheck className="mr-1 inline-block h-4 w-4 text-accent-primary" strokeWidth={2} aria-hidden />
             {t('auth.login.footerHttps')}
           </p>
           <p>
@@ -196,11 +196,6 @@ const LoginPage = () => {
         </div>
       }
     >
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-      >
         {(idleNotice || sessionNotice) && (
           <div
             className="mb-4 rounded-lg border border-border-light bg-surface/80 px-4 py-3 text-sm text-secondary"
@@ -212,14 +207,22 @@ const LoginPage = () => {
 
         {verifiedNotice && (
           <div
-            className="mb-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-secondary"
+            className="mb-4 rounded-lg border border-semantic-success/25 bg-semantic-success-muted px-4 py-3 text-sm text-secondary"
             role="status"
           >
             {t('auth.login.noticeVerified')}
           </div>
         )}
 
+        <AnimatePresence mode="wait">
         {step === 'role' && (
+          <motion.div
+            key="role"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -8 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          >
           <Card elevated className="!p-5 sm:!p-6">
             <fieldset>
               <legend className="text-[11px] font-semibold uppercase tracking-wider text-secondary">{t('auth.login.signInOption')}</legend>
@@ -259,9 +262,17 @@ const LoginPage = () => {
               <ArrowRight className="ml-1.5 h-4 w-4" strokeWidth={2} aria-hidden />
             </Button>
           </Card>
+          </motion.div>
         )}
 
         {step === 'mfa' && (
+          <motion.div
+            key="mfa"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -8 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          >
           <Card elevated className="!p-5 sm:!p-6">
             <form className="space-y-4" onSubmit={handleMfaSubmit} noValidate>
               <Input
@@ -307,9 +318,17 @@ const LoginPage = () => {
               </div>
             </form>
           </Card>
+          </motion.div>
         )}
 
         {step === 'credentials' && (
+          <motion.div
+            key="credentials"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -8 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          >
           <Card elevated className="!p-5 sm:!p-6">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <button
@@ -411,8 +430,9 @@ const LoginPage = () => {
               </Button>
             </form>
           </Card>
+          </motion.div>
         )}
-      </motion.div>
+        </AnimatePresence>
     </PublicAuthShell>
   );
 };

@@ -120,7 +120,7 @@ export default function VoiceAssistantPanel() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6, scale: 0.99 }}
             transition={{ duration: 0.18 }}
-            className="w-[min(100vw-2rem,22rem)] rounded-2xl border border-border-light bg-surface p-4 shadow-xl"
+            className="w-[min(100vw-2rem,22rem)] rounded-2xl border border-border-light bg-base p-4 shadow-elevated-lg"
             role="dialog"
             aria-label={t('voice.title')}
           >
@@ -149,7 +149,7 @@ export default function VoiceAssistantPanel() {
                 {transcript}
               </p>
             ) : null}
-            {feedback ? <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400">{feedback}</p> : null}
+            {feedback ? <p className="mt-1 text-xs text-semantic-success">{feedback}</p> : null}
             <p className="mt-3 text-[10px] leading-snug text-tertiary">{t('voice.privacyNote')}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               <button
@@ -179,7 +179,7 @@ export default function VoiceAssistantPanel() {
       <button
         type="button"
         className={cn(
-          'flex h-14 w-14 items-center justify-center rounded-full border-2 border-border-light bg-accent-primary text-white shadow-lg shadow-accent-primary/25 transition-transform hover:scale-[1.03] focus:outline-none focus-visible:ring-4 focus-visible:ring-accent-primary/35',
+          'flex h-14 w-14 items-center justify-center rounded-full border-2 border-border-light bg-accent-primary text-white shadow-elevated-md shadow-accent-primary/20 transition-transform duration-150 hover:scale-[1.03] hover:bg-accent-hover focus:outline-none focus-visible:ring-4 focus-visible:ring-accent-soft/40',
           listening && 'ring-4 ring-accent-primary/40 animate-pulse'
         )}
         aria-expanded={open}

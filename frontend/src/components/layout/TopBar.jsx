@@ -12,7 +12,7 @@ import { AppLogo } from '../brand/AppLogo';
 import LanguageToggle from '../inclusive/LanguageToggle';
 
 const iconBtn =
-  'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-secondary transition-colors hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35';
+  'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-secondary transition-colors hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35';
 
 const panelMotion = {
   initial: { opacity: 0, y: -4 },
@@ -84,7 +84,7 @@ const TopBar = ({ onMobileMenuClick }) => {
   const initial = (user?.name || user?.email || 'U').slice(0, 1).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-4 border-b border-border-light bg-base/95 px-4 backdrop-blur-md supports-[backdrop-filter]:bg-base/80 lg:px-8">
+    <header className="sticky top-0 z-30 flex h-16 min-h-16 shrink-0 items-center gap-4 border-b border-border-light bg-base/90 px-4 backdrop-blur-md supports-[backdrop-filter]:bg-base/75 lg:gap-6 lg:px-8">
       <div className="flex min-w-0 shrink-0 items-center gap-3">
         <button
           type="button"
@@ -104,7 +104,7 @@ const TopBar = ({ onMobileMenuClick }) => {
         </Link>
       </div>
 
-      <div className="mx-auto min-w-0 max-w-xl flex-1" ref={searchRef}>
+      <div className="mx-auto min-w-0 max-w-2xl flex-1" ref={searchRef}>
         <div className="relative w-full">
           <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-tertiary">
             <Search size={17} strokeWidth={2} aria-hidden />
@@ -125,7 +125,7 @@ const TopBar = ({ onMobileMenuClick }) => {
             {searchOpen && search.trim() && (
               <motion.div
                 {...panelMotion}
-                className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-border-light bg-base shadow-lg"
+                className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-xl border border-border-light bg-base shadow-elevated-md"
               >
                 {searchResults.length === 0 ? (
                   <div className="px-4 py-3 text-sm text-secondary">{t('topbar.noResults')}</div>
@@ -157,7 +157,7 @@ const TopBar = ({ onMobileMenuClick }) => {
       </div>
 
       <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
-        <LanguageToggle className="max-sm:[&_button]:min-w-[8.5rem] max-sm:[&_button]:px-2" />
+        <LanguageToggle />
 
         <button
           type="button"
@@ -215,7 +215,7 @@ const TopBar = ({ onMobileMenuClick }) => {
             {panelOpen && (
               <motion.div
                 {...panelMotion}
-                className="absolute right-0 top-[calc(100%+6px)] z-50 w-[min(100vw-1rem,320px)] overflow-hidden rounded-lg border border-border-light bg-base shadow-lg"
+                className="absolute right-0 top-[calc(100%+6px)] z-50 w-[min(100vw-1rem,320px)] overflow-hidden rounded-xl border border-border-light bg-base shadow-elevated-md"
                 role="dialog"
                 aria-label={t('topbar.notificationsDialog')}
               >
@@ -285,7 +285,7 @@ const TopBar = ({ onMobileMenuClick }) => {
             {profileOpen && (
               <motion.div
                 {...panelMotion}
-                className="absolute right-0 top-[calc(100%+6px)] z-50 min-w-[208px] overflow-hidden rounded-lg border border-border-light bg-base py-1 shadow-lg"
+                className="absolute right-0 top-[calc(100%+6px)] z-50 min-w-[208px] overflow-hidden rounded-xl border border-border-light bg-base py-1 shadow-elevated-md"
                 role="menu"
               >
                 <button
@@ -328,7 +328,7 @@ const TopBar = ({ onMobileMenuClick }) => {
                 <button
                   type="button"
                   role="menuitem"
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 transition-colors hover:bg-red-500/10 focus:outline-none focus-visible:bg-red-500/10 dark:text-red-400"
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-semantic-error transition-colors hover:bg-semantic-error-muted focus:outline-none focus-visible:bg-semantic-error-muted"
                   onClick={handleLogout}
                 >
                   <LogOut size={16} aria-hidden />

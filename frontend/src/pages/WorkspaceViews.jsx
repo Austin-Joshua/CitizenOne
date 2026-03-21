@@ -786,13 +786,13 @@ const WorkspaceViews = ({ moduleKey }) => {
                 </div>
                 <div className="rounded-lg border border-border-light bg-base/35 p-4">
                   <p className="text-xs text-tertiary">Service queue open</p>
-                  <p className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400">
+                  <p className="text-2xl font-semibold text-accent-primary">
                     {adminMetrics.pendingServiceRequests ?? 0}
                   </p>
                 </div>
                 <div className="rounded-lg border border-border-light bg-base/35 p-4">
                   <p className="text-xs text-tertiary">Apps awaiting review</p>
-                  <p className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400">
+                  <p className="text-2xl font-semibold text-accent-primary">
                     {adminMetrics.pendingApplicationReviews ?? 0}
                   </p>
                 </div>

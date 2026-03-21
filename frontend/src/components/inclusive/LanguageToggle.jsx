@@ -11,10 +11,14 @@ const panelMotion = {
   transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] },
 };
 
-const triggerClass =
-  'flex h-10 min-w-[10.5rem] shrink-0 items-center justify-center gap-2 rounded-lg border border-border-light bg-surface/60 px-2.5 text-left text-[13px] font-medium text-primary transition-colors hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40 sm:min-w-[11rem]';
+/** Compact icon trigger (default) — full-width locale bar via `variant="bar"` */
+const triggerIcon =
+  'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border-light bg-surface text-secondary transition-[color,background-color,box-shadow] duration-150 hover:bg-base hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/45';
 
-export default function LanguageToggle({ className }) {
+const triggerBar =
+  'flex h-10 min-w-[10.5rem] shrink-0 items-center justify-center gap-2 rounded-xl border border-border-light bg-surface px-2.5 text-left text-[13px] font-medium text-primary transition-colors hover:bg-base focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/45 sm:min-w-[11rem]';
+
+export default function LanguageToggle({ className, variant = 'icon' }) {
   const { locale, setLocale, t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -32,23 +36,29 @@ export default function LanguageToggle({ className }) {
     return undefined;
   }, [open]);
 
+  const label = `${t('topbar.chooseLanguage')}: ${current.native}`;
+
   return (
     <div className={cn('relative', className)} ref={ref}>
       <button
         type="button"
-        className={cn(triggerClass)}
+        className={cn(variant === 'bar' ? triggerBar : triggerIcon)}
         aria-expanded={open}
         aria-haspopup="listbox"
-        aria-label={t('topbar.chooseLanguage')}
+        aria-label={label}
         onClick={() => setOpen((o) => !o)}
       >
-        <Languages size={18} strokeWidth={2} className="shrink-0 text-accent-primary" aria-hidden />
-        <span className="min-w-0 flex-1 truncate text-left">
-          <span className="block truncate leading-tight">{current.native}</span>
-          <span className="block truncate text-[10px] font-normal uppercase tracking-wide text-tertiary">
-            {t('topbar.language')}
+        <Languages size={variant === 'bar' ? 18 : 20} strokeWidth={2} className="shrink-0 text-accent-primary" aria-hidden />
+        {variant === 'bar' ? (
+          <span className="min-w-0 flex-1 truncate text-left">
+            <span className="block truncate leading-tight">{current.native}</span>
+            <span className="block truncate text-[10px] font-normal uppercase tracking-wide text-tertiary">
+              {t('topbar.language')}
+            </span>
           </span>
-        </span>
+        ) : (
+          <span className="sr-only">{label}</span>
+        )}
       </button>
       <AnimatePresence>
         {open && (
@@ -56,14 +66,14 @@ export default function LanguageToggle({ className }) {
             {...panelMotion}
             role="listbox"
             aria-label={t('topbar.chooseLanguage')}
-            className="absolute right-0 top-[calc(100%+6px)] z-[60] max-h-72 min-w-[11rem] overflow-y-auto rounded-xl border border-border-light bg-surface py-1 shadow-lg sm:left-0 sm:right-auto"
+            className="absolute right-0 top-[calc(100%+6px)] z-[60] max-h-72 min-w-[11rem] overflow-y-auto rounded-xl border border-border-light bg-base py-1 shadow-elevated-md sm:left-0 sm:right-auto"
           >
             {SUPPORTED_LOCALES.map((l) => (
               <li key={l.code} role="option" aria-selected={l.code === locale}>
                 <button
                   type="button"
                   className={cn(
-                    'flex w-full flex-col items-start px-3 py-2.5 text-left text-[14px] transition-colors hover:bg-base',
+                    'flex w-full flex-col items-start px-3 py-2.5 text-left text-[14px] transition-colors hover:bg-surface',
                     l.code === locale && 'bg-accent-primary/10 font-semibold text-accent-primary'
                   )}
                   onClick={() => {

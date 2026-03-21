@@ -314,7 +314,7 @@ export const WORKSPACE_MODULES = {
                 <span
                   className={cn(
                     'text-sm font-medium',
-                    st === 'Connected' ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
+                    st === 'Connected' ? 'text-semantic-success' : 'text-semantic-warning'
                   )}
                 >
                   {st}

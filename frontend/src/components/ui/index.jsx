@@ -8,19 +8,21 @@ export function cn(...inputs) {
 
 export const Button = React.forwardRef(({ className, variant = "primary", size = "default", children, ...props }, ref) => {
   const baseStyles =
-    "inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-base disabled:opacity-45 disabled:pointer-events-none rounded-lg active:scale-[0.99]";
+    "inline-flex items-center justify-center font-medium transition-[background-color,box-shadow,transform,color,border-color] duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/45 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:opacity-45 disabled:pointer-events-none rounded-xl active:scale-[0.99]";
 
   const variants = {
-    primary: "bg-accent-primary text-white hover:bg-accent-primary/92 shadow-sm",
-    secondary: "border border-border-light bg-surface text-primary hover:bg-base",
+    primary:
+      "bg-accent-primary text-white shadow-elevated-sm hover:bg-accent-hover hover:shadow-elevated-md focus-visible:ring-offset-base",
+    secondary:
+      "border border-border-light bg-base text-primary shadow-xs hover:bg-surface hover:border-border-light",
     ghost: "bg-transparent text-secondary hover:bg-surface hover:text-primary",
     glass: "glass-button",
   };
 
   const sizes = {
     sm: "h-9 px-3.5 text-xs",
-    default: "h-10 px-4 text-sm",
-    lg: "h-11 px-5 text-[15px]",
+    default: "h-10 min-h-10 px-4 text-sm",
+    lg: "h-11 min-h-11 px-5 text-[15px]",
   };
 
   return (
@@ -44,10 +46,10 @@ export const Card = ({ className, children, elevated = false, ...props }) => (
 
 export const Badge = ({ className, variant = "default", children, ...props }) => {
   const variants = {
-    default: "bg-slate-100 dark:bg-slate-800 text-secondary border border-border-light",
+    default: "bg-surface text-secondary border border-border-light",
     primary: "bg-accent-primary/10 text-accent-primary border-none",
-    warning: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-none",
-    danger: "bg-red-500/10 text-red-600 dark:text-red-400 border-none",
+    warning: "bg-semantic-warning-muted text-semantic-warning border-none",
+    danger: "bg-semantic-error-muted text-semantic-error border-none",
   };
   return (
     <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider", variants[variant], className)} {...props}>
@@ -70,7 +72,7 @@ export const Input = React.forwardRef(({ className, icon, label, ...props }, ref
       <input
         ref={ref}
         className={cn(
-          'w-full rounded-lg border border-border-light bg-surface text-[15px] text-primary placeholder:text-tertiary transition-[border-color,box-shadow] focus:border-accent-primary/35 focus:outline-none focus:ring-2 focus:ring-accent-primary/20',
+          'w-full rounded-xl border border-border-light bg-surface text-[15px] text-primary shadow-xs placeholder:text-tertiary transition-[border-color,box-shadow] focus:border-accent-primary/40 focus:outline-none focus:ring-2 focus:ring-accent-soft/25 focus:shadow-elevated-sm',
           icon ? 'py-2.5 pl-10 pr-3' : 'px-3 py-2.5',
           className
         )}
