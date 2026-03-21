@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "name": "John Citizen",
+    "email": "john@example.com",
+    "password": "$2b$12$IqHpxQS.9gM0m09wuG1n4e/PwWDxlkKtW5qRBtYGKo/DizImFU08a",
+    "role": "citizen",
+    "plan": "free",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  },
+  {
+    "id": "2",
+    "name": "Admin One",
+    "email": "admin@citizenone.gov",
+    "password": "$2b$12$uR3pA8r9sVRaXrS22b2QJuyLf8k2FnTxMkX30cIbpHMH/McrtqZ7S",
+    "role": "admin",
+    "plan": "premium",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  },
+  {
+    "id": "3",
+    "name": "Community NGO",
+    "email": "ngo@citizenone.org",
+    "password": "$2b$12$lvWPnLAkEMf7G0wELx7IB.VzouWXqxn/33G1fsy7grKMOZ.xVmgEu",
+    "role": "organization",
+    "plan": "premium",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  },
+  {
+    "id": "4",
+    "name": "Case Officer",
+    "email": "staff@citizenone.gov",
+    "password": "$2b$12$.kgNwzy24T2Am0oIDgPixOYlHEQPqDaAOHUifkw.49LMTWW3spJLi",
+    "role": "staff",
+    "plan": "premium",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  },
+  {
+    "id": "5",
+    "name": "Student User",
+    "email": "student@example.com",
+    "password": "$2b$12$1Rry54H4F4emNliiqZF.rOI/Bs3c07oq.tqSqenZgzs5y0oTBCoQK",
+    "role": "student",
+    "plan": "free",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  }
+]

@@ -5,6 +5,7 @@ const { isDatabaseEnabled } = require('./db/config');
 const { getPool } = require('./db/pool');
 
 const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
+const USERS_EXAMPLE = path.join(__dirname, '..', 'data', 'users.example.json');
 
 function readUsersJson() {
   try {
@@ -12,6 +13,16 @@ function readUsersJson() {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
+    try {
+      const seedRaw = fs.readFileSync(USERS_EXAMPLE, 'utf8');
+      const seed = JSON.parse(seedRaw);
+      if (Array.isArray(seed) && seed.length > 0) {
+        writeUsersJson(seed);
+        return seed;
+      }
+    } catch {
+      /* no example file */
+    }
     return [];
   }
 }

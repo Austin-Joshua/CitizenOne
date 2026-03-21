@@ -145,6 +145,7 @@ Full tables and a go-live checklist are in [`docs/PRODUCTION.md`](docs/PRODUCTIO
 ## Maintenance notes
 
 - **Data**: Users, refresh tokens, service requests, applications, audit entries, and related JSON files under `backend/src/data/` are convenient for development; they are not a substitute for a database with backups and access control.
+- **`users.json`**: Not tracked in git (local / CI installs). On first read, the API copies `users.example.json` → `users.json` if the file is missing. Edit `users.example.json` to change default demo accounts; keep real signups and e2e users only in your local `users.json`.
 - **Billing**: The subscription screen changes the user’s plan in profile data only. Card payments and institutional contracts are out of scope here.
 - **SSE**: Real-time updates use an in-process event bus. If you run multiple API instances, you will need a shared pub/sub layer (see `docs/PRODUCTION.md`).
 
