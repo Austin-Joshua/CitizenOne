@@ -8,19 +8,19 @@ export function cn(...inputs) {
 
 export const Button = React.forwardRef(({ className, variant = "primary", size = "default", children, ...props }, ref) => {
   const baseStyles =
-    "inline-flex items-center justify-center font-semibold tracking-wide uppercase transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/45 disabled:opacity-50 disabled:pointer-events-none rounded-lg active:scale-[0.98]";
+    "inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-base disabled:opacity-45 disabled:pointer-events-none rounded-lg active:scale-[0.99]";
 
   const variants = {
-    primary: "bg-accent-primary text-white hover:bg-accent-primary/90 shadow-sm shadow-accent-primary/15",
-    secondary: "bg-glass-base border border-border-light text-primary hover:bg-surface shadow-sm",
-    ghost: "bg-transparent text-secondary hover:text-primary hover:bg-base/80",
+    primary: "bg-accent-primary text-white hover:bg-accent-primary/92 shadow-sm",
+    secondary: "border border-border-light bg-surface text-primary hover:bg-base",
+    ghost: "bg-transparent text-secondary hover:bg-surface hover:text-primary",
     glass: "glass-button",
   };
 
   const sizes = {
-    sm: "h-9 px-3.5 text-[11px]",
-    default: "h-10 px-5 text-xs",
-    lg: "h-11 px-6 text-sm",
+    sm: "h-9 px-3.5 text-xs",
+    default: "h-10 px-4 text-sm",
+    lg: "h-11 px-5 text-[15px]",
   };
 
   return (
@@ -32,7 +32,10 @@ export const Button = React.forwardRef(({ className, variant = "primary", size =
 
 export const Card = ({ className, children, elevated = false, ...props }) => (
   <div
-    className={cn(elevated ? "glass-elevated py-5 px-5 sm:px-6" : "glass-panel p-4 sm:p-5", className)}
+    className={cn(
+      elevated ? 'glass-elevated p-6 sm:p-6' : 'app-card p-5 sm:p-6',
+      className
+    )}
     {...props}
   >
     {children}

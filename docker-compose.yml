@@ -1,0 +1,55 @@
+# Demo stack: PostgreSQL + API + nginx SPA. For real deployments, set SMTP, Stripe, and STRICT_PRODUCTION_CONFIG=true.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: citizen
+      POSTGRES_PASSWORD: citizen
+      POSTGRES_DB: citizen
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U citizen -d citizen']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://citizen:citizen@db:5432/citizen
+      JWT_SECRET: ${JWT_SECRET:-change_me_to_a_long_random_secret_at_least_32_chars________}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:8080}
+      PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:8080}
+      # Demo only — enforce full config in real environments
+      STRICT_PRODUCTION_CONFIG: ${STRICT_PRODUCTION_CONFIG:-false}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_PREMIUM: ${STRIPE_PRICE_PREMIUM:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ['sh', '-c', 'node scripts/migrate.js && node src/app.js']
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ''
+    ports:
+      - '8080:80'
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

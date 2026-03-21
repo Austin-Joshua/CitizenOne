@@ -14,7 +14,7 @@ function armThemeTransition(transitionRef) {
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     const stored = localStorage.getItem('citizen-one-v2-theme');
-    return stored === 'light' || stored === 'dark' ? stored : 'dark';
+    return stored === 'light' || stored === 'dark' ? stored : 'light';
   });
   const transitionRef = useRef(null);
 

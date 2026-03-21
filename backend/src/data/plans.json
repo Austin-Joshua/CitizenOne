@@ -3,23 +3,36 @@
     "id": "free",
     "name": "Free",
     "priceMonthly": 0,
+    "currency": "USD",
     "features": [
-      "Core dashboard",
-      "Basic scheme discovery",
-      "Standard alerts",
-      "Document vault"
+      "Command center & activity",
+      "Benefit discovery & scheme guidance",
+      "Service requests & document vault",
+      "Standard notifications"
     ]
   },
   {
     "id": "premium",
     "name": "Premium",
     "priceMonthly": 29,
+    "currency": "USD",
     "features": [
-      "AI assistant copilots",
-      "Predictive insights",
-      "Priority support",
-      "Org-level controls",
-      "Advanced analytics"
+      "Advanced recommendations & career tools",
+      "Priority notification handling",
+      "Extended analytics views",
+      "Organisation-ready controls"
+    ]
+  },
+  {
+    "id": "institutional",
+    "name": "Institutional",
+    "priceMonthly": null,
+    "currency": "USD",
+    "features": [
+      "Volume licensing & SSO (on request)",
+      "Dedicated support & onboarding",
+      "Custom integrations with government systems",
+      "No restriction on citizen-facing welfare discovery"
     ]
   }
 ]

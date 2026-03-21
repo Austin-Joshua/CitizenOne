@@ -1,62 +1,63 @@
 const express = require('express');
 const router = express.Router();
 const { auth } = require('../middlewares/auth');
-const { readCollection, writeCollection, nextId } = require('../lib/dataStore');
+const { Principal } = require('../domain/user/Principal');
+const { getApplicationProcessingService } = require('../application/applications/ApplicationProcessingService');
+const { handleApplicationError } = require('../interfaces/http/handleApplicationError');
 
-router.get('/', auth, (req, res) => {
-  const apps = readCollection('applications').filter((a) => a.userId === req.user.id);
-  res.json(apps);
+router.get('/queue', auth, async (req, res, next) => {
+  try {
+    const principal = Principal.fromRequestUser(req.user);
+    const data = await getApplicationProcessingService().listQueue(principal);
+    res.json(data);
+  } catch (err) {
+    if (handleApplicationError(res, err, req)) return;
+    next(err);
+  }
 });
 
-router.post('/', auth, (req, res) => {
-  const { type, targetId, title, status = 'submitted', deadline = null } = req.body || {};
-  if (!type || !targetId || !title) {
-    return res.status(400).json({ message: 'type, targetId, and title are required' });
+router.get('/', auth, async (req, res, next) => {
+  try {
+    const principal = Principal.fromRequestUser(req.user);
+    const data = await getApplicationProcessingService().listForUser(principal);
+    res.json(data);
+  } catch (err) {
+    if (handleApplicationError(res, err, req)) return;
+    next(err);
   }
-
-  const apps = readCollection('applications');
-  const existing = apps.find((a) => a.userId === req.user.id && a.type === type && a.targetId === targetId);
-  if (existing) {
-    return res.status(409).json({ message: 'Application already exists' });
-  }
-
-  const app = {
-    id: nextId('app', apps),
-    userId: req.user.id,
-    type,
-    targetId,
-    title,
-    status,
-    deadline,
-    updatedAt: new Date().toISOString(),
-  };
-  apps.unshift(app);
-  writeCollection('applications', apps);
-
-  const activities = readCollection('activities');
-  activities.unshift({
-    id: nextId('act', activities),
-    userId: req.user.id,
-    type: 'application',
-    message: `Submitted ${title}`,
-    createdAt: new Date().toISOString(),
-  });
-  writeCollection('activities', activities);
-
-  return res.status(201).json(app);
 });
 
-router.patch('/:id', auth, (req, res) => {
-  const { status } = req.body || {};
-  if (!status) return res.status(400).json({ message: 'status is required' });
+router.post('/', auth, async (req, res, next) => {
+  try {
+    const principal = Principal.fromRequestUser(req.user);
+    const appRow = await getApplicationProcessingService().submit(principal, req.body, req);
+    res.status(201).json(appRow);
+  } catch (err) {
+    if (handleApplicationError(res, err, req)) return;
+    next(err);
+  }
+});
 
-  const apps = readCollection('applications');
-  const index = apps.findIndex((a) => a.id === req.params.id && a.userId === req.user.id);
-  if (index === -1) return res.status(404).json({ message: 'Application not found' });
+router.patch('/:id/review', auth, async (req, res, next) => {
+  try {
+    const principal = Principal.fromRequestUser(req.user);
+    const row = await getApplicationProcessingService().review(principal, req.params.id, req.body, req);
+    res.json(row);
+  } catch (err) {
+    if (handleApplicationError(res, err, req)) return;
+    next(err);
+  }
+});
 
-  apps[index] = { ...apps[index], status, updatedAt: new Date().toISOString() };
-  writeCollection('applications', apps);
-  return res.json(apps[index]);
+router.patch('/:id', auth, async (req, res, next) => {
+  try {
+    const principal = Principal.fromRequestUser(req.user);
+    const row = await getApplicationProcessingService().ownerPatchStatus(principal, req.params.id, req.body);
+    res.json(row);
+  } catch (err) {
+    if (handleApplicationError(res, err, req)) return;
+    next(err);
+  }
 });
 
 module.exports = router;

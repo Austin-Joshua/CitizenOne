@@ -3,7 +3,7 @@
     "id": "1",
     "name": "John Citizen",
     "email": "john@example.com",
-    "password": "password123",
+    "password": "$2b$12$IqHpxQS.9gM0m09wuG1n4e/PwWDxlkKtW5qRBtYGKo/DizImFU08a",
     "role": "citizen",
     "plan": "free",
     "preferences": {
@@ -17,7 +17,7 @@
     "id": "2",
     "name": "Admin One",
     "email": "admin@citizenone.gov",
-    "password": "adminpassword",
+    "password": "$2b$12$uR3pA8r9sVRaXrS22b2QJuyLf8k2FnTxMkX30cIbpHMH/McrtqZ7S",
     "role": "admin",
     "plan": "premium",
     "preferences": {
@@ -31,7 +31,7 @@
     "id": "3",
     "name": "Community NGO",
     "email": "ngo@citizenone.org",
-    "password": "ngopassword",
+    "password": "$2b$12$lvWPnLAkEMf7G0wELx7IB.VzouWXqxn/33G1fsy7grKMOZ.xVmgEu",
     "role": "organization",
     "plan": "premium",
     "preferences": {
@@ -43,16 +43,46 @@
   },
   {
     "id": "4",
-    "name": "Audit User Updated",
-    "email": "audit.user@example.com",
-    "password": "auditpass123",
-    "role": "service_provider",
+    "name": "Case Officer",
+    "email": "staff@citizenone.gov",
+    "password": "$2b$12$.kgNwzy24T2Am0oIDgPixOYlHEQPqDaAOHUifkw.49LMTWW3spJLi",
+    "role": "staff",
     "plan": "premium",
     "preferences": {
-      "largeText": true,
-      "highContrast": true,
-      "simpleLanguage": true,
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
       "notifyEmailDigest": true
     }
+  },
+  {
+    "id": "5",
+    "name": "Student User",
+    "email": "student@example.com",
+    "password": "$2b$12$1Rry54H4F4emNliiqZF.rOI/Bs3c07oq.tqSqenZgzs5y0oTBCoQK",
+    "role": "student",
+    "plan": "free",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    }
+  },
+  {
+    "id": "3a2bb81c-b6c4-498c-a2a0-7950676c2207",
+    "name": "E2E Smoke User",
+    "email": "e2e_1774088460863_yaxy11d0@citizenone-e2e.test",
+    "password": "$2b$12$cHEFGkrJrEaZOJGCLa.XBeVza3./d4Z.VGsOy7iqBE3n3AqemVPx.",
+    "role": "citizen",
+    "plan": "free",
+    "preferences": {
+      "largeText": false,
+      "highContrast": false,
+      "simpleLanguage": false,
+      "notifyEmailDigest": true
+    },
+    "mfaEnrolled": false,
+    "emailVerified": false
   }
 ]

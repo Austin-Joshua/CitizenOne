@@ -1,0 +1,26 @@
+[
+  {
+    "id": "aud-2-1774088462543",
+    "ts": "2026-03-21T10:21:02.543Z",
+    "actorId": "3a2bb81c-b6c4-498c-a2a0-7950676c2207",
+    "actorEmail": "e2e_1774088460863_yaxy11d0@citizenone-e2e.test",
+    "action": "auth.login",
+    "resourceType": null,
+    "resourceId": null,
+    "outcome": "success",
+    "ip": "::1",
+    "detail": null
+  },
+  {
+    "id": "aud-1-1774088461213",
+    "ts": "2026-03-21T10:21:01.213Z",
+    "actorId": "3a2bb81c-b6c4-498c-a2a0-7950676c2207",
+    "actorEmail": "e2e_1774088460863_yaxy11d0@citizenone-e2e.test",
+    "action": "auth.signup",
+    "resourceType": null,
+    "resourceId": null,
+    "outcome": "success",
+    "ip": "::1",
+    "detail": null
+  }
+]

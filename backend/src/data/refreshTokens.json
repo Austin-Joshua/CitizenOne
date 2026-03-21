@@ -1,0 +1,16 @@
+[
+  {
+    "id": "82c064e1-0625-40d4-abef-63a6a3ccf683",
+    "userId": "3a2bb81c-b6c4-498c-a2a0-7950676c2207",
+    "tokenHash": "0a745a3c80fb793ef1ebb0251a22f43a99b78d4cfa70a8c67c2f3517b66d44a1",
+    "expiresAt": 1774693261219,
+    "createdAt": "2026-03-21T10:21:01.219Z"
+  },
+  {
+    "id": "08038a6a-db6d-4a25-83b0-56b918b34f4f",
+    "userId": "3a2bb81c-b6c4-498c-a2a0-7950676c2207",
+    "tokenHash": "b0ec9fa485e65b2c9cd683106c202220730ec858d85be32ca5a67c1592b12dd0",
+    "expiresAt": 1774693262544,
+    "createdAt": "2026-03-21T10:21:02.544Z"
+  }
+]

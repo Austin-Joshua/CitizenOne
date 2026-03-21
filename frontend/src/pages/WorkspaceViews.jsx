@@ -2,515 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageShell from '../components/layout/PageShell';
 import { Card, Button, Badge, cn } from '../components/ui';
-import { apiFetch } from '../lib/api';
+import { apiFetch, getErrorMessageFromResponse } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
-
-const Row = ({ children, className }) => (
-  <div
-    className={cn(
-      'flex items-center justify-between gap-3 border-b border-border-light py-2.5 text-sm last:border-0 sm:text-[15px]',
-      className
-    )}
-  >
-    {children}
-  </div>
-);
-
-const MODULES = {
-  navigator: {
-    title: 'Life Navigator',
-    description: 'Guided pathways for services, milestones, and next-best actions across programs.',
-    body: (
-      <>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Card elevated className="!p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Active path</p>
-            <p className="mt-1.5 text-base font-medium text-primary">Housing stability → Benefits review</p>
-            <p className="mt-2 text-sm text-secondary">3 steps remaining · Est. 12 min</p>
-            <Button size="sm" className="mt-4">
-              Continue
-            </Button>
-          </Card>
-          <Card elevated className="!p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Suggested</p>
-            <ul className="mt-2 space-y-2 text-sm text-secondary">
-              <li>• Register for transit subsidy pre-check</li>
-              <li>• Update household composition (due in 8 days)</li>
-            </ul>
-          </Card>
-        </div>
-        <Card className="!mt-4 !p-0 overflow-hidden">
-          <div className="border-b border-border-light bg-surface/40 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-tertiary">
-            Upcoming milestones
-          </div>
-          <div className="px-4 py-1">
-            <Row>
-              <span className="text-primary">Document verification</span>
-              <Badge variant="warning">Due Fri</Badge>
-            </Row>
-            <Row>
-              <span className="text-primary">Benefit renewal window</span>
-              <Badge variant="primary">Open</Badge>
-            </Row>
-            <Row>
-              <span className="text-primary">Community workshop</span>
-              <span className="text-tertiary">Optional</span>
-            </Row>
-          </div>
-        </Card>
-      </>
-    ),
-  },
-  benefits: {
-    title: 'Benefit Discovery',
-    description: 'Eligibility signals, enrolled programs, and recommended applications in one view.',
-    body: (
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card elevated className="!p-5 lg:col-span-2">
-          <div className="mb-4 flex items-center justify-between">
-            <span className="text-base font-medium text-primary">Matches this week</span>
-            <Badge variant="primary">Live</Badge>
-          </div>
-          <div className="space-y-0 divide-y divide-border-light">
-            <Row>
-              <span className="text-primary">Energy relief credit</span>
-              <span className="font-medium text-accent-primary">94% fit</span>
-            </Row>
-            <Row>
-              <span className="text-primary">Childcare subsidy (tier B)</span>
-              <span className="font-medium text-secondary">Review</span>
-            </Row>
-            <Row>
-              <span className="text-primary">Small business micro-grant</span>
-              <span className="font-medium text-secondary">Draft saved</span>
-            </Row>
-          </div>
-          <Button size="sm" variant="secondary" className="mt-5">
-            Export summary
-          </Button>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Enrolled</p>
-          <p className="mt-2 text-3xl font-semibold text-primary">6</p>
-          <p className="mt-1 text-sm text-secondary">Programs with active disbursement</p>
-          <Button size="sm" className="mt-5 w-full" variant="ghost">
-            View ledger
-          </Button>
-        </Card>
-      </div>
-    ),
-  },
-  opportunities: {
-    title: 'Opportunity Engine',
-    description: 'Grants, contracts, and workforce openings ranked for your organization.',
-    body: (
-      <Card elevated className="!p-0 overflow-hidden">
-        <table className="w-full text-left text-sm sm:text-[15px]">
-          <thead>
-            <tr className="border-b border-border-light bg-surface/50 text-[11px] font-semibold uppercase tracking-wider text-tertiary">
-              <th className="px-4 py-3 font-medium">Opportunity</th>
-              <th className="hidden px-4 py-3 font-medium sm:table-cell">Closes</th>
-              <th className="px-4 py-3 font-medium">Score</th>
-              <th className="px-4 py-3 font-medium" />
-            </tr>
-          </thead>
-          <tbody className="text-primary">
-            {[
-              ['Urban renewal grant', 'Apr 12', '0.94', 'Draft'],
-              ['Municipal EV fleet RFP', 'Mar 28', '0.81', 'Track'],
-              ['Regional data fellowship', 'Rolling', '0.76', 'Apply'],
-            ].map(([name, close, score, act]) => (
-              <tr key={name} className="border-b border-border-light/80 last:border-0">
-                <td className="px-4 py-3 font-medium">{name}</td>
-                <td className="hidden px-4 py-3 text-secondary sm:table-cell">{close}</td>
-                <td className="px-4 py-3 text-accent-primary">{score}</td>
-                <td className="px-4 py-3">
-                  <button
-                    type="button"
-                    className="rounded text-sm font-medium text-accent-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40"
-                  >
-                    {act}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
-    ),
-  },
-  vault: {
-    title: 'Identity Vault',
-    description: 'Controlled document storage, verification status, and access audit trail.',
-    body: (
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Verification</p>
-          <p className="mt-2 text-base font-medium text-primary">Identity tier: Strong</p>
-          <p className="mt-1 text-sm text-secondary">Last verified 6 days ago · Doc expiry in 142 days</p>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Documents</p>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li className="flex justify-between text-primary">
-              <span>Proof of residence</span>
-              <Badge variant="primary">OK</Badge>
-            </li>
-            <li className="flex justify-between text-primary">
-              <span>Income attestation</span>
-              <Badge variant="warning">Renew</Badge>
-            </li>
-          </ul>
-        </Card>
-        <Card className="!p-0 overflow-hidden md:col-span-2">
-          <div className="border-b border-border-light px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-tertiary">
-            Recent access
-          </div>
-          <div className="px-4 py-1">
-            <Row>
-              <span className="text-secondary">Benefits API · read metadata</span>
-              <span className="text-tertiary text-sm">2h ago</span>
-            </Row>
-            <Row>
-              <span className="text-secondary">You · uploaded PDF</span>
-              <span className="text-tertiary text-sm">Yesterday</span>
-            </Row>
-          </div>
-        </Card>
-      </div>
-    ),
-  },
-  alerts: {
-    title: 'Smart Alerts',
-    description: 'Policy changes, deadlines, and risk signals configured for your jurisdiction.',
-    body: (
-      <Card elevated className="!p-5">
-        <div className="space-y-3">
-          {[
-            { t: 'Policy', m: 'Federal reporting schema v3 effective next quarter.', s: 'info' },
-            { t: 'Deadline', m: 'Quarterly transparency filing in 9 business days.', s: 'warning' },
-            { t: 'Insight', m: 'Anomaly volume down 18% vs. prior week.', s: 'primary' },
-          ].map((a) => (
-            <div
-              key={a.m}
-              className="flex gap-3 rounded-lg border border-border-light bg-base/40 px-4 py-3"
-            >
-              <Badge variant={a.s === 'warning' ? 'warning' : a.s === 'primary' ? 'primary' : 'default'}>
-                {a.t}
-              </Badge>
-              <p className="text-sm leading-relaxed text-primary sm:text-[15px]">{a.m}</p>
-            </div>
-          ))}
-        </div>
-        <Button size="sm" variant="secondary" className="mt-5">
-          Manage rules
-        </Button>
-      </Card>
-    ),
-  },
-  assistant: {
-    title: 'AI Assistant',
-    description: 'Conversational copilot for policy guidance, case triage, and citizen support tasks.',
-    body: (
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card elevated className="!p-5 lg:col-span-2">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Assistant Console</p>
-          <div className="mt-3 rounded-lg border border-border-light bg-base/40 p-4">
-            <p className="text-sm text-secondary">Suggested prompt</p>
-            <p className="mt-1 text-sm font-medium text-primary">"Find all housing benefits for a single parent in district 14."</p>
-          </div>
-          <div className="mt-4 space-y-2">
-            <Button size="sm">Open Chat Assistant</Button>
-            <p className="text-sm text-secondary">Natural-language queries with auditable recommendation trails.</p>
-          </div>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Model status</p>
-          <p className="mt-2 text-base font-medium text-primary">C-ONE Assistant v4.2</p>
-          <p className="mt-1 text-sm text-secondary">Latency: 210ms · Safety filters active</p>
-        </Card>
-      </div>
-    ),
-  },
-  recommendations: {
-    title: 'Personalized Recommendations',
-    description: 'AI-ranked actions tailored by profile, plan, and region-level policy signals.',
-    body: (
-      <Card elevated className="!p-5">
-        <div className="space-y-3">
-          {[
-            'Complete identity refresh to unlock fast-track approvals.',
-            'Apply to youth employment credit before March 31.',
-            'Enable rural transport alerting for higher response coverage.',
-          ].map((rec) => (
-            <div key={rec} className="rounded-lg border border-border-light bg-base/35 px-4 py-3 text-sm text-primary">
-              {rec}
-            </div>
-          ))}
-        </div>
-      </Card>
-    ),
-  },
-  inclusion: {
-    title: 'Inclusion Tools',
-    description: 'Specialized workflows for women, students, rural communities, and accessibility-first services.',
-    body: (
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Priority Cohorts</p>
-          <ul className="mt-3 space-y-2 text-sm text-secondary">
-            <li>• Women entrepreneurship pathways</li>
-            <li>• Student scholarship navigator</li>
-            <li>• Rural offline-first support packs</li>
-          </ul>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Accessibility</p>
-          <ul className="mt-3 space-y-2 text-sm text-secondary">
-            <li>• Screen-reader optimized form flows</li>
-            <li>• Simplified language mode</li>
-            <li>• Multi-lingual translation aids</li>
-          </ul>
-        </Card>
-      </div>
-    ),
-  },
-  career: {
-    title: 'AI Career & Learning Guidance',
-    description: 'Skill gap analysis, learning pathways, interview prep, and roadmap guidance.',
-    body: (
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card elevated className="!p-5 lg:col-span-2">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Skill Gap Analysis</p>
-          <div className="mt-3 space-y-2">
-            <div className="rounded-lg border border-border-light bg-base/30 px-4 py-3 text-sm text-primary">Data literacy — 62%</div>
-            <div className="rounded-lg border border-border-light bg-base/30 px-4 py-3 text-sm text-primary">Digital forms workflow — 84%</div>
-            <div className="rounded-lg border border-border-light bg-base/30 px-4 py-3 text-sm text-primary">Interview confidence — 48%</div>
-          </div>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Recommended Path</p>
-          <p className="mt-2 text-sm text-secondary">4-week civic-tech employability sprint with mock interviews and mentorship.</p>
-          <Button size="sm" className="mt-4">Start pathway</Button>
-        </Card>
-      </div>
-    ),
-  },
-  support: {
-    title: 'Community & Support',
-    description: 'Mentor network, help center, FAQs, contact support, and structured feedback.',
-    body: (
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Help Center</p>
-          <ul className="mt-3 space-y-2 text-sm text-secondary">
-            <li>• How to apply for high-priority schemes</li>
-            <li>• Document upload troubleshooting</li>
-            <li>• Profile verification and role upgrade guide</li>
-          </ul>
-          <Button size="sm" className="mt-4">Open help docs</Button>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Mentor & Support Desk</p>
-          <p className="mt-2 text-sm text-secondary">Connect with vetted mentors, local NGOs, or request assisted onboarding.</p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            <Button size="sm" variant="secondary">Find mentor</Button>
-            <Button size="sm">Contact support</Button>
-          </div>
-        </Card>
-      </div>
-    ),
-  },
-  emergency: {
-    title: 'Emergency & Critical Support',
-    description: 'Immediate access to safety services, crisis support, and local emergency resources.',
-    body: (
-      <Card elevated className="!p-5">
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[
-            ['Emergency Contact', 'Dial national emergency helpline and nearest local responders.'],
-            ['Safety Resources', 'Domestic safety, legal aid, and secure shelter guidance.'],
-            ['Health Crisis Support', 'Urgent care routing and tele-support channels.'],
-            ['Local NGOs', 'Trusted regional support organizations and hotlines.'],
-          ].map(([title, desc]) => (
-            <div key={title} className="rounded-lg border border-border-light bg-base/40 p-4">
-              <p className="text-sm font-semibold text-primary">{title}</p>
-              <p className="mt-1 text-sm text-secondary">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </Card>
-    ),
-  },
-  offline: {
-    title: 'Offline & Low-Connectivity',
-    description: 'Save-for-later flows, lightweight mode, and SMS-assistance concepts for low bandwidth.',
-    body: (
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Save for Later</p>
-          <p className="mt-2 text-sm text-secondary">Queue forms and guidance steps locally and sync automatically once online.</p>
-          <Button size="sm" className="mt-4">Enable offline queue</Button>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">SMS Guidance Concept</p>
-          <p className="mt-2 text-sm text-secondary">Fallback channel for critical reminders and application updates via SMS.</p>
-          <Button size="sm" variant="secondary" className="mt-4">Configure SMS alerts</Button>
-        </Card>
-      </div>
-    ),
-  },
-  integrations: {
-    title: 'Open Integration Capability',
-    description: 'API-ready architecture for government systems, partners, and third-party data exchange.',
-    body: (
-      <div className="grid auto-rows-fr gap-3 md:grid-cols-2 xl:grid-cols-3">
-        <Card elevated className="!p-4">
-          <p className="text-sm font-semibold text-primary">Government API Bridge</p>
-          <p className="mt-1 text-sm text-secondary">Secure connector architecture for central/state/public service systems.</p>
-        </Card>
-        <Card elevated className="!p-4">
-          <p className="text-sm font-semibold text-primary">Third-Party Participation</p>
-          <p className="mt-1 text-sm text-secondary">NGO/service-provider onboarding with scoped permissions and audit logs.</p>
-        </Card>
-        <Card elevated className="!p-4">
-          <p className="text-sm font-semibold text-primary">Data Exchange Contracts</p>
-          <p className="mt-1 text-sm text-secondary">Schema-driven payloads, rate-limits, and consent-first data boundaries.</p>
-        </Card>
-        <Card elevated className="!p-4">
-          <p className="text-sm font-semibold text-primary">Integration Health</p>
-          <p className="mt-1 text-sm text-secondary">Real-time connector uptime and error monitoring in admin console.</p>
-        </Card>
-        <Card elevated className="!p-4">
-          <p className="text-sm font-semibold text-primary">Security & Consent Layer</p>
-          <p className="mt-1 text-sm text-secondary">Token scopes, consent receipts, and policy-based access controls for every exchange.</p>
-        </Card>
-        <Card elevated className="!p-4">
-          <p className="text-sm font-semibold text-primary">Fallback & Offline Sync</p>
-          <p className="mt-1 text-sm text-secondary">Queue requests in low connectivity zones and reconcile with conflict-safe sync when online.</p>
-        </Card>
-      </div>
-    ),
-  },
-  progress: {
-    title: 'Action Tracking & Progress',
-    description: 'Track submitted applications, task completion, milestones, and real-world impact indicators.',
-    body: (
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Milestones</p>
-          <div className="mt-3 space-y-2">
-            <div className="rounded-lg border border-border-light bg-base/35 px-4 py-3 text-sm text-primary">Applications submitted: 7</div>
-            <div className="rounded-lg border border-border-light bg-base/35 px-4 py-3 text-sm text-primary">Tasks completed: 24</div>
-            <div className="rounded-lg border border-border-light bg-base/35 px-4 py-3 text-sm text-primary">Opportunities pursued: 5</div>
-          </div>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Impact Indicators</p>
-          <ul className="mt-3 space-y-2 text-sm text-secondary">
-            <li>• Approval cycle reduced by 18%</li>
-            <li>• Document completeness increased to 96%</li>
-            <li>• Alert response time improved to same-day</li>
-          </ul>
-        </Card>
-      </div>
-    ),
-  },
-  analytics: {
-    title: 'Personal Analytics',
-    description: 'Application trends, opportunity conversion, and engagement summaries.',
-    body: (
-      <Card elevated className="!p-5">
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="rounded-lg border border-border-light bg-base/35 p-4">
-            <p className="text-[11px] uppercase tracking-wide text-tertiary">Conversion</p>
-            <p className="mt-1 text-2xl font-semibold text-primary">64%</p>
-          </div>
-          <div className="rounded-lg border border-border-light bg-base/35 p-4">
-            <p className="text-[11px] uppercase tracking-wide text-tertiary">Avg. completion</p>
-            <p className="mt-1 text-2xl font-semibold text-primary">2.8 days</p>
-          </div>
-          <div className="rounded-lg border border-border-light bg-base/35 p-4">
-            <p className="text-[11px] uppercase tracking-wide text-tertiary">Engagement</p>
-            <p className="mt-1 text-2xl font-semibold text-primary">91%</p>
-          </div>
-        </div>
-      </Card>
-    ),
-  },
-  settings: {
-    title: 'Settings & accessibility',
-    description: 'Notifications, motion, focus, and session preferences for your workspace.',
-    body: (
-      <Card elevated className="!space-y-4 !p-5">
-        {[
-          ['Reduce motion', 'Minimize non-essential animation'],
-          ['High-contrast focus', 'Stronger focus rings across forms'],
-          ['Email digests', 'Daily summary of alerts and deadlines'],
-        ].map(([label, hint]) => (
-          <label
-            key={label}
-            className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border border-border-light bg-base/30 px-4 py-3 transition-colors hover:bg-base/50"
-          >
-            <span>
-              <span className="block text-[15px] font-medium text-primary">{label}</span>
-              <span className="mt-1 block text-sm text-secondary">{hint}</span>
-            </span>
-            <input
-              type="checkbox"
-              className="mt-1 h-4 w-4 rounded border-border-light text-accent-primary focus:ring-accent-primary/30"
-              defaultChecked={label === 'Email digests'}
-            />
-          </label>
-        ))}
-        <div className="flex justify-end pt-2">
-          <Button size="sm">Save changes</Button>
-        </div>
-      </Card>
-    ),
-  },
-  admin: {
-    title: 'Admin Hub',
-    description: 'Tenant configuration, roles, and integration health for operators.',
-    body: (
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Integrations</p>
-          <div className="mt-3 space-y-1">
-            {[
-              ['SSO / OIDC', 'Connected'],
-              ['Benefits bridge API', 'Connected'],
-              ['Document OCR', 'Limited'],
-            ].map(([n, st]) => (
-              <Row key={n}>
-                <span className="text-primary">{n}</span>
-                <span
-                  className={cn(
-                    'text-sm font-medium',
-                    st === 'Connected' ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
-                  )}
-                >
-                  {st}
-                </span>
-              </Row>
-            ))}
-          </div>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Roles</p>
-          <p className="mt-2 text-sm text-secondary sm:text-[15px]">
-            12 admins · 48 operators · 4 auditors.{' '}
-            <Link to="/app/settings" className="font-medium text-accent-primary hover:underline">
-              Invite users
-            </Link>
-          </p>
-        </Card>
-      </div>
-    ),
-  },
-};
+import { WORKSPACE_MODULES as MODULES } from './workspace/workspaceModuleCatalog';
+import { SettingsInclusionBody } from './workspace/InclusiveHubBodies';
+import { useI18n } from '../context/I18nContext';
 
 const WorkspaceViews = ({ moduleKey }) => {
+  const { t } = useI18n();
   const { user } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [applications, setApplications] = useState([]);
@@ -536,8 +35,24 @@ const WorkspaceViews = ({ moduleKey }) => {
     sdg: '',
     department: '',
     lifeEvent: '',
+    state: '',
   });
   const [selectedScheme, setSelectedScheme] = useState(null);
+  const [alertFeed, setAlertFeed] = useState([]);
+  const [securityFeatures, setSecurityFeatures] = useState(null);
+  const [adminAudit, setAdminAudit] = useState([]);
+  const [vaultError, setVaultError] = useState(null);
+  const [benefitsActionError, setBenefitsActionError] = useState(null);
+  const [opportunityError, setOpportunityError] = useState(null);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      setVaultError(null);
+      setBenefitsActionError(null);
+      setOpportunityError(null);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [moduleKey]);
 
   useEffect(() => {
     const needsDocs = moduleKey === 'vault';
@@ -597,7 +112,130 @@ const WorkspaceViews = ({ moduleKey }) => {
     };
   }, [moduleKey, user?.id, schemeFilters, schemeTab]);
 
+  useEffect(() => {
+    if (moduleKey !== 'alerts') return;
+    let active = true;
+    (async () => {
+      try {
+        const res = await apiFetch('/api/notifications');
+        if (!res.ok || !active) return;
+        const data = await res.json();
+        setAlertFeed(Array.isArray(data.items) ? data.items : []);
+      } catch {
+        if (active) setAlertFeed([]);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [moduleKey, user?.id]);
+
+  useEffect(() => {
+    if (moduleKey !== 'settings') return;
+    let active = true;
+    (async () => {
+      try {
+        const res = await apiFetch('/api/auth/security-features');
+        if (!res.ok || !active) return;
+        setSecurityFeatures(await res.json());
+      } catch {
+        if (active) setSecurityFeatures(null);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [moduleKey, user?.id]);
+
+  useEffect(() => {
+    if (moduleKey === 'admin' && user?.role === 'admin') return undefined;
+    const id = requestAnimationFrame(() => setAdminAudit([]));
+    return () => cancelAnimationFrame(id);
+  }, [moduleKey, user?.role]);
+
+  useEffect(() => {
+    if (moduleKey !== 'admin' || user?.role !== 'admin') return undefined;
+    let active = true;
+    (async () => {
+      try {
+        const res = await apiFetch('/api/audit?limit=50');
+        if (!res.ok || !active) return;
+        const data = await res.json();
+        setAdminAudit(Array.isArray(data.items) ? data.items : []);
+      } catch {
+        if (active) setAdminAudit([]);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [moduleKey, user?.role]);
+
   const dynamicBody = (() => {
+    if (moduleKey === 'settings') {
+      return (
+        <div className="space-y-4">
+          <SettingsInclusionBody />
+          {MODULES.settings.body}
+          <Card elevated className="!p-5">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">{t('settingsWorkspace.preferences')}</p>
+            <p className="mt-2 text-sm leading-relaxed text-secondary">
+              {t('settingsWorkspace.preferencesBody')}{' '}
+              <Link to="/app/profile" className="font-medium text-accent-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35">
+                {t('topbar.profile')}
+              </Link>
+            </p>
+          </Card>
+          {securityFeatures && (
+            <Card elevated className="!p-5">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">{t('settingsWorkspace.security')}</p>
+              <p className="mt-2 text-sm leading-relaxed text-secondary">{securityFeatures.mfa?.message}</p>
+              <p className="mt-2 text-sm text-secondary">
+                {t('settingsWorkspace.sessionNote', { hours: securityFeatures.session?.maxAgeHours ?? '—' })}
+              </p>
+            </Card>
+          )}
+        </div>
+      );
+    }
+
+    if (moduleKey === 'alerts') {
+      return (
+        <Card elevated className="!p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Inbox</p>
+          <p className="mt-1 text-sm text-secondary">
+            System notices and updates from service requests and application reviews (refreshed when you open this page).
+          </p>
+          <div className="mt-4 space-y-3">
+            {alertFeed.length === 0 ? (
+              <p className="text-sm text-secondary">No notifications loaded.</p>
+            ) : (
+              alertFeed.map((a) => (
+                <div
+                  key={a.id}
+                  className="flex gap-3 rounded-lg border border-border-light bg-base/40 px-4 py-3 transition-shadow hover:shadow-sm"
+                >
+                  <Badge variant={a.unread ? 'primary' : 'default'}>{a.type || 'notice'}</Badge>
+                  <div>
+                    <p className="text-sm font-medium text-primary">{a.title}</p>
+                    <p className="text-sm leading-relaxed text-secondary">{a.body}</p>
+                    {a.at && (
+                      <p className="mt-1 text-[11px] text-tertiary">
+                        {new Date(a.at).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          <Button size="sm" variant="secondary" className="mt-5" type="button" onClick={() => window.location.assign('/app/benefits')}>
+            Go to benefit discovery
+          </Button>
+        </Card>
+      );
+    }
+
     if (moduleKey === 'vault') {
       return (
         <Card elevated className="!p-5">
@@ -606,6 +244,7 @@ const WorkspaceViews = ({ moduleKey }) => {
             <Button
               size="sm"
               onClick={async () => {
+                setVaultError(null);
                 const name = `Citizen File ${documents.length + 1}`;
                 const res = await apiFetch('/api/documents', {
                   method: 'POST',
@@ -614,12 +253,19 @@ const WorkspaceViews = ({ moduleKey }) => {
                 if (res.ok) {
                   const created = await res.json();
                   setDocuments((prev) => [created, ...prev]);
+                } else {
+                  setVaultError(await getErrorMessageFromResponse(res));
                 }
               }}
             >
               Upload
             </Button>
           </div>
+          {vaultError ? (
+            <p className="mb-2 text-sm text-red-600 dark:text-red-400" role="alert">
+              {vaultError}
+            </p>
+          ) : null}
           <div className="space-y-2">
             {documents.map((d) => (
               <div key={d.id} className="rounded-lg border border-border-light bg-base/35 px-4 py-3 text-sm">
@@ -642,6 +288,13 @@ const WorkspaceViews = ({ moduleKey }) => {
         <div className="grid gap-3 lg:grid-cols-[2.2fr_1fr]">
           <Card elevated className="!p-4 lg:col-span-1">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Government Scheme Intelligence</p>
+            <p className="mt-1 text-xs text-secondary">
+              Profile:{' '}
+              {[schemeIntel.profile?.stateCode, schemeIntel.profile?.settlement, schemeIntel.profile?.occupation].filter(Boolean).join(' · ') || 'Not set — '}
+              <Link to="/app/profile" className="ml-1 font-medium text-accent-primary hover:underline">
+                complete in Profile
+              </Link>
+            </p>
             <div className="mt-2 grid gap-1.5 sm:grid-cols-3">
               <input
                 className="rounded-lg border border-border-light bg-surface px-2.5 py-1.5 text-sm"
@@ -691,16 +344,30 @@ const WorkspaceViews = ({ moduleKey }) => {
                 onChange={(e) => setSchemeFilters((p) => ({ ...p, department: e.target.value }))}
               />
             </div>
+            <div className="mt-1.5">
+              <input
+                className="w-full rounded-lg border border-border-light bg-surface px-2.5 py-1.5 text-sm"
+                placeholder="State / region filter (e.g. TN — prioritises state-listed programmes)"
+                value={schemeFilters.state}
+                onChange={(e) => setSchemeFilters((p) => ({ ...p, state: e.target.value }))}
+              />
+            </div>
             <div className="mt-2">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Life-event discovery</p>
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {[
+                  ['health_need', 'Health & hospitalisation'],
+                  ['emergency_health', 'Emergency care'],
                   ['education', 'Student support'],
                   ['job_loss', 'Job loss'],
                   ['starting_business', 'Start business'],
+                  ['marriage_family', 'Marriage & family'],
+                  ['women_empowerment', 'Women’s programmes'],
                   ['pregnancy_childcare', 'Pregnancy & childcare'],
                   ['farming_challenges', 'Farming challenges'],
+                  ['housing_needs', 'Housing needs'],
                   ['retirement', 'Retirement'],
+                  ['digital_access', 'Digital & connectivity'],
                 ].map(([value, label]) => (
                   <button
                     key={value}
@@ -739,6 +406,11 @@ const WorkspaceViews = ({ moduleKey }) => {
                 </button>
               ))}
             </div>
+            {benefitsActionError ? (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
+                {benefitsActionError}
+              </p>
+            ) : null}
             <div className="mt-2 space-y-1.5">
               {tabRows.map((scheme) => (
                 <div key={scheme.id} className="rounded-lg border border-border-light bg-base/35 px-3 py-2.5">
@@ -746,6 +418,11 @@ const WorkspaceViews = ({ moduleKey }) => {
                     <button type="button" className="text-left" onClick={() => setSelectedScheme(scheme)}>
                       <p className="text-sm font-medium text-primary">{scheme.schemeName}</p>
                       <p className="text-xs text-secondary mt-0.5">{scheme.ministryOrDepartment || 'Ministry TBD'}</p>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        <span className="rounded bg-base/80 px-1.5 py-0 text-[10px] font-medium uppercase text-tertiary">
+                          {scheme.governmentLevel === 'state' ? 'State' : 'National'}
+                        </span>
+                      </div>
                     </button>
                     <Badge variant={scheme.applicationStatus === 'not_started' ? 'warning' : 'primary'}>
                       {scheme.applicationStatus}
@@ -762,8 +439,13 @@ const WorkspaceViews = ({ moduleKey }) => {
                       size="sm"
                       variant="secondary"
                       onClick={async () => {
-                        await apiFetch(`/api/schemes/save/${scheme.id}`, { method: 'POST' });
-                        setSchemeFilters((p) => ({ ...p }));
+                        setBenefitsActionError(null);
+                        const res = await apiFetch(`/api/schemes/save/${scheme.id}`, { method: 'POST' });
+                        if (res.ok) {
+                          setSchemeFilters((p) => ({ ...p }));
+                        } else {
+                          setBenefitsActionError(await getErrorMessageFromResponse(res));
+                        }
                       }}
                     >
                       Save
@@ -772,7 +454,8 @@ const WorkspaceViews = ({ moduleKey }) => {
                       <Button
                         size="sm"
                         onClick={async () => {
-                          await apiFetch('/api/applications', {
+                          setBenefitsActionError(null);
+                          const res = await apiFetch('/api/applications', {
                             method: 'POST',
                             body: JSON.stringify({
                               type: 'scheme',
@@ -781,7 +464,11 @@ const WorkspaceViews = ({ moduleKey }) => {
                               deadline: scheme.deadline || null,
                             }),
                           });
-                          setSchemeFilters((p) => ({ ...p }));
+                          if (res.ok) {
+                            setSchemeFilters((p) => ({ ...p }));
+                          } else {
+                            setBenefitsActionError(await getErrorMessageFromResponse(res));
+                          }
                         }}
                       >
                         Apply
@@ -792,7 +479,11 @@ const WorkspaceViews = ({ moduleKey }) => {
               ))}
               {tabRows.length === 0 && (
                 <div className="rounded-lg border border-dashed border-border-light bg-base/25 px-3 py-4 text-sm text-secondary">
-                  No schemes loaded yet. Module is integration-ready for future government data ingestion.
+                  No schemes match the current filters. Clear filters or{' '}
+                  <Link to="/app/profile" className="font-medium text-accent-primary hover:underline">
+                    complete your profile
+                  </Link>{' '}
+                  to improve eligibility matching.
                 </div>
               )}
             </div>
@@ -800,9 +491,33 @@ const WorkspaceViews = ({ moduleKey }) => {
           <Card elevated className="!p-4">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Application Guidance Panel</p>
             {selectedScheme ? (
-              <div className="mt-1.5 space-y-1.5 text-sm">
+              <div className="mt-1.5 max-h-[min(72vh,640px)] space-y-1.5 overflow-y-auto text-sm pr-1">
                 <p className="font-medium text-primary">{selectedScheme.schemeName}</p>
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="secondary">{selectedScheme.governmentLevel === 'state' ? 'State' : 'Central'}</Badge>
+                  {(selectedScheme.targetStates || []).slice(0, 4).map((st) => (
+                    <Badge key={st} variant="default">{st}</Badge>
+                  ))}
+                </div>
                 <p className="text-secondary">{selectedScheme.description || 'Description will appear once scheme data is connected.'}</p>
+                {selectedScheme.benefitEstimate && (selectedScheme.benefitEstimate.narrative || selectedScheme.benefitEstimate.amountMin != null) && (
+                  <div className="rounded-lg border border-border-light bg-base/35 p-3">
+                    <p className="text-xs uppercase tracking-wide text-tertiary">Benefit estimate</p>
+                    {selectedScheme.benefitEstimate.amountMin != null && (
+                      <p className="mt-1 text-primary">
+                        {selectedScheme.benefitEstimate.currency || 'INR'}{' '}
+                        {selectedScheme.benefitEstimate.amountMin}
+                        {selectedScheme.benefitEstimate.amountMax != null && selectedScheme.benefitEstimate.amountMax !== selectedScheme.benefitEstimate.amountMin
+                          ? ` – ${selectedScheme.benefitEstimate.amountMax}`
+                          : ''}
+                        {selectedScheme.benefitEstimate.unit ? ` · ${selectedScheme.benefitEstimate.unit}` : ''}
+                      </p>
+                    )}
+                    {selectedScheme.benefitEstimate.narrative && (
+                      <p className="mt-1 text-secondary">{selectedScheme.benefitEstimate.narrative}</p>
+                    )}
+                  </div>
+                )}
                 <div className="rounded-lg border border-border-light bg-base/35 p-3">
                   <p className="text-xs uppercase tracking-wide text-tertiary">Step-by-step</p>
                   <ol className="mt-1 list-decimal pl-5 text-secondary">
@@ -811,10 +526,68 @@ const WorkspaceViews = ({ moduleKey }) => {
                     ))}
                   </ol>
                 </div>
+                {selectedScheme.whereToApply && (
+                  <div className="rounded-lg border border-border-light bg-base/35 p-3">
+                    <p className="text-xs uppercase tracking-wide text-tertiary">Where to apply</p>
+                    <p className="mt-1 text-secondary">{selectedScheme.whereToApply}</p>
+                  </div>
+                )}
                 <div className="rounded-lg border border-border-light bg-base/35 p-3">
-                  <p className="text-xs uppercase tracking-wide text-tertiary">Required documents</p>
-                  <p className="mt-1 text-secondary">{(selectedScheme.requiredDocuments || []).join(', ') || 'Checklist will populate when data is provided.'}</p>
+                  <p className="text-xs uppercase tracking-wide text-tertiary">Timing & renewal</p>
+                  <p className="text-secondary">
+                    Processing: ~{selectedScheme.estimatedProcessingTimeDays ?? 'TBD'} days · Mode: {selectedScheme.applicationMode || 'TBD'}
+                  </p>
+                  {selectedScheme.applicationWindow && (
+                    <p className="mt-1 text-secondary">
+                      Window: {selectedScheme.applicationWindow.type}
+                      {selectedScheme.applicationWindow.notes ? ` — ${selectedScheme.applicationWindow.notes}` : ''}
+                    </p>
+                  )}
+                  {selectedScheme.deadline && (
+                    <p className="mt-1 text-amber-700 dark:text-amber-400">Deadline: {selectedScheme.deadline}</p>
+                  )}
+                  {selectedScheme.renewalCycle && (
+                    <p className="mt-1 text-secondary">Renewal cycle: {selectedScheme.renewalCycle}</p>
+                  )}
+                  {selectedScheme.renewalRequirements && (
+                    <p className="mt-1 text-secondary">Renewal: {selectedScheme.renewalRequirements}</p>
+                  )}
                 </div>
+                <div className="rounded-lg border border-border-light bg-base/35 p-3">
+                  <p className="text-xs uppercase tracking-wide text-tertiary">Document checklist</p>
+                  <ul className="mt-1 space-y-1">
+                    {(selectedScheme.documentRequirements?.length ? selectedScheme.documentRequirements : (selectedScheme.requiredDocuments || []).map((l) => ({ id: l, label: l, category: 'General', required: true }))).map((doc) => {
+                      const missing = (selectedScheme.missingDocumentDetails || []).some((m) => m.id === doc.id || m.label === doc.label);
+                      return (
+                        <li
+                          key={doc.id || doc.label}
+                          className={cn('text-sm', missing ? 'font-medium text-amber-700 dark:text-amber-400' : 'text-secondary')}
+                        >
+                          {doc.required === false ? '(Optional) ' : ''}{doc.label}
+                          {doc.category && doc.category !== 'General' ? ` · ${doc.category}` : ''}
+                          {missing ? ' — missing in vault' : ''}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+                {(selectedScheme.supportContacts || []).length > 0 && (
+                  <div className="rounded-lg border border-border-light bg-base/35 p-3">
+                    <p className="text-xs uppercase tracking-wide text-tertiary">Local & helpline support</p>
+                    <ul className="mt-1 space-y-2 text-secondary">
+                      {selectedScheme.supportContacts.map((c, i) => (
+                        <li key={`${c.name}-${i}`}>
+                          <span className="font-medium text-primary">{c.name}</span>
+                          {c.role ? ` · ${c.role}` : ''}
+                          {c.phone && <span className="block text-xs">Tel: {c.phone}</span>}
+                          {c.email && <span className="block text-xs">{c.email}</span>}
+                          {c.address && <span className="block text-xs">{c.address}</span>}
+                          {c.hours && <span className="block text-xs">{c.hours}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div className="rounded-lg border border-border-light bg-base/35 p-3">
                   <p className="text-xs uppercase tracking-wide text-tertiary">Official source attribution</p>
                   <p className="mt-1 text-secondary">
@@ -827,19 +600,17 @@ const WorkspaceViews = ({ moduleKey }) => {
                     Policy notes: {selectedScheme.sourceAttribution?.policyNotes || 'No policy notes available.'}
                   </p>
                 </div>
-                <p className="text-secondary">Processing time: {selectedScheme.estimatedProcessingTimeDays || 'TBD'} days</p>
-                <p className="text-secondary">Application mode: {selectedScheme.applicationMode || 'TBD'} (online/offline supported)</p>
                 <p className="text-secondary">
-                  Official source:{' '}
+                  Official portal:{' '}
                   {selectedScheme.officialLink ? (
                     <a className="text-accent-primary hover:underline" href={selectedScheme.officialLink} target="_blank" rel="noreferrer">
-                      Open portal
+                      Open link
                     </a>
                   ) : (
                     'TBD'
                   )}
                 </p>
-                <p className="text-secondary">Language: Multilingual guidance (concept) | Voice assist (concept) | Printable checklist (concept)</p>
+                <p className="text-xs text-tertiary">Use your browser’s print or save-as-PDF to keep this checklist.</p>
               </div>
             ) : (
               <p className="mt-2 text-sm text-secondary">Select a scheme to view guidance.</p>
@@ -858,6 +629,11 @@ const WorkspaceViews = ({ moduleKey }) => {
       return (
         <Card elevated className="!p-5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Opportunity Matching</p>
+          {opportunityError ? (
+            <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
+              {opportunityError}
+            </p>
+          ) : null}
           <div className="mt-3 space-y-2">
             {opportunities.map((opp) => (
               <div key={opp.id} className="rounded-lg border border-border-light bg-base/35 px-4 py-3">
@@ -871,6 +647,7 @@ const WorkspaceViews = ({ moduleKey }) => {
                     size="sm"
                     className="mt-2"
                     onClick={async () => {
+                      setOpportunityError(null);
                       const res = await apiFetch('/api/applications', {
                         method: 'POST',
                         body: JSON.stringify({ type: 'opportunity', targetId: opp.id, title: opp.title }),
@@ -879,6 +656,8 @@ const WorkspaceViews = ({ moduleKey }) => {
                         setOpportunities((prev) =>
                           prev.map((o) => (o.id === opp.id ? { ...o, pursued: true, applicationStatus: 'submitted' } : o))
                         );
+                      } else {
+                        setOpportunityError(await getErrorMessageFromResponse(res));
                       }
                     }}
                   >
@@ -887,6 +666,11 @@ const WorkspaceViews = ({ moduleKey }) => {
                 )}
               </div>
             ))}
+            {opportunities.length === 0 && (
+              <p className="rounded-lg border border-dashed border-border-light bg-base/25 px-4 py-6 text-center text-sm text-secondary">
+                No opportunities are listed for your account right now. Check back after datasets are refreshed, or review programmes in Benefit Discovery.
+              </p>
+            )}
           </div>
         </Card>
       );
@@ -895,7 +679,7 @@ const WorkspaceViews = ({ moduleKey }) => {
     if (moduleKey === 'progress') {
       return (
         <Card elevated className="!p-5">
-          <p className="text-sm font-semibold text-primary">Live Progress Summary</p>
+          <p className="text-sm font-semibold text-primary">Progress summary</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             <div className="rounded-lg border border-border-light bg-base/35 p-4">
               <p className="text-xs text-tertiary">Applications</p>
@@ -914,26 +698,149 @@ const WorkspaceViews = ({ moduleKey }) => {
       );
     }
 
-    if (moduleKey === 'admin') {
-      if (!adminMetrics) return null;
+    if (moduleKey === 'analytics') {
+      const roleNorm = user?.role === 'service_provider' ? 'staff' : user?.role || 'citizen';
+      const isStaffOrAdmin = roleNorm === 'staff' || roleNorm === 'admin';
+      const recent = Array.isArray(activitySummary?.activities) ? activitySummary.activities : [];
       return (
-        <Card elevated className="!p-5">
-          <p className="text-sm font-semibold text-primary">Live Admin Metrics</p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-lg border border-border-light bg-base/35 p-4">
-              <p className="text-xs text-tertiary">Users</p>
-              <p className="text-2xl font-semibold text-primary">{adminMetrics.totalUsers}</p>
+        <div className="space-y-4">
+          <Card elevated className="!p-5">
+            <p className="text-sm font-semibold text-primary">Activity overview</p>
+            <p className="mt-1 text-xs text-secondary">Counts reflect this deployment and your signed-in account.</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                <p className="text-xs text-tertiary">Applications</p>
+                <p className="text-2xl font-semibold text-primary">{activitySummary?.applications ?? applications.length}</p>
+              </div>
+              <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                <p className="text-xs text-tertiary">Documents</p>
+                <p className="text-2xl font-semibold text-primary">{activitySummary?.documents ?? 0}</p>
+              </div>
+              <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                <p className="text-xs text-tertiary">Completed / approved items</p>
+                <p className="text-2xl font-semibold text-primary">{activitySummary?.completedTasks ?? 0}</p>
+              </div>
+              <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                <p className="text-xs text-tertiary">Open service requests (yours)</p>
+                <p className="text-2xl font-semibold text-primary">{activitySummary?.myOpenServiceRequests ?? 0}</p>
+              </div>
             </div>
-            <div className="rounded-lg border border-border-light bg-base/35 p-4">
-              <p className="text-xs text-tertiary">Applications</p>
-              <p className="text-2xl font-semibold text-primary">{adminMetrics.totalApplications}</p>
-            </div>
-            <div className="rounded-lg border border-border-light bg-base/35 p-4">
-              <p className="text-xs text-tertiary">Documents</p>
-              <p className="text-2xl font-semibold text-primary">{adminMetrics.totalDocuments}</p>
-            </div>
-          </div>
-        </Card>
+            {isStaffOrAdmin && (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {activitySummary?.staffServiceQueueCount != null && (
+                  <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                    <p className="text-xs text-tertiary">Service desk queue (organisation)</p>
+                    <p className="text-2xl font-semibold text-primary">{activitySummary.staffServiceQueueCount}</p>
+                  </div>
+                )}
+                {activitySummary?.applicationQueueCount != null && (
+                  <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                    <p className="text-xs text-tertiary">Applications awaiting review</p>
+                    <p className="text-2xl font-semibold text-primary">{activitySummary.applicationQueueCount}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </Card>
+          <Card elevated className="!p-5">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Recent activity</p>
+            {recent.length === 0 ? (
+              <p className="mt-2 text-sm text-secondary">No recent events recorded.</p>
+            ) : (
+              <ul className="mt-3 space-y-2 text-sm text-secondary">
+                {recent.map((a) => (
+                  <li key={a.id || `${a.type}-${a.createdAt}`} className="rounded-lg border border-border-light bg-base/30 px-3 py-2">
+                    <span className="font-medium text-primary capitalize">{a.type || 'event'}</span>
+                    {a.message || a.title ? ` — ${a.message || a.title}` : ''}
+                    {a.createdAt ? (
+                      <span className="mt-0.5 block text-[11px] text-tertiary">{new Date(a.createdAt).toLocaleString()}</span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
+      );
+    }
+
+    if (moduleKey === 'admin') {
+      return (
+        <div className="space-y-4">
+          {MODULES.admin.body}
+          {adminMetrics && (
+            <Card elevated className="!p-5">
+              <p className="text-sm font-semibold text-primary">Live operational metrics</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                  <p className="text-xs text-tertiary">Registered users</p>
+                  <p className="text-2xl font-semibold text-primary">{adminMetrics.totalUsers}</p>
+                </div>
+                <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                  <p className="text-xs text-tertiary">Applications (all)</p>
+                  <p className="text-2xl font-semibold text-primary">{adminMetrics.totalApplications}</p>
+                </div>
+                <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                  <p className="text-xs text-tertiary">Documents</p>
+                  <p className="text-2xl font-semibold text-primary">{adminMetrics.totalDocuments}</p>
+                </div>
+                <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                  <p className="text-xs text-tertiary">Service queue open</p>
+                  <p className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400">
+                    {adminMetrics.pendingServiceRequests ?? 0}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-light bg-base/35 p-4">
+                  <p className="text-xs text-tertiary">Apps awaiting review</p>
+                  <p className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400">
+                    {adminMetrics.pendingApplicationReviews ?? 0}
+                  </p>
+                </div>
+              </div>
+              <p className="mt-4 text-sm">
+                <Link to="/app/services" className="font-medium text-accent-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35">
+                  Open service desk for queues and decisions →
+                </Link>
+              </p>
+            </Card>
+          )}
+          {user?.role === 'admin' && (
+            <Card elevated className="!p-5">
+              <p className="text-sm font-semibold text-primary">Audit log (recent)</p>
+              <p className="mt-1 text-xs text-secondary">Security-relevant events; excludes credential material.</p>
+              <div className="mt-3 max-h-[min(50vh,420px)] overflow-auto rounded-lg border border-border-light">
+                {adminAudit.length === 0 ? (
+                  <p className="p-4 text-sm text-secondary">No events recorded yet.</p>
+                ) : (
+                  <table className="w-full text-left text-xs sm:text-sm">
+                    <thead className="sticky top-0 bg-surface/95 text-[10px] font-semibold uppercase tracking-wider text-tertiary">
+                      <tr>
+                        <th className="px-3 py-2">Time</th>
+                        <th className="px-3 py-2">Action</th>
+                        <th className="px-3 py-2">Outcome</th>
+                        <th className="hidden px-3 py-2 sm:table-cell">Detail</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-light text-primary">
+                      {adminAudit.map((row) => (
+                        <tr key={row.id}>
+                          <td className="whitespace-nowrap px-3 py-2 text-secondary">{new Date(row.ts).toLocaleString()}</td>
+                          <td className="px-3 py-2 font-medium">{row.action}</td>
+                          <td className="px-3 py-2">
+                            <Badge variant={row.outcome === 'failure' ? 'danger' : row.outcome === 'denied' ? 'warning' : 'primary'}>
+                              {row.outcome}
+                            </Badge>
+                          </td>
+                          <td className="hidden max-w-[200px] truncate px-3 py-2 text-secondary sm:table-cell">{row.detail || '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </Card>
+          )}
+        </div>
       );
     }
 
@@ -943,20 +850,21 @@ const WorkspaceViews = ({ moduleKey }) => {
   const m = MODULES[moduleKey];
   if (!m) {
     return (
-      <PageShell
-        title="Page unavailable"
-        description="This section could not be loaded. Use the sidebar to open a valid workspace."
-      >
+      <PageShell title={t('workspace.unknownTitle')} description={t('workspace.unknownDesc')}>
         <p className="text-sm text-secondary">
-          Unknown module: <code className="rounded bg-base px-1.5 py-0.5 text-primary">{moduleKey}</code>
+          {t('workspace.unknownModule')}: <code className="rounded bg-base px-1.5 py-0.5 text-primary">{moduleKey}</code>
         </p>
       </PageShell>
     );
   }
+  const title = m.titleKey ? t(m.titleKey) : m.title || '';
+  const description = m.descriptionKey ? t(m.descriptionKey) : m.description || '';
+  const staticBody = m.Body ? <m.Body /> : m.body;
+  const bodyContent = dynamicBody ?? staticBody;
   return (
     <div className="space-y-5">
-      <PageShell title={m.title} description={m.description}>
-        {dynamicBody || m.body}
+      <PageShell title={title} description={description}>
+        {bodyContent}
       </PageShell>
     </div>
   );

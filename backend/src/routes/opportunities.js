@@ -9,8 +9,9 @@ const opportunities = [
   { id: 'opp-3', title: 'Frontend Developer', company: 'GlassUI', type: 'Full-time', location: 'Chicago' }
 ];
 
-router.get('/', auth, (req, res) => {
-  const apps = readCollection('applications').filter((a) => a.userId === req.user.id && a.type === 'opportunity');
+router.get('/', auth, async (req, res) => {
+  const allApps = await readCollection('applications');
+  const apps = allApps.filter((a) => a.userId === req.user.id && a.type === 'opportunity');
   const enriched = opportunities.map((opp) => {
     const app = apps.find((a) => a.targetId === opp.id);
     return {

@@ -1,6 +1,7 @@
 export const globalSearchItems = [
   { id: 'dashboard', title: 'Command Center', subtitle: 'Main dashboard and activity overview', path: '/app/dashboard', category: 'Core' },
-  { id: 'assistant', title: 'AI Assistant', subtitle: 'Natural language guidance and action plans', path: '/app/assistant', category: 'AI' },
+  { id: 'services', title: 'Service desk', subtitle: 'Submit requests and review queues (role-based)', path: '/app/services', category: 'Core' },
+  { id: 'assistant', title: 'Guided assistance', subtitle: 'Structured help for schemes, documents, and tasks', path: '/app/assistant', category: 'Support' },
   { id: 'navigator', title: 'Life Navigator', subtitle: 'Education, jobs, health, family, retirement pathways', path: '/app/navigator', category: 'Guidance' },
   { id: 'benefits', title: 'Benefit Discovery', subtitle: 'Scheme eligibility, status tracking, and deadlines', path: '/app/benefits', category: 'Benefits' },
   { id: 'vault', title: 'Identity Vault', subtitle: 'Documents, access logs, and secure records', path: '/app/vault', category: 'Identity' },
@@ -12,6 +13,7 @@ export const globalSearchItems = [
   { id: 'support', title: 'Community Support', subtitle: 'Mentors, help center, FAQs, and feedback', path: '/app/support', category: 'Support' },
   { id: 'emergency', title: 'Emergency Support', subtitle: 'Critical services and crisis resources', path: '/app/emergency', category: 'Safety' },
   { id: 'offline', title: 'Offline Access', subtitle: 'Save for later, low-connectivity support', path: '/app/offline', category: 'Offline' },
+  { id: 'sms', title: 'SMS channel', subtitle: 'Text-based information and pilot integration', path: '/app/sms', category: 'Access' },
   { id: 'integrations', title: 'Integrations', subtitle: 'API-ready interfaces and data exchange', path: '/app/integrations', category: 'Platform' },
   { id: 'progress', title: 'Progress Tracker', subtitle: 'Applications, tasks, milestones, and outcomes', path: '/app/progress', category: 'Insights' },
   { id: 'analytics', title: 'Personal Analytics', subtitle: 'Engagement and conversion metrics', path: '/app/analytics', category: 'Insights' },

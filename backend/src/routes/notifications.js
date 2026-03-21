@@ -1,53 +1,64 @@
 const express = require('express');
 const router = express.Router();
 const { auth } = require('../middlewares/auth');
+const { readCollection, writeCollection } = require('../lib/dataStore');
 
-const templates = [
+const SYSTEM_TEMPLATES = [
   {
-    stableId: 'system-api-health',
+    stableId: 'system-uptime',
     type: 'system',
-    title: 'API health',
-    body: 'All regional gateways responding normally.',
+    title: 'Service status',
+    body: 'Core services are operating normally.',
   },
   {
-    stableId: 'benefit-scheme-match',
+    stableId: 'benefit-reminder',
     type: 'benefit',
-    title: 'New scheme match',
-    body: '12 citizens may qualify for the winter energy credit.',
-  },
-  {
-    stableId: 'security-vault-audit',
-    type: 'security',
-    title: 'Vault audit',
-    body: 'Scheduled document integrity check completed with no issues.',
-  },
-  {
-    stableId: 'ops-deployment',
-    type: 'ops',
-    title: 'Deployment',
-    body: 'Citizen Portal patch v2.4.1 promoted to production.',
+    title: 'Scheme intelligence',
+    body: 'Review recommended programmes under Benefit Discovery when your profile changes.',
   },
 ];
 
-let tick = 0;
+router.get('/', auth, async (req, res) => {
+  const userId = req.user.id;
+  const allNotes = await readCollection('inAppNotifications');
+  const stored = allNotes
+    .filter((n) => n.userId === userId)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 40)
+    .map((n, i) => ({
+      id: n.id,
+      stableId: n.id,
+      type: n.type,
+      title: n.title,
+      body: n.body,
+      unread: !n.read,
+      at: n.createdAt,
+      refType: n.refType,
+      refId: n.refId,
+    }));
 
-// @route GET /api/notifications
-router.get('/', auth, (req, res) => {
   const now = Date.now();
-  const items = [0, 1, 2].map((offset) => {
-    const t = templates[(tick + offset) % templates.length];
-    return {
-      id: `${now}-${offset}`,
-      stableId: t.stableId,
-      type: t.type,
-      title: t.title,
-      body: t.body,
-      unread: offset === 0,
-      at: new Date(now - offset * 60000).toISOString(),
-    };
-  });
-  tick += 1;
+  const systemItems = SYSTEM_TEMPLATES.map((t, offset) => ({
+    id: `sys-${now}-${offset}`,
+    stableId: t.stableId,
+    type: t.type,
+    title: t.title,
+    body: t.body,
+    unread: false,
+    at: new Date(now - offset * 3600000).toISOString(),
+  }));
+
+  const items = [...stored, ...systemItems].slice(0, 25);
   res.json({ items });
+});
+
+router.patch('/:id/read', auth, async (req, res) => {
+  const rows = await readCollection('inAppNotifications');
+  const index = rows.findIndex((n) => n.id === req.params.id && n.userId === req.user.id);
+  if (index === -1) return res.status(404).json({ message: 'Notification not found' });
+  rows[index] = { ...rows[index], read: true };
+  await writeCollection('inAppNotifications', rows);
+  res.json(rows[index]);
 });
 
 module.exports = router;
