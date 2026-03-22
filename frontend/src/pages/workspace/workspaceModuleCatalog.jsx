@@ -21,34 +21,62 @@ export const WORKSPACE_MODULES = {
     title: 'Service pathways',
     description: 'Typical steps for using this workspace. Follow the links to complete each part of your case.',
     body: (
-      <Card elevated className="!p-5">
-        <ol className="list-decimal space-y-3 pl-5 text-sm leading-relaxed text-secondary">
-          <li>Complete your eligibility profile (household, location, occupation).</li>
-          <li>Review recommended programmes and read official guidance before you apply.</li>
-          <li>Upload supporting documents to your vault when you are ready.</li>
-          <li>Use the service desk if you need a staff member to review a request.</li>
-        </ol>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Link to="/app/profile">
-            <Button size="sm">Eligibility profile</Button>
-          </Link>
-          <Link to="/app/benefits">
-            <Button size="sm" variant="secondary">
-              Benefit discovery
-            </Button>
-          </Link>
-          <Link to="/app/vault">
-            <Button size="sm" variant="secondary">
-              Document vault
-            </Button>
-          </Link>
-          <Link to="/app/services">
-            <Button size="sm" variant="secondary">
-              Service desk
-            </Button>
-          </Link>
-        </div>
-      </Card>
+      <>
+        <Card elevated className="!p-5">
+          <ol className="list-decimal space-y-3 pl-5 text-sm leading-relaxed text-secondary">
+            <li>Complete your eligibility profile (household, location, occupation).</li>
+            <li>Review recommended programmes and read official guidance before you apply.</li>
+            <li>Upload supporting documents to your vault when you are ready.</li>
+            <li>Use the service desk if you need a staff member to review a request.</li>
+          </ol>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link to="/app/profile">
+              <Button size="sm">Eligibility profile</Button>
+            </Link>
+            <Link to="/app/benefits">
+              <Button size="sm" variant="secondary">
+                Benefit discovery
+              </Button>
+            </Link>
+            <Link to="/app/vault">
+              <Button size="sm" variant="secondary">
+                Document vault
+              </Button>
+            </Link>
+            <Link to="/app/services">
+              <Button size="sm" variant="secondary">
+                Service desk
+              </Button>
+            </Link>
+          </div>
+        </Card>
+        <Card elevated className="!mt-6 !p-5">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-tertiary">Extended services</p>
+          <p className="mb-4 text-sm text-secondary">
+            Access inclusion tools, connectivity guidance, integrations, and other modules from the links below.
+          </p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {[
+              { to: '/app/inclusion', label: 'Inclusion & accessibility' },
+              { to: '/app/offline', label: 'Connectivity & lite mode' },
+              { to: '/app/sms', label: 'SMS channel (concept)' },
+              { to: '/app/integrations', label: 'Integrations' },
+              { to: '/app/recommendations', label: 'Recommendations' },
+              { to: '/app/career', label: 'Career & learning' },
+              { to: '/app/emergency', label: 'Emergency information' },
+              { to: '/app/opportunities', label: 'Opportunities' },
+            ].map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className="rounded-[12px] border border-border-light px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-surface"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </Card>
+      </>
     ),
   },
   benefits: {
@@ -88,34 +116,9 @@ export const WORKSPACE_MODULES = {
     ),
   },
   assistant: {
-    title: 'Guided assistance',
-    description: 'Structured guidance through Benefit Discovery and the service desk—not unverified automated chat in this build.',
-    body: (
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card elevated className="!p-5">
-          <p className="text-sm leading-relaxed text-secondary">
-            Select a programme to view steps, document checklists, and official links. For case-specific questions, staff review requests on the
-            service desk.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Link to="/app/benefits">
-              <Button size="sm">Benefit discovery</Button>
-            </Link>
-            <Link to="/app/services">
-              <Button size="sm" variant="secondary">
-                Service desk
-              </Button>
-            </Link>
-          </div>
-        </Card>
-        <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Deployment note</p>
-          <p className="mt-2 text-sm text-secondary">
-            Contact-centre or chat integrations are configured per jurisdiction when you connect external channels.
-          </p>
-        </Card>
-      </div>
-    ),
+    titleKey: 'modules.assistant.title',
+    descriptionKey: 'modules.assistant.description',
+    body: null,
   },
   recommendations: {
     title: 'Recommendations',

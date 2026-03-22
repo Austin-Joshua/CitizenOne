@@ -5,6 +5,7 @@ import { Card, Button, Badge, cn } from '../components/ui';
 import { apiFetch, getErrorMessageFromResponse } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { WORKSPACE_MODULES as MODULES } from './workspace/workspaceModuleCatalog';
+import { IntelligentGuidanceWorkspace } from './workspace/IntelligentGuidanceWorkspace';
 import { SettingsInclusionBody } from './workspace/InclusiveHubBodies';
 import { useI18n } from '../context/I18nContext';
 
@@ -202,13 +203,11 @@ const WorkspaceViews = ({ moduleKey }) => {
     if (moduleKey === 'alerts') {
       return (
         <Card elevated className="!p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">Inbox</p>
-          <p className="mt-1 text-sm text-secondary">
-            System notices and updates from service requests and application reviews (refreshed when you open this page).
-          </p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-tertiary">{t('alertsWorkspace.eyebrow')}</p>
+          <p className="mt-1 text-sm text-secondary">{t('alertsWorkspace.intro')}</p>
           <div className="mt-4 space-y-3">
             {alertFeed.length === 0 ? (
-              <p className="text-sm text-secondary">No notifications loaded.</p>
+              <p className="text-sm text-secondary">{t('alertsWorkspace.inboxEmpty')}</p>
             ) : (
               alertFeed.map((a) => (
                 <div
@@ -230,7 +229,7 @@ const WorkspaceViews = ({ moduleKey }) => {
             )}
           </div>
           <Button size="sm" variant="secondary" className="mt-5" type="button" onClick={() => window.location.assign('/app/benefits')}>
-            Go to benefit discovery
+            {t('alertsWorkspace.ctaBenefits')}
           </Button>
         </Card>
       );
@@ -678,24 +677,77 @@ const WorkspaceViews = ({ moduleKey }) => {
 
     if (moduleKey === 'progress') {
       return (
-        <Card elevated className="!p-5">
-          <p className="text-sm font-semibold text-primary">Progress summary</p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-lg border border-border-light bg-base/35 p-4">
-              <p className="text-xs text-tertiary">Applications</p>
-              <p className="text-2xl font-semibold text-primary">{activitySummary?.applications ?? applications.length}</p>
+        <div className="space-y-6">
+          <Card elevated className="!p-5">
+            <p className="ds-card-title">{t('progressPage.summaryTitle')}</p>
+            <p className="mt-1 text-sm text-secondary">{t('progressPage.summaryLead')}</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-[14px] border border-border-light bg-base/35 p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-tertiary">{t('progressPage.statApplications')}</p>
+                <p className="mt-1 text-2xl font-semibold tracking-tight text-primary">{activitySummary?.applications ?? applications.length}</p>
+              </div>
+              <div className="rounded-[14px] border border-border-light bg-base/35 p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-tertiary">{t('progressPage.statDocuments')}</p>
+                <p className="mt-1 text-2xl font-semibold tracking-tight text-primary">{activitySummary?.documents ?? 0}</p>
+              </div>
+              <div className="rounded-[14px] border border-border-light bg-base/35 p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-tertiary">{t('progressPage.statCompleted')}</p>
+                <p className="mt-1 text-2xl font-semibold tracking-tight text-primary">{activitySummary?.completedTasks ?? 0}</p>
+              </div>
             </div>
-            <div className="rounded-lg border border-border-light bg-base/35 p-4">
-              <p className="text-xs text-tertiary">Documents</p>
-              <p className="text-2xl font-semibold text-primary">{activitySummary?.documents ?? documents.length}</p>
+          </Card>
+          <Card elevated className="!p-5">
+            <p className="ds-card-title">{t('progressPage.listTitle')}</p>
+            <div className="mt-4 space-y-3">
+              {applications.length === 0 ? (
+                <p className="rounded-[14px] border border-dashed border-border-light bg-surface/50 px-4 py-6 text-center text-sm text-secondary">
+                  {t('progressPage.listEmpty')}
+                </p>
+              ) : (
+                applications.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex flex-col gap-2 rounded-[14px] border border-border-light bg-base/35 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="min-w-0">
+                      <p className="font-medium text-primary">{a.title}</p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <Badge variant="default">{a.type === 'opportunity' ? t('progressPage.typeOpp') : t('progressPage.typeScheme')}</Badge>
+                        <Badge variant={a.status === 'approved' || a.status === 'completed' ? 'primary' : 'warning'}>{a.status}</Badge>
+                      </div>
+                      {a.deadline ? (
+                        <p className="mt-1 text-xs text-semantic-warning">
+                          {t('guidance.deadline')}: {a.deadline}
+                        </p>
+                      ) : null}
+                    </div>
+                    <p className="shrink-0 text-xs text-tertiary">
+                      {t('progressPage.updated')}{' '}
+                      {a.updatedAt ? new Date(a.updatedAt).toLocaleString() : '—'}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
-            <div className="rounded-lg border border-border-light bg-base/35 p-4">
-              <p className="text-xs text-tertiary">Completed tasks</p>
-              <p className="text-2xl font-semibold text-primary">{activitySummary?.completedTasks ?? 0}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link to="/app/services">
+                <Button size="sm" variant="secondary">
+                  {t('nav.serviceDesk')}
+                </Button>
+              </Link>
+              <Link to="/app/benefits">
+                <Button size="sm" variant="secondary">
+                  {t('nav.schemesOpportunities')}
+                </Button>
+              </Link>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       );
+    }
+
+    if (moduleKey === 'assistant') {
+      return <IntelligentGuidanceWorkspace />;
     }
 
     if (moduleKey === 'analytics') {
@@ -862,7 +914,7 @@ const WorkspaceViews = ({ moduleKey }) => {
   const staticBody = m.Body ? <m.Body /> : m.body;
   const bodyContent = dynamicBody ?? staticBody;
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageShell title={title} description={description}>
         {bodyContent}
       </PageShell>

@@ -1,8 +1,8 @@
 {
   "brand": {
     "short": "Citizen One",
-    "subtitle": "Public service workspace",
-    "tagline": "Digital public services"
+    "subtitle": "Intelligent access to public programmes",
+    "tagline": "National-scale citizen operating layer"
   },
   "nav": {
     "mainNavigation": "Main navigation",
@@ -11,16 +11,18 @@
     "sectionAccount": "Account",
     "sectionAdditional": "Additional services",
     "sectionAdministration": "Administration",
+    "applicationsAndRequests": "Applications & requests",
+    "moreServices": "More services",
     "dashboard": "Dashboard",
     "schemes": "Schemes & benefits",
     "applications": "Applications",
-    "documents": "Documents",
-    "insights": "Insights",
+    "documents": "Documents & records",
+    "insights": "Insights & analytics",
     "notifications": "Notifications",
     "profile": "Profile",
     "support": "Support",
     "schemesOpportunities": "Schemes & opportunities",
-    "aiAssistant": "AI assistant",
+    "aiAssistant": "AI Assistant",
     "sectionCore": "Core",
     "sectionIntelligence": "Intelligence",
     "sectionSystem": "System",
@@ -76,7 +78,7 @@
     "login": "Login",
     "getStarted": "Get started",
     "heroTitle": "One workspace for schemes, documents, and citizen service workflows.",
-    "heroSubtitle": "A nationwide digital public infrastructure layer: multilingual, accessible, and designed for variable connectivity—integrating with departments and programmes without replacing official channels.",
+    "heroSubtitle": "An intelligent access layer—not a brochure site—that connects people to programmes, documents, and desk workflows at national scale, with multilingual, accessible, and low-bandwidth-aware delivery.",
     "trustLine": "Clear status. Defensible trails. Privacy-aware defaults.",
     "capSchemeTitle": "Programme radar",
     "capSchemeDesc": "Eligibility cues, document nudges, and application timelines aligned to national and state programmes—without inventing policy.",
@@ -156,12 +158,15 @@
     },
     "navigator": { "title": "Service pathways", "description": "Typical steps for using this workspace." },
     "benefits": { "title": "Benefit Discovery", "description": "Live scheme intelligence loads when you open this module." },
-    "assistant": { "title": "Guided assistance", "description": "Structured guidance through benefits and the service desk." }
+    "assistant": {
+      "title": "Intelligent guidance",
+      "description": "Interprets the situation signals you share, ranks programmes by fit and impact, and points to defensible next steps. Issuers remain authoritative; this layer organises access."
+    }
   },
   "search": {
     "dashboard": { "title": "Command Center", "subtitle": "Main dashboard and activity overview", "category": "Core" },
     "services": { "title": "Service desk", "subtitle": "Submit requests and review queues (role-based)", "category": "Core" },
-    "assistant": { "title": "Guided assistance", "subtitle": "Structured help for schemes, documents, and tasks", "category": "Support" },
+    "assistant": { "title": "Intelligent guidance", "subtitle": "Situation signals, ranked programmes, next actions", "category": "Support" },
     "navigator": { "title": "Life Navigator", "subtitle": "Education, jobs, health, family, retirement pathways", "category": "Guidance" },
     "benefits": { "title": "Benefit Discovery", "subtitle": "Scheme eligibility, status tracking, and deadlines", "category": "Benefits" },
     "vault": { "title": "Identity Vault", "subtitle": "Documents, access logs, and secure records", "category": "Identity" },
@@ -191,7 +196,7 @@
     "opportunities": "Opportunities",
     "vault": "Document vault",
     "alerts": "Alerts",
-    "assistant": "Guided assistance",
+    "assistant": "Intelligent guidance",
     "inclusion": "Inclusion",
     "recommendations": "Recommendations",
     "career": "Learning & employment",
@@ -416,10 +421,60 @@
       "back": "Back"
     }
   },
+  "guidance": {
+    "modeEyebrow": "Structured intelligence",
+    "trustNote": "Citizen One is an access layer: it interprets the profile and signals you provide, ranks published programmes by fit and impact signals, and surfaces deadlines and checklists. Official issuers decide eligibility and outcomes.",
+    "situationLabel": "Situation signals",
+    "situationHint": "Choose a life context to re-rank recommendations. Clear all to rely on your saved profile alone.",
+    "profileCta": "Refine eligibility profile",
+    "rankedTitle": "Prioritised programmes",
+    "rankedSubtitle": "Ordered using scheme intelligence (scores, impact flags, and known windows where data exists).",
+    "whyRanked": "Why it ranked",
+    "whyRankedHint": "Short, rule-based reasons from the same signals as the score—not a generative chat reply.",
+    "empty": "No ranked programmes for this view. Expand filters in Benefit discovery or enrich your profile.",
+    "openDiscovery": "Open scheme intelligence",
+    "impactBadge": "High impact",
+    "eligibleBadge": "Likely match",
+    "deadline": "Deadline",
+    "viewDetail": "Open in discovery",
+    "step1Title": "Interpret context",
+    "step1Desc": "Household, geography, role, and situation chips you opt into—never speculative guessing.",
+    "step2Title": "Map to programmes",
+    "step2Desc": "Rules and metadata from issuer catalogues drive matches—not generic chat replies.",
+    "step3Title": "Surface next actions",
+    "step3Desc": "Checklists, vault gaps, desk routes, and alerts you can execute in the real world.",
+    "footerDesk": "Case-specific reviews still flow through staff channels.",
+    "signalHealth": "Health & care",
+    "signalEducation": "Education",
+    "signalJobLoss": "Employment shock",
+    "signalWomen": "Women’s programmes",
+    "signalHousing": "Housing",
+    "signalRetirement": "Retirement",
+    "signalFarming": "Farming & rural",
+    "signalDigital": "Digital access"
+  },
+  "progressPage": {
+    "summaryTitle": "Unified tracking",
+    "summaryLead": "Programme applications, pursuits, and desk-related work appear together so citizens and officers share a single status narrative.",
+    "statApplications": "Applications",
+    "statDocuments": "Documents on file",
+    "statCompleted": "Completed",
+    "listTitle": "Active items",
+    "listEmpty": "No applications yet. Start from schemes, opportunities, or the service desk.",
+    "typeScheme": "Programme",
+    "typeOpp": "Opportunity",
+    "updated": "Updated"
+  },
+  "alertsWorkspace": {
+    "eyebrow": "Predictive & operational alerts",
+    "intro": "New opportunities, approaching deadlines, status changes, and desk updates surface here when triggered for your account or role.",
+    "inboxEmpty": "No notifications loaded.",
+    "ctaBenefits": "Review programmes"
+  },
   "dashboardPage": {
     "welcomePrefix": "Welcome,",
     "userFallback": "User",
-    "intro": "Your command centre summarises applications, documents, and recommended programmes. Use the service desk for formal requests and officer review.",
+    "intro": "This command centre connects discovery, vault, applications, and desk workflows—so residents act on opportunities while teams clear queues with a shared, auditable record.",
     "benefitDiscovery": "Benefit discovery",
     "serviceDesk": "Service desk",
     "metricApplications": "Applications",
@@ -435,7 +490,7 @@
     "queueHintUser": "{count} awaiting decision",
     "queueHintNone": "None pending",
     "recommendedTitle": "Recommended programmes",
-    "recommendedSubtitle": "From scheme intelligence (profile-aware)",
+    "recommendedSubtitle": "Profile-aware ranking from scheme intelligence",
     "recommendedEmpty": "Complete your eligibility profile to improve matches, then open",
     "levelState": "State",
     "levelNational": "National",
@@ -453,7 +508,7 @@
     "quickActionServices": "Service desk",
     "quickActionAlerts": "Alerts",
     "tipsTitle": "Workspace tips",
-    "tipsBody": "Keep your eligibility profile current for better scheme matching. Use the service desk for formal requests that require officer review."
+    "tipsBody": "Refresh your profile after life changes—matching and alerts improve materially. Voice, language, SMS concepts, and lite mode live under More services → Inclusion."
   },
   "serviceDesk": {
     "pageTitle": "Service requests",

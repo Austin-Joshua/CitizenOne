@@ -95,6 +95,108 @@ function computeMissingDocuments(scheme, docNames) {
 }
 
 /**
+ * Rule-based, deterministic copy for UI — not LLM output.
+ * Reasons mirror signals already used in matchScore / prioritizedScore.
+ */
+function buildGuidanceExplain(scheme, ctx) {
+  const { filters, userInTamilNadu, regionalBoost, tnwiseWeight, deadlineBoostApplied, windowBoostApplied } = ctx;
+  const reasons = [];
+  const ms = scheme.matchScore ?? 0;
+
+  if (ms >= 0.75) {
+    reasons.push({
+      code: 'profile_match_high',
+      detail:
+        'Your profile matches most of the eligibility checks we can evaluate from the catalogue for this programme.',
+    });
+  } else if (ms >= 0.55) {
+    reasons.push({
+      code: 'profile_match_mid',
+      detail:
+        'Several profile fields overlap with this programme; confirm any remaining rules on the official issuer portal.',
+    });
+  } else if (ms > 0) {
+    reasons.push({
+      code: 'profile_match_low',
+      detail:
+        'Only partial overlap with your profile was detected—treat this rank as exploratory until you verify eligibility.',
+    });
+  } else {
+    reasons.push({
+      code: 'profile_match_none',
+      detail:
+        'No automated profile overlap was detected; this programme may appear because of filters or search only.',
+    });
+  }
+
+  if (regionalBoost > 0) {
+    reasons.push({
+      code: 'regional_boost',
+      detail:
+        'State programme geography aligns with your profile region, so the rank includes a small regional boost.',
+    });
+  }
+
+  if (tnwiseWeight > 0) {
+    reasons.push({
+      code: 'sdg_priority_weight',
+      detail: userInTamilNadu
+        ? 'Tamil Nadu–oriented ranking adds weight when schemes map to priority SDGs; this programme qualifies.'
+        : 'The ranker adds a small fixed weight when a scheme maps to priority SDGs in the catalogue.',
+    });
+  }
+
+  if (deadlineBoostApplied) {
+    reasons.push({
+      code: 'deadline_boost',
+      detail: 'A catalogue deadline is present, so a small time-sensitivity factor was added to the composite score.',
+    });
+  }
+
+  if (windowBoostApplied) {
+    reasons.push({
+      code: 'window_boost',
+      detail: 'The application window is not marked as rolling, so a minor scheduling signal was included in ranking.',
+    });
+  }
+
+  if (filters.lifeEvent && Array.isArray(scheme.lifeEvents) && scheme.lifeEvents.includes(filters.lifeEvent)) {
+    reasons.push({
+      code: 'life_event_filter',
+      detail: 'Matches the life-event signal you selected in guidance.',
+    });
+  }
+
+  if (scheme.missingRequirements?.length) {
+    const labels = scheme.missingRequirements.slice(0, 3).join(', ');
+    reasons.push({
+      code: 'vault_gaps',
+      detail: `Your document vault is missing required items for this programme: ${labels}${scheme.missingRequirements.length > 3 ? '…' : ''}.`,
+    });
+  }
+
+  if (scheme.isSaved) {
+    reasons.push({ code: 'saved', detail: 'You previously saved this programme in your workspace.' });
+  }
+
+  if (scheme.applicationStatus && scheme.applicationStatus !== 'not_started') {
+    reasons.push({
+      code: 'application_started',
+      detail: `You have an in-flight application here (status: ${String(scheme.applicationStatus).replace(/_/g, ' ')}).`,
+    });
+  }
+
+  if ((scheme.prioritizedScore ?? 0) >= 0.8) {
+    reasons.push({
+      code: 'composite_high',
+      detail: 'Composite rank (profile fit plus policy and time signals) is in the upper band for your current view.',
+    });
+  }
+
+  return { version: '1.0.0', reasons };
+}
+
+/**
  * Profile-aware scheme catalogue intelligence (recommendations, eligibility hints, alerts).
  */
 class SchemeIntelligenceService {
@@ -183,7 +285,7 @@ class SchemeIntelligenceService {
       const windowWeight = scheme.applicationWindow?.type && scheme.applicationWindow.type !== 'ongoing' ? 0.02 : 0;
       const prioritizedScore = Number((score + tnwiseWeight + deadlineWeight + regionalBoost + windowWeight).toFixed(3));
       const authoritativeBuiltIn = AUTHORITATIVE_BUILTIN_SCHEME_IDS.has(scheme.id);
-      return {
+      const enriched = {
         ...scheme,
         matchScore: score,
         prioritizedScore,
@@ -195,6 +297,15 @@ class SchemeIntelligenceService {
         tnwiseAlignedSdgs: scheme.sdgGoalMapping.filter((sdg) => TNWISE_PRIORITY_SDGS.includes(sdg)),
         authoritativeBuiltIn,
       };
+      enriched.guidanceExplain = buildGuidanceExplain(enriched, {
+        filters,
+        userInTamilNadu,
+        regionalBoost,
+        tnwiseWeight,
+        deadlineBoostApplied: deadlineWeight > 0,
+        windowBoostApplied: windowWeight > 0,
+      });
+      return enriched;
     });
 
     const recommended = [...withMatch].sort((a, b) => b.prioritizedScore - a.prioritizedScore).slice(0, 12);
@@ -273,5 +384,6 @@ module.exports = {
   schemeStateTokens,
   matchScore,
   computeMissingDocuments,
+  buildGuidanceExplain,
   TNWISE_PRIORITY_SDGS,
 };

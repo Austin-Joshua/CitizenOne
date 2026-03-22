@@ -42,7 +42,7 @@ const METRIC_ACCENTS = {
 const MetricBlock = ({ title, value, hint, icon: Icon, accent }) => {
   const a = METRIC_ACCENTS[accent] || METRIC_ACCENTS.primary;
   return (
-    <Card elevated className="flex min-h-[108px] flex-col justify-between !p-4 sm:!p-5">
+    <Card elevated className="flex min-h-[96px] flex-col justify-between !p-4 sm:!p-4">
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-[11px] font-semibold uppercase tracking-wide text-secondary">{title}</h3>
         <div className={cn('rounded-xl p-2', a.iconWrap)}>
@@ -91,11 +91,11 @@ const DashboardPage = () => {
 
   const container = {
     hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.035 } },
+    show: { opacity: 1, transition: { staggerChildren: 0.02 } },
   };
   const item = {
-    hidden: { opacity: 0, y: 4 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.18 } },
+    hidden: { opacity: 0, y: 2 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] } },
   };
 
   const queueHint = isStaff
@@ -133,7 +133,7 @@ const DashboardPage = () => {
         </div>
       </motion.section>
 
-      <motion.section variants={item} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <motion.section variants={item} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
         <MetricBlock
           title={t('dashboardPage.metricApplications')}
           value={String(summary.applications)}
@@ -166,7 +166,7 @@ const DashboardPage = () => {
         />
       </motion.section>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
         <motion.div variants={item} className="lg:col-span-8">
           <Card elevated className="!p-5 sm:!p-6">
             <div className="mb-6 flex items-center gap-3">

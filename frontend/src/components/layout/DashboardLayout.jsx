@@ -73,7 +73,7 @@ const DashboardLayout = () => {
             tabIndex={-1}
             className="app-main-canvas min-h-0 flex-1 overflow-y-auto outline-none"
           >
-            <div className="mx-auto w-full max-w-[1440px] px-5 py-8 sm:px-8 lg:px-20 lg:py-10">
+            <div className="mx-auto w-full max-w-[1440px] px-4 py-8 sm:px-6 lg:px-[72px] lg:py-8 xl:px-20">
               <div className="mx-auto w-full max-w-[1280px]">
                 <Outlet />
               </div>

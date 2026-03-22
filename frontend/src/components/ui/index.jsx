@@ -35,7 +35,7 @@ export const Button = React.forwardRef(({ className, variant = "primary", size =
 export const Card = ({ className, children, elevated = false, ...props }) => (
   <div
     className={cn(
-      elevated ? 'glass-elevated p-6 sm:p-6' : 'app-card p-5 sm:p-6',
+      elevated ? 'glass-elevated p-4 sm:p-5' : 'app-card p-4 sm:p-5',
       className
     )}
     {...props}

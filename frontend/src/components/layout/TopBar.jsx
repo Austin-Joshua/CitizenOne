@@ -84,7 +84,8 @@ const TopBar = ({ onMobileMenuClick }) => {
   const initial = (user?.name || user?.email || 'U').slice(0, 1).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 min-h-16 shrink-0 items-center gap-4 border-b border-border-light bg-base/90 px-4 backdrop-blur-md supports-[backdrop-filter]:bg-base/75 lg:gap-6 lg:px-8">
+    <header className="sticky top-0 z-30 shrink-0 border-b border-border-light bg-base/90 backdrop-blur-md supports-[backdrop-filter]:bg-base/75">
+      <div className="mx-auto flex h-16 min-h-16 max-w-[1440px] items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:gap-6 lg:px-[72px] xl:px-20">
       <div className="flex min-w-0 shrink-0 items-center gap-3">
         <button
           type="button"
@@ -113,7 +114,7 @@ const TopBar = ({ onMobileMenuClick }) => {
             type="search"
             placeholder={t('topbar.search')}
             aria-label={t('topbar.searchAria')}
-            className="h-10 w-full rounded-lg border border-border-light bg-surface py-2 pl-10 pr-3 text-sm text-primary placeholder:text-tertiary transition-[border-color,box-shadow] focus:border-accent-primary/35 focus:outline-none focus:ring-2 focus:ring-accent-primary/15"
+            className="h-10 w-full rounded-xl border border-border-light bg-surface py-2 pl-10 pr-3 text-sm text-primary placeholder:text-tertiary transition-[border-color,box-shadow] focus:border-accent-primary/35 focus:outline-none focus:ring-2 focus:ring-accent-primary/15"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -338,6 +339,7 @@ const TopBar = ({ onMobileMenuClick }) => {
             )}
           </AnimatePresence>
         </div>
+      </div>
       </div>
     </header>
   );
