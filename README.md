@@ -8,7 +8,7 @@ Citizen One is a full-stack web application built for organisations that need a 
 
 **Public and authenticated areas**
 
-- Landing, registration, and a two-step sign-in (portal role, then credentials). Password recovery runs over dedicated pages with request → verification code → new password → confirmation.
+- Landing, registration, and email/password sign-in (account type comes from the server; first screen after sign-in depends on role). Password recovery runs over dedicated pages with request → verification code → new password → confirmation.
 - Signed-in **dashboard** with activity summaries and entry points into the workspace.
 - **Profile** with display name, accessibility preferences, and a scheme-eligibility profile used by benefit matching.
 - **Benefit discovery** backed by scheme intelligence APIs: filters, life-event tags, saved items, applications, and a guidance panel per scheme.
@@ -38,7 +38,7 @@ This is what the repository actually contains today. It is not a certification o
 | **Access tokens** | Short-lived JWTs (default **15 minutes**, overridable with `JWT_ACCESS_EXPIRES`). |
 | **Refresh tokens** | Opaque tokens, **HMAC-hashed** with `JWT_SECRET`, stored in `backend/src/data/refreshTokens.json`, **rotated** on each successful refresh. The SPA keeps the refresh token beside the access token and retries failed API calls once after `POST /api/auth/refresh`. |
 | **Logout** | `POST /api/auth/logout` (authenticated) revokes the supplied refresh token; the client clears local/session storage. |
-| **Sign-in** | Optional portal-role check so the chosen entrance matches the account type; failed attempts are rate-limited. |
+| **Sign-in** | Credentials are checked against stored users; failed attempts are rate-limited. Optional `portalRole` in the API remains for legacy clients but the SPA does not send it. |
 | **Email verification** | New accounts are created with `emailVerified: false` until `GET /api/auth/verify-email?token=` succeeds. Resend is available from the profile when still unverified. In development, verification links are written to the server log; production must use your mail or messaging infrastructure. |
 | **Password reset** | Token store in `passwordResets.json`, expiry enforced server-side. Successful reset revokes refresh tokens for that user. Do not enable token-in-response flags in real production. |
 | **Transport** | You are responsible for **HTTPS** in front of Node (reverse proxy, load balancer, or platform ingress). |

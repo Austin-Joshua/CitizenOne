@@ -1,94 +1,74 @@
-import React, { useId, useState } from 'react';
+import React from 'react';
 import { cn } from '../ui';
 
-const PNG_CANDIDATES = ['/branding/citizen-one-logo.png', '/branding/citizen-one-logo.png.png'];
+/** Browser tab + in-app mark (must match `index.html` / `public/Favicon.png`). */
+export const BRAND_FAVICON_SRC = '/Favicon.png';
+
+const SIZE_STYLES = {
+  sm: {
+    icon: 'h-9 w-auto max-h-9 sm:h-10 sm:max-h-10',
+    wordmark: 'text-base sm:text-lg',
+  },
+  md: {
+    icon: 'h-10 w-auto max-h-10 sm:h-11 sm:max-h-11 md:h-12 md:max-h-12',
+    wordmark: 'text-lg sm:text-xl',
+  },
+  lg: {
+    icon: 'h-11 w-auto max-h-11 sm:h-12 sm:max-h-12 md:h-14 md:max-h-14',
+    wordmark: 'text-xl sm:text-2xl md:text-3xl',
+  },
+  xl: {
+    icon: 'h-14 w-auto max-h-14 sm:h-16 sm:max-h-16 md:h-20 md:max-h-20 xl:h-24 xl:max-h-24',
+    wordmark: 'text-2xl sm:text-3xl md:text-4xl xl:text-5xl',
+  },
+};
 
 /**
- * Brand lockup: `public/branding/citizen-one-logo.png` (transparent PNG recommended).
- * Falls back to `citizen-one-logo.png.png` if the OS doubled the extension, then inline SVG.
- * `variant="onDark"` is for logos on dark hero panels (e.g. auth visual column).
+ * Manual wordmark styled like the brand art: bold Outfit, "Citizen" + "One" (navy/white + cyan).
  */
-export function CitizenOneLogo({ className, height: _height, decorative = true, variant = 'default' }) {
-  const [pngFailed, setPngFailed] = useState(false);
-  const [pngIndex, setPngIndex] = useState(0);
-  const uid = useId().replace(/:/g, '');
-  const gidShield = `co-shield-${uid}`;
-  const gidOne = `co-one-${uid}`;
+export function BrandWordmark({ variant = 'default', size = 'md', className }) {
   const onDark = variant === 'onDark';
-  const src = PNG_CANDIDATES[pngIndex];
+  const scale = SIZE_STYLES[size]?.wordmark ?? SIZE_STYLES.md.wordmark;
+  return (
+    <span
+      className={cn(
+        'inline-flex min-w-0 flex-wrap items-baseline gap-0 font-outfit font-extrabold tracking-[-0.04em]',
+        onDark && 'co-brand-wordmark--onDark',
+        scale,
+        className
+      )}
+    >
+      <span className="co-brand-citizen">Citizen</span>
+      <span className="co-brand-one">One</span>
+    </span>
+  );
+}
 
-  if (!pngFailed) {
-    return (
-      <img
-        src={src}
-        alt={decorative ? '' : 'CitizenOne'}
-        className={cn(
-          'h-12 w-auto max-w-full shrink-0 object-contain object-left sm:h-14',
-          onDark
-            ? 'brightness-[1.22] contrast-[1.08] saturate-[1.06]'
-            : 'dark:brightness-[1.16] dark:contrast-[1.06] dark:saturate-[1.04]',
-          className
-        )}
-        onError={() => {
-          setPngIndex((i) => {
-            if (i < PNG_CANDIDATES.length - 1) return i + 1;
-            setPngFailed(true);
-            return i;
-          });
-        }}
-        {...(decorative ? { 'aria-hidden': true } : {})}
-      />
-    );
-  }
+/**
+ * Favicon image + manual wordmark. No `citizen-one-logo.png`.
+ */
+export function CitizenOneLogo({
+  className,
+  iconClassName,
+  wordmarkClassName,
+  decorative = true,
+  variant = 'default',
+  showWordmark = true,
+  size = 'md',
+}) {
+  const styles = SIZE_STYLES[size] ?? SIZE_STYLES.md;
 
   return (
-    <svg
-      className={cn('h-12 w-auto max-w-full shrink-0 sm:h-14', className)}
-      viewBox="0 0 320 72"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden={decorative}
-      role={decorative ? undefined : 'img'}
-    >
-      {!decorative ? <title>CitizenOne</title> : null}
-      <defs>
-        <linearGradient id={gidShield} x1="8" y1="4" x2="52" y2="68" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5eead4" />
-          <stop offset="0.45" stopColor="#14b8a6" />
-          <stop offset="1" stopColor="#0f766e" />
-        </linearGradient>
-        <linearGradient id={gidOne} x1="188" y1="20" x2="308" y2="52" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#22d3ee" />
-          <stop offset="0.5" stopColor="#14b8a6" />
-          <stop offset="1" stopColor="#0e7490" />
-        </linearGradient>
-      </defs>
-      <path fill={`url(#${gidShield})`} d="M30 4 52 12v26q0 18-22 30Q8 56 8 38V12Z" />
-      <path fill="#fff" fillOpacity="0.28" d="M14 14h32v4H14z" />
-      <path
-        fill="#fff"
-        d="M30 7.5 31.8 11.2l3.7.5-2.7 2.6.6 3.9-3.4-1.8-3.4 1.8.6-3.9-2.7-2.6 3.7-.5z"
+    <div className={cn('flex min-w-0 items-center gap-3', className)}>
+      <img
+        src={BRAND_FAVICON_SRC}
+        alt={decorative ? '' : 'CitizenOne'}
+        className={cn(styles.icon, 'shrink-0 object-contain object-left', iconClassName)}
+        {...(decorative ? { 'aria-hidden': true } : {})}
       />
-      <path fill="#050a30" fillOpacity="0.9" d="M18 44V32h4v-4h16v4h4v12h-8v-6h-8v6z" />
-      <path fill="#050a30" fillOpacity="0.9" d="M22 38h16v2H22zm0 4h8v2h-8z" />
-      <circle cx="30" cy="36" r="5" fill="#fff" />
-      <path fill="#fff" d="M24 46q6-4 12 0v4H24z" />
-      <text
-        x="72"
-        y="49"
-        className={onDark ? 'fill-white' : 'fill-[hsl(220_40%_10%)] dark:fill-white'}
-        style={{ fontFamily: 'Outfit, Inter, system-ui, sans-serif', fontSize: 26, fontWeight: 800, letterSpacing: '-0.04em' }}
-      >
-        Citizen
-      </text>
-      <text
-        x="188"
-        y="49"
-        fill={`url(#${gidOne})`}
-        style={{ fontFamily: 'Outfit, Inter, system-ui, sans-serif', fontSize: 26, fontWeight: 800, letterSpacing: '-0.04em' }}
-      >
-        One
-      </text>
-    </svg>
+      {showWordmark ? (
+        <BrandWordmark variant={variant} size={size} className={cn('min-w-0 truncate', wordmarkClassName)} />
+      ) : null}
+    </div>
   );
 }

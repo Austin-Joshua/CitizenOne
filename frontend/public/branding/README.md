@@ -1,24 +1,21 @@
 # Brand assets
 
-Place your horizontal **CitizenOne** logo PNG here as exactly:
+## `Favicon.png` (in `public/`, not only this folder)
 
-`citizen-one-logo.png`  
+Single raster used for:
 
-(Not `citizen-one-logo.png.png`—Windows can hide the real extension.)
+- **Browser tab** and **apple-touch-icon** — `index.html` → `/Favicon.png`
+- **In-app brand row** — `CitizenOneLogo` / `AppLogo` load the same file; the word **CitizenOne** is rendered as **HTML text** (`BrandWordmark`: bold Outfit, `#1a3050` / white + `#00aeef` / cyan; `onDark` variant for dark panels).
 
-The app loads `/branding/citizen-one-logo.png` in the UI. If the file is missing, an inline SVG fallback is used.
+Replace **`public/Favicon.png`** when you update the mark. Paths are case-sensitive on Linux (`Favicon.png`).
 
-- **`Favicon.png`** — browser tab (`rel="icon"`) and **`apple-touch-icon`** only (`index.html`).
-- **`citizen-one-logo.png`** — full lockup everywhere in the UI (TopBar, sidebar, landing, auth, etc.) via `CitizenOneLogo` / `AppLogo`.
+## Optional: strip a solid plate from `Favicon.png`
 
-For a crisp tab icon, use a square **`Favicon.png`** (e.g. 180×180 or 512×512). Wide images still work but look small in the tab.
+If your favicon export has a flat black or white background, from `frontend/`:
 
-**Use a transparent background** so light/dark theme toggles show the real page chrome behind the mark.
+- **Black plate:** `npm run brand:transparent-favicon`
+- **White plate:** `npm run brand:transparent-favicon:white`
 
-- **Dark / black plate:** `npm run brand:transparent-logo` (or `node scripts/transparent-logo-bg.mjs <file.png> [out.png]`).
-- **White / light plate:** `npm run brand:transparent-logo:white` (adds `--white`; tune `WHITE_CUTOFF` in `scripts/transparent-logo-bg.mjs` if light cyan edges look chipped).
+Or: `node scripts/transparent-logo-bg.mjs public/Favicon.png --white`
 
-You can also import in one step:  
-`node scripts/transparent-logo-bg.mjs path/to/download.png public/branding/citizen-one-logo.png --white`
-
-Recommended: **transparent** PNG, ~3:2 or ~3:1 width:height, at least **640×180** px for crisp headers.
+For a sharp tab icon, a **square** PNG (e.g. 180×180) works best.

@@ -125,15 +125,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   /**
-   * @param {string} email
-   * @param {string} password
-   * @param {boolean} remember
-   * @param {'resident'|'staff'|'organization'|'administrator'} portalRole
+   * @returns {Promise<{ success?: true, user?: object, mfaRequired?: true, mfaPendingToken?: string, message?: string }>}
    */
-  const login = async (email, password, remember = true, portalRole) => {
+  const login = async (email, password, remember = true) => {
     const response = await apiFetch('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password, portalRole }),
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json().catch(() => ({}));
@@ -151,7 +148,7 @@ export const AuthProvider = ({ children }) => {
 
     rememberSession(data.user, data.token, data.refreshToken, remember);
     lastActivityRef.current = Date.now();
-    return { success: true };
+    return { success: true, user: data.user };
   };
 
   const completeMfaLogin = async (mfaPendingToken, code, remember = true) => {
@@ -165,6 +162,7 @@ export const AuthProvider = ({ children }) => {
     }
     rememberSession(data.user, data.token, data.refreshToken, remember);
     lastActivityRef.current = Date.now();
+    return data.user;
   };
 
   const signup = async ({ name, email, password, role = 'citizen', plan = 'free', remember = true }) => {
@@ -180,6 +178,7 @@ export const AuthProvider = ({ children }) => {
 
     rememberSession(data.user, data.token, data.refreshToken, remember);
     lastActivityRef.current = Date.now();
+    return data.user;
   };
 
   const resendEmailVerification = useCallback(async () => {

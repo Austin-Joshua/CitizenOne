@@ -73,8 +73,7 @@ function SidebarContent({ onMobileClose }) {
           className="flex min-w-0 flex-1 flex-col gap-1 rounded-xl py-0.5 text-left transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35"
           aria-label={t('auth.homeAria')}
         >
-          <AppLogo size="md" lockup className="min-w-0 w-full max-w-full" />
-          <p className="truncate pl-0.5 text-[12px] text-tertiary">{t('brand.subtitle')}</p>
+          <AppLogo size="md" className="min-w-0 w-full max-w-full" subtitle={t('brand.subtitle')} />
         </Link>
         <button
           type="button"

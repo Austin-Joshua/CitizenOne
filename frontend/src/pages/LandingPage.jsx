@@ -8,9 +8,13 @@ import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../context/I18nContext';
 import LanguageToggle from '../components/inclusive/LanguageToggle';
 
+/** South Indic scripts: smaller display type + looser line-height + letter-spacing so lines don’t collide. */
+const DENSE_SCRIPT_LOCALES = new Set(['ta', 'ml', 'kn', 'te', 'hi']);
+
 export default function LandingPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { theme, toggleTheme } = useTheme();
+  const denseIndicHero = DENSE_SCRIPT_LOCALES.has(locale);
 
   useDocumentTitle(t('landing.documentTitle'));
 
@@ -75,8 +79,8 @@ export default function LandingPage() {
 
       <nav className="fixed left-0 right-0 top-0 z-50 border-b border-border-light bg-pub-nav backdrop-blur-2xl transition-colors duration-300 dark:border-white/5">
         <div className="mx-auto flex h-[5.25rem] max-w-7xl items-center gap-2 px-4 sm:h-24 sm:gap-3 sm:px-6">
-          <Link to="/" className="flex shrink-0 items-center py-0.5 sm:py-1">
-            <CitizenOneLogo className="h-10 w-auto max-h-12 max-w-[min(100%,min(640px,86vw))] object-contain object-left sm:h-16 sm:max-h-[4.25rem] md:h-[4.25rem] md:max-h-[4.5rem] lg:h-[4.5rem] lg:max-h-20 xl:max-w-[min(100%,720px)]" />
+          <Link to="/" className="flex min-w-0 max-w-[min(100%,min(90vw,52rem))] shrink-0 items-center py-0.5 sm:py-1">
+            <AppLogo size="lg" className="min-w-0" />
           </Link>
 
           <div
@@ -131,21 +135,35 @@ export default function LandingPage() {
             <Bot className="h-3.5 w-3.5 fill-current" aria-hidden />
             {t('landing.replicaEyebrow')}
           </div>
-          <h1 className="mb-8 text-5xl font-black leading-[0.88] tracking-tighter text-primary min-[400px]:text-6xl sm:mb-10 sm:text-7xl md:text-8xl md:leading-[0.85] lg:text-[min(9rem,11vw)]">
+          <h1
+            className={cn(
+              'mb-8 font-black text-primary sm:mb-10',
+              denseIndicHero
+                ? 'space-y-3 text-3xl leading-[1.22] tracking-wide min-[400px]:text-4xl sm:space-y-4 sm:text-5xl sm:leading-[1.2] md:text-6xl md:leading-[1.18] lg:text-[min(5.75rem,8vw)]'
+                : 'text-5xl leading-[0.88] tracking-tighter min-[400px]:text-6xl sm:text-7xl md:text-8xl md:leading-[0.85] lg:text-[min(9rem,11vw)]'
+            )}
+          >
             <span className="block">{t('landing.replicaHeroL1')}</span>
             <span className="block">{t('landing.replicaHeroL2')}</span>
-            <span className="text-gradient-pub-hero block">{t('landing.replicaHeroL3')}</span>
+            <span className="text-gradient-pub-hero block tracking-tight">{t('landing.replicaHeroL3')}</span>
           </h1>
-          <p className="mx-auto mb-12 max-w-3xl text-base font-medium leading-relaxed text-secondary sm:mb-16 sm:text-xl md:text-2xl">
+          <p
+            className={cn(
+              'pub-text-secondary mx-auto mb-12 max-w-3xl font-medium sm:mb-16',
+              denseIndicHero
+                ? 'text-sm leading-[1.75] tracking-wide sm:text-base md:text-lg'
+                : 'text-base leading-relaxed sm:text-xl md:text-2xl'
+            )}
+          >
             {t('landing.replicaHeroDeck')}
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
             <Link
               to="/signup"
-              className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-primary px-10 py-5 text-lg font-black text-white shadow-2xl transition-all hover:scale-105 active:scale-95 dark:bg-white dark:text-primary sm:w-auto sm:px-12 sm:py-6 sm:text-xl"
+              className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-accent-primary px-10 py-5 text-lg font-black text-white shadow-2xl transition-all hover:scale-105 hover:bg-accent-hover hover:text-white active:scale-95 sm:w-auto sm:px-12 sm:py-6 sm:text-xl [&_svg]:text-white"
             >
-              {t('landing.replicaPrimaryCta')}
-              <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" aria-hidden />
+              <span className="text-white">{t('landing.replicaPrimaryCta')}</span>
+              <ArrowRight className="h-6 w-6 shrink-0 text-white transition-transform group-hover:translate-x-1" aria-hidden />
             </Link>
             <button
               type="button"
@@ -167,8 +185,15 @@ export default function LandingPage() {
                 <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-primary/10 text-accent-primary transition-all group-hover:bg-accent-primary group-hover:text-white">
                   <item.icon className="h-7 w-7" aria-hidden />
                 </div>
-                <h3 className="mb-3 text-xl font-black tracking-tight text-primary sm:text-2xl">{item.title}</h3>
-                <p className="font-medium leading-relaxed text-secondary">{item.desc}</p>
+                <h3
+                  className={cn(
+                    'mb-3 font-black text-primary',
+                    denseIndicHero ? 'text-lg tracking-wide sm:text-xl' : 'text-xl tracking-tight sm:text-2xl'
+                  )}
+                >
+                  {item.title}
+                </h3>
+                <p className="pub-text-secondary font-medium leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -181,17 +206,31 @@ export default function LandingPage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24 xl:gap-32">
               <div>
-                <h2 className="mb-8 text-4xl font-black leading-[0.9] tracking-tighter text-primary sm:text-5xl md:text-6xl">
-                  {t('landing.replicaPlatformKicker')} <br />
-                  <span className="text-accent-primary">{t('landing.replicaPlatformAccent')}</span>
+                <h2
+                  className={cn(
+                    'mb-8 font-black text-primary',
+                    denseIndicHero
+                      ? 'space-y-3 text-2xl leading-[1.2] tracking-wide sm:space-y-4 sm:text-3xl sm:leading-[1.18] md:text-4xl'
+                      : 'text-4xl leading-[0.9] tracking-tighter sm:text-5xl md:text-6xl'
+                  )}
+                >
+                  <span className="block">{t('landing.replicaPlatformKicker')}</span>
+                  <span className="block text-accent-primary">{t('landing.replicaPlatformAccent')}</span>
                 </h2>
                 <div className="space-y-8 sm:space-y-10">
                   {platformFeatures.map((item, i) => (
                     <div key={i} className="group flex gap-6 sm:gap-8">
                       <div className="h-14 w-1.5 shrink-0 rounded-full bg-accent-primary/20 transition-colors group-hover:bg-accent-primary sm:h-16" />
                       <div className="min-w-0">
-                        <h4 className="mb-2 text-lg font-black text-primary sm:text-xl">{item.title}</h4>
-                        <p className="text-base font-medium leading-relaxed text-secondary sm:text-lg">{item.desc}</p>
+                        <h4
+                          className={cn(
+                            'mb-2 font-black text-primary',
+                            denseIndicHero ? 'text-base tracking-wide sm:text-lg' : 'text-lg sm:text-xl'
+                          )}
+                        >
+                          {item.title}
+                        </h4>
+                        <p className="pub-text-secondary text-base font-medium leading-relaxed sm:text-lg">{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -204,7 +243,15 @@ export default function LandingPage() {
                 <div className="absolute right-0 top-0 h-48 w-48 rounded-full bg-accent-primary/10 blur-[100px]" aria-hidden />
                 <div className="relative space-y-5 sm:space-y-6">
                   {stats.map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 text-lg font-black tracking-tight text-accent-primary sm:gap-4 sm:text-xl">
+                    <div
+                      key={i}
+                      className={cn(
+                        'flex items-center gap-3 font-black text-accent-primary sm:gap-4',
+                        denseIndicHero
+                          ? 'text-base tracking-wide sm:text-lg'
+                          : 'text-lg tracking-tight sm:text-xl'
+                      )}
+                    >
                       <CheckCircle2 className="h-6 w-6 shrink-0" aria-hidden />
                       <span className="text-left">{item}</span>
                     </div>
@@ -226,33 +273,49 @@ export default function LandingPage() {
         </section>
 
         <section id="landing-network" className="scroll-mt-28 px-4 py-16 text-center sm:scroll-mt-32 sm:py-24 lg:py-40">
-          <h2 className="mb-8 text-4xl font-black leading-none tracking-tighter text-primary sm:mb-12 sm:text-6xl md:text-7xl lg:text-8xl">
-            {t('landing.replicaCtaTitle')}{' '}
-            <span className="text-accent-primary">{t('landing.replicaCtaAccent')}</span>
+          <h2
+            className={cn(
+              'mb-8 font-black text-primary sm:mb-12',
+              denseIndicHero
+                ? 'space-y-3 text-2xl leading-[1.2] tracking-wide sm:space-y-4 sm:text-4xl sm:leading-[1.18] md:text-5xl lg:text-6xl'
+                : 'text-4xl leading-none tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl'
+            )}
+          >
+            {denseIndicHero ? (
+              <>
+                <span className="block">{t('landing.replicaCtaTitle')}</span>
+                <span className="block text-accent-primary">{t('landing.replicaCtaAccent')}</span>
+              </>
+            ) : (
+              <>
+                {t('landing.replicaCtaTitle')}{' '}
+                <span className="text-accent-primary">{t('landing.replicaCtaAccent')}</span>
+              </>
+            )}
           </h2>
-          <p className="mx-auto mb-12 max-w-2xl text-base font-medium text-secondary sm:mb-16 sm:text-xl">
+          <p className="pub-text-secondary mx-auto mb-12 max-w-2xl text-base font-medium sm:mb-16 sm:text-xl">
             {t('landing.replicaCtaBody')}
           </p>
           <Link
             to="/signup"
-            className="inline-flex rounded-[2rem] bg-accent-primary px-10 py-6 text-xl font-black text-white shadow-pub-cta transition-all hover:scale-105 hover:bg-accent-hover active:scale-95 sm:px-16 sm:py-8 sm:text-2xl"
+            className="inline-flex items-center justify-center rounded-[2rem] bg-accent-primary px-10 py-6 text-xl font-black text-white shadow-pub-cta transition-all hover:scale-105 hover:bg-accent-hover hover:text-white active:scale-95 sm:px-16 sm:py-8 sm:text-2xl [&_svg]:text-white"
           >
-            {t('landing.replicaCtaButton')}
+            <span className="text-white">{t('landing.replicaCtaButton')}</span>
           </Link>
         </section>
 
-        <footer className="border-t border-border-light bg-base/60 py-16 dark:border-white/5 dark:bg-base/50 sm:py-24 lg:py-32">
+        <footer className="pub-landing-footer py-16 sm:py-24 lg:py-32">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="mb-12 grid grid-cols-1 gap-12 text-center md:mb-20 md:grid-cols-4 md:gap-16 md:text-left">
               <div className="md:col-span-2">
                 <div className="mb-6 flex justify-center md:justify-start">
-                  <AppLogo size="lg" lockup className="w-full max-w-2xl md:max-w-3xl" />
+                  <AppLogo size="lg" className="w-full max-w-2xl md:max-w-3xl" />
                 </div>
-                <p className="mx-auto max-w-sm font-medium leading-relaxed text-secondary md:mx-0">{t('landing.footerBlurb')}</p>
+                <p className="pub-text-secondary mx-auto max-w-sm font-medium leading-relaxed md:mx-0">{t('landing.footerBlurb')}</p>
               </div>
               <div>
                 <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-primary">{t('landing.footerColPlatform')}</h4>
-                <ul className="space-y-3 text-sm font-bold text-secondary">
+                <ul className="pub-text-secondary space-y-3 text-sm font-bold">
                   <li>
                     <button type="button" onClick={() => scrollTo('landing-platform')} className="hover:text-accent-primary">
                       {t('landing.footerLinkOverview')}
@@ -277,7 +340,7 @@ export default function LandingPage() {
               </div>
               <div>
                 <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-primary">{t('landing.footerColSolutions')}</h4>
-                <ul className="space-y-3 text-sm font-bold text-secondary">
+                <ul className="pub-text-secondary space-y-3 text-sm font-bold">
                   <li>
                     <button type="button" onClick={() => scrollTo('landing-platform')} className="hover:text-accent-primary">
                       {t('landing.footerLinkAbout')}

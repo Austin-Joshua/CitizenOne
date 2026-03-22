@@ -55,7 +55,7 @@ export function PublicAuthShell({ children, title, subtitle, footer }) {
             className="rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35"
             aria-label={t('auth.homeAria')}
           >
-            <AppLogo size="lg" lockup />
+            <AppLogo size="lg" />
           </Link>
           <Link
             to="/login"

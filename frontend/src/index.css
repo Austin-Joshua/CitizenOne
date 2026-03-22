@@ -93,6 +93,10 @@
     --pub-visual-to: hsl(161 72% 20%);
     --pub-card-bg: hsl(0 0% 100%);
     --pub-card-border: hsl(220 14% 88%);
+    --pub-auth-footer-bg: hsl(220 18% 92%);
+    --pub-auth-footer-border: hsl(220 14% 78%);
+    --pub-landing-footer-bg: hsl(220 22% 93%);
+    --pub-landing-footer-border: hsl(220 14% 82%);
   }
 
   .dark {
@@ -142,6 +146,8 @@
     --pub-visual-to: hsl(161 94% 8%);
     --pub-card-bg: hsl(222 47% 6%);
     --pub-card-border: hsl(217 28% 18%);
+    --pub-auth-footer-bg: hsl(222 34% 14%);
+    --pub-auth-footer-border: hsl(217 22% 24%);
   }
 
   body {
@@ -343,8 +349,23 @@
     box-shadow: var(--shadow-md);
   }
 
+  /* Match body Indic coverage; Outfit/Inter alone can drop Noto and confuse rendering for hi/ta/ml/kn/te. */
   .font-outfit {
-    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+    font-family:
+      'Outfit',
+      'Inter',
+      'Noto Sans Devanagari',
+      'Noto Sans Tamil',
+      'Noto Sans Telugu',
+      'Noto Sans Malayalam',
+      'Noto Sans Kannada',
+      system-ui,
+      sans-serif;
+  }
+
+  /** Theme body copy — use instead of `text-secondary` next to `text-sm`/`text-base` (tailwind-merge can drop one). */
+  .pub-text-secondary {
+    color: var(--text-secondary);
   }
 
   .pub-page-gradient {
@@ -365,6 +386,26 @@
 
   .pub-auth-visual-bg {
     background: linear-gradient(to bottom right, var(--pub-visual-from), var(--pub-visual-to));
+  }
+
+  /** Band below the auth card: distinct from page gradient and form panel in light & dark */
+  .pub-auth-page-footer {
+    background-color: var(--pub-auth-footer-bg);
+    border: 1px solid var(--pub-auth-footer-border);
+    color: var(--text-primary);
+  }
+
+  .pub-auth-footer-muted {
+    color: var(--text-tertiary);
+  }
+
+  .pub-auth-footer-enter {
+    animation: pubAuthFooterEnter 0.42s cubic-bezier(0.23, 1, 0.32, 1) 0.06s both;
+  }
+
+  .pub-landing-footer {
+    background-color: var(--pub-landing-footer-bg);
+    border-top: 1px solid var(--pub-landing-footer-border);
   }
 
   .animate-civiq-pulse-slow {
@@ -400,6 +441,28 @@
     color: transparent;
   }
 
+  /**
+   * Brand wordmark (Citizen / One): page-level `text-primary` must not override these.
+   */
+  .co-brand-citizen {
+    color: #0a0a0a;
+  }
+  .dark .co-brand-citizen {
+    color: #fafafa;
+  }
+  .co-brand-one {
+    color: #00aeef;
+  }
+  .dark .co-brand-one {
+    color: #22d3ee;
+  }
+  .co-brand-wordmark--onDark .co-brand-citizen {
+    color: #ffffff;
+  }
+  .co-brand-wordmark--onDark .co-brand-one {
+    color: #a5f3fc;
+  }
+
   .shadow-pub-cta {
     box-shadow: 0 25px 50px -12px hsl(161 72% 39% / 0.28);
   }
@@ -426,6 +489,17 @@
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pubAuthFooterEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

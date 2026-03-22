@@ -5,11 +5,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Briefcase } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
-import { Button, Card, Input, Badge } from '../components/ui';
+import { Button, Card, Input, Badge, cn } from '../components/ui';
 import { AuthSplitLayout } from '../components/auth/AuthSplitLayout';
+import { getPostLoginPath } from '../lib/postLoginPath';
+
+const DENSE_AUTH_LOCALES = new Set(['ta', 'ml', 'kn', 'te', 'hi']);
 
 const SignupPage = () => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const denseAuth = DENSE_AUTH_LOCALES.has(locale);
   useDocumentTitle(t('auth.signup.documentTitle'));
   const navigate = useNavigate();
   const { signup, user, loading } = useAuth();
@@ -31,8 +35,8 @@ const SignupPage = () => {
     setError('');
     setSubmitting(true);
     try {
-      await signup(form);
-      navigate('/app/dashboard');
+      const newUser = await signup(form);
+      navigate(newUser ? getPostLoginPath(newUser) : '/app/dashboard');
     } catch (err) {
       setError(err.message || t('auth.signup.errorGeneric'));
     } finally {
@@ -41,8 +45,30 @@ const SignupPage = () => {
   };
 
   useEffect(() => {
-    if (!loading && user) navigate('/app/dashboard', { replace: true });
+    if (!loading && user) navigate(getPostLoginPath(user), { replace: true });
   }, [user, loading, navigate]);
+
+  const switchFooter = (
+    <div className={cn(denseAuth && 'tracking-wide')}>
+      <p className="text-center text-sm">
+        <span className="pub-text-secondary font-medium">{t('auth.signup.haveAccount')} </span>
+        <Link to="/login" className="font-black text-accent-primary hover:underline">
+          {t('auth.signup.signIn')}
+        </Link>
+      </p>
+      <p className="pub-text-secondary mt-3 text-center text-xs">
+        <Link to="/" className="font-semibold text-accent-primary hover:underline">
+          {t('auth.login.home')}
+        </Link>
+        <span className="mx-2 text-primary/30 dark:text-primary/40" aria-hidden>
+          ·
+        </span>
+        <Link to="/login/recovery" className="font-semibold text-accent-primary hover:underline">
+          {t('auth.login.forgotPassword')}
+        </Link>
+      </p>
+    </div>
+  );
 
   if (loading) {
     return (
@@ -56,48 +82,35 @@ const SignupPage = () => {
     );
   }
 
-  const signupFooter = (
-    <>
-      <p>
-        {t('auth.signup.haveAccount')}{' '}
-        <Link to="/login" className="font-black text-accent-primary hover:underline">
-          {t('auth.signup.signIn')}
-        </Link>
-      </p>
-      <p className="text-xs leading-relaxed text-tertiary">{t('auth.signup.footerNote')}</p>
-      <p>
-        <Link to="/" className="font-bold text-accent-primary hover:underline">
-          {t('auth.login.home')}
-        </Link>
-        {' · '}
-        <Link to="/login/recovery" className="font-bold text-accent-primary hover:underline">
-          {t('auth.login.forgotPassword')}
-        </Link>
-      </p>
-    </>
-  );
-
   return (
     <AuthSplitLayout
       visualTitle={t('auth.signup.visualTitle')}
       visualAccent={t('auth.signup.visualAccent')}
       visualLead={t('auth.signup.visualLead')}
       mobileBrandLine={t('auth.signup.mobileBrand')}
-      footer={signupFooter}
+      footer={switchFooter}
     >
-      <div className="mb-6 lg:mb-8">
-        <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-accent-primary">{t('auth.signup.eyebrow')}</p>
-        <h1 className="mb-2 text-3xl font-black tracking-tighter text-primary sm:text-4xl lg:text-[2.125rem] lg:leading-tight">
-          {t('auth.signup.heading')}
-        </h1>
-        <p className="text-sm font-medium leading-relaxed text-secondary">{t('auth.signup.intro')}</p>
-      </div>
+      <div className="mx-auto w-full min-w-0 max-w-md">
+        <div className="mb-5 lg:mb-7">
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-accent-primary">{t('auth.signup.eyebrow')}</p>
+          <h1 className="mb-3 text-3xl font-black tracking-tighter text-primary sm:text-4xl lg:text-[2.125rem] lg:leading-tight">
+            {t('auth.signup.heading')}
+          </h1>
+          <div
+            className={cn(
+              'space-y-2.5 rounded-xl border border-border-light/80 bg-pub-input/40 px-3.5 py-3 dark:border-white/10 sm:px-4 sm:py-3.5',
+              denseAuth && 'tracking-wide'
+            )}
+          >
+            <p className="pub-text-secondary text-sm font-medium leading-relaxed">{t('auth.signup.intro')}</p>
+            <p className="pub-text-secondary text-sm font-medium leading-relaxed">{t('auth.signup.introStaff')}</p>
+          </div>
+        </div>
 
-      <div className="mx-auto w-full max-w-md flex-1">
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.06 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
         >
           <Card
             elevated
@@ -106,7 +119,7 @@ const SignupPage = () => {
             <Badge variant="primary" className="mb-4 text-[10px] font-black uppercase tracking-widest">
               {t('auth.signup.badge')}
             </Badge>
-            <form className="space-y-4" onSubmit={onSubmit}>
+            <form className="space-y-5" onSubmit={onSubmit}>
               <Input
                 label={t('auth.signup.fullName')}
                 icon={<User strokeWidth={2} />}
@@ -137,13 +150,13 @@ const SignupPage = () => {
                 className="!bg-pub-input"
               />
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="space-y-1.5">
+              <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
+                <label className="min-w-0 space-y-1.5">
                   <span className="ml-1 text-[10px] font-black uppercase tracking-[0.2em] text-tertiary">{t('auth.signup.role')}</span>
-                  <div className="relative">
+                  <div className="relative min-w-0">
                     <Briefcase className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-tertiary" aria-hidden />
                     <select
-                      className="w-full rounded-xl border border-border-light bg-pub-input py-2.5 pl-10 pr-3 text-[15px] font-medium text-primary transition-[border-color,box-shadow] focus:border-accent-primary/40 focus:outline-none focus:ring-2 focus:ring-accent-primary/15 dark:border-white/10"
+                      className="h-11 w-full min-w-0 rounded-xl border border-border-light bg-pub-input py-2 pl-10 pr-3 text-sm font-medium text-primary transition-[border-color,box-shadow] focus:border-accent-primary/40 focus:outline-none focus:ring-2 focus:ring-accent-primary/15 dark:border-white/10 sm:text-[15px]"
                       value={form.role}
                       onChange={(e) => onChange('role', e.target.value)}
                     >
@@ -153,10 +166,10 @@ const SignupPage = () => {
                     </select>
                   </div>
                 </label>
-                <label className="space-y-1.5">
+                <label className="min-w-0 space-y-1.5">
                   <span className="ml-1 text-[10px] font-black uppercase tracking-[0.2em] text-tertiary">{t('auth.signup.plan')}</span>
                   <select
-                    className="w-full rounded-xl border border-border-light bg-pub-input px-3 py-2.5 text-[15px] font-medium text-primary focus:border-accent-primary/40 focus:outline-none focus:ring-2 focus:ring-accent-primary/15 dark:border-white/10"
+                    className="h-11 w-full min-w-0 rounded-xl border border-border-light bg-pub-input px-3 py-2 text-sm font-medium text-primary focus:border-accent-primary/40 focus:outline-none focus:ring-2 focus:ring-accent-primary/15 dark:border-white/10 sm:text-[15px]"
                     value={form.plan}
                     onChange={(e) => onChange('plan', e.target.value)}
                   >
@@ -166,14 +179,14 @@ const SignupPage = () => {
                 </label>
               </div>
 
-              <label className="flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl text-sm font-medium text-secondary">
+              <label className="pub-text-secondary flex min-h-[48px] cursor-pointer items-start gap-3 rounded-xl pt-0.5 text-sm font-medium sm:items-center">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 shrink-0 rounded border-border-light text-accent-primary focus:ring-accent-primary/30"
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded border-border-light text-accent-primary focus:ring-accent-primary/30 sm:mt-0"
                   checked={form.remember}
                   onChange={(e) => onChange('remember', e.target.checked)}
                 />
-                {t('auth.signup.remember')}
+                <span className={cn(denseAuth && 'leading-relaxed tracking-wide')}>{t('auth.signup.remember')}</span>
               </label>
 
               <div role="status" aria-live="polite" className="min-h-[1.25rem] text-sm text-semantic-error">

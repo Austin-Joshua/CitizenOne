@@ -9,8 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "depcheck": "depcheck",
-    "brand:transparent-logo": "node scripts/transparent-logo-bg.mjs public/branding/citizen-one-logo.png",
-    "brand:transparent-logo:white": "node scripts/transparent-logo-bg.mjs public/branding/citizen-one-logo.png --white"
+    "brand:transparent-favicon": "node scripts/transparent-logo-bg.mjs public/Favicon.png",
+    "brand:transparent-favicon:white": "node scripts/transparent-logo-bg.mjs public/Favicon.png --white"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
