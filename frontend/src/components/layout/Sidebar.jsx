@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
   Home,
   Bell,
@@ -14,9 +14,10 @@ import {
   BarChart3,
   FolderOpen,
   ClipboardList,
-  Zap,
+  LayoutGrid,
 } from 'lucide-react';
 import { cn } from '../ui';
+import { AppLogo } from '../brand/AppLogo';
 import { useI18n } from '../../context/I18nContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -65,19 +66,19 @@ function SidebarContent({ onMobileClose }) {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 border-b border-border-light px-4 py-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-accent-primary text-xs font-bold text-white shadow-elevated-sm">
-            C1
-          </div>
-          <div className="min-w-0 leading-tight">
-            <p className="truncate text-sm font-semibold text-primary">{t('brand.short')}</p>
-            <p className="truncate text-[12px] text-tertiary">{t('brand.subtitle')}</p>
-          </div>
-        </div>
+      <div className="flex items-start justify-between gap-2 border-b border-border-light px-4 py-4">
+        <Link
+          to="/app/dashboard"
+          onClick={onMobileClose}
+          className="flex min-w-0 flex-1 flex-col gap-1 rounded-xl py-0.5 text-left transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35"
+          aria-label={t('auth.homeAria')}
+        >
+          <AppLogo size="md" lockup className="min-w-0 w-full max-w-full" />
+          <p className="truncate pl-0.5 text-[12px] text-tertiary">{t('brand.subtitle')}</p>
+        </Link>
         <button
           type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-[12px] text-secondary transition-colors hover:bg-surface hover:text-primary lg:hidden"
+          className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] text-secondary transition-colors hover:bg-surface hover:text-primary lg:hidden"
           aria-label={t('nav.closeMenu')}
           onClick={onMobileClose}
         >
@@ -93,7 +94,7 @@ function SidebarContent({ onMobileClose }) {
           <NavItem to="/app/dashboard" icon={Home} label={t('nav.dashboard')} onNavigate={onMobileClose} end />
           <NavItem
             to="/app/benefits"
-            icon={Zap}
+            icon={LayoutGrid}
             label={t('nav.schemesOpportunities')}
             onNavigate={onMobileClose}
             matchPrefixes={['/app/benefits', '/app/opportunities']}

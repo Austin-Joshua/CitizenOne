@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 
-const BASE = 'Citizen One';
+const BASE = 'CitizenOne';
 
 export function useDocumentTitle(segment) {
   useEffect(() => {
-    const title = segment ? `${segment} · ${BASE}` : BASE;
+    const s = segment != null ? String(segment).trim() : '';
+    const title =
+      !s || s === BASE || s === 'Citizen One' ? BASE : `${s} · ${BASE}`;
     document.title = title;
     return () => {
       document.title = BASE;

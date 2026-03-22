@@ -85,7 +85,7 @@ const TopBar = ({ onMobileMenuClick }) => {
 
   return (
     <header className="sticky top-0 z-30 shrink-0 border-b border-border-light bg-base/90 backdrop-blur-md supports-[backdrop-filter]:bg-base/75">
-      <div className="mx-auto flex h-16 min-h-16 max-w-[1440px] items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:gap-6 lg:px-[72px] xl:px-20">
+      <div className="mx-auto flex h-[4.75rem] min-h-[4.75rem] max-w-[1440px] items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:gap-6 lg:px-[72px] xl:px-20">
       <div className="flex min-w-0 shrink-0 items-center gap-3">
         <button
           type="button"
@@ -98,10 +98,10 @@ const TopBar = ({ onMobileMenuClick }) => {
 
         <Link
           to="/app/dashboard"
-          className="hidden min-w-0 md:flex"
-          aria-label={t('nav.dashboard')}
+          className="flex min-w-0 max-w-[min(100%,min(90vw,28rem))] items-center sm:max-w-[min(100%,36rem)] md:max-w-[min(100%,42rem)] lg:max-w-none"
+          aria-label={t('auth.homeAria')}
         >
-          <AppLogo size="sm" title={t('brand.short')} subtitle={t('brand.tagline')} />
+          <AppLogo size="lg" lockup />
         </Link>
       </div>
 

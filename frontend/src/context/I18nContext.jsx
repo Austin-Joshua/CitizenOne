@@ -6,6 +6,7 @@ import taRaw from '../i18n/locales/ta.json';
 import teRaw from '../i18n/locales/te.json';
 import mlRaw from '../i18n/locales/ml.json';
 import knRaw from '../i18n/locales/kn.json';
+import landingPagePatches from '../i18n/landingPagePatches.json';
 
 const STORAGE_KEY = 'citizenone-locale';
 
@@ -57,7 +58,12 @@ export function I18nProvider({ children }) {
   const messages = useMemo(() => {
     const base = CATALOG.en;
     if (locale === 'en') return base;
-    return deepMergeLocale(base, CATALOG[locale] || {});
+    let merged = deepMergeLocale(base, CATALOG[locale] || {});
+    const landingPatch = landingPagePatches[locale];
+    if (landingPatch && typeof landingPatch === 'object') {
+      merged = deepMergeLocale(merged, { landing: landingPatch });
+    }
+    return merged;
   }, [locale]);
 
   const setLocale = useCallback((code) => {

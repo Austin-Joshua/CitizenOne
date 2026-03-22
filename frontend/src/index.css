@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Full-viewport shells (public + app) without clipping wide in-app tables */
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
 @theme {
   --color-canvas: var(--canvas);
   --color-base: var(--base);
@@ -40,8 +46,8 @@
     --surface-elevated: hsl(0 0% 100%);
 
     --text-primary: hsl(220 40% 10%);
-    --text-secondary: hsl(220 10% 45%);
-    --text-tertiary: hsl(220 10% 52%);
+    --text-secondary: hsl(220 12% 36%);
+    --text-tertiary: hsl(220 10% 44%);
 
     --accent-primary: hsl(161 72% 39%);
     --accent-hover: hsl(161 72% 44%);
@@ -76,6 +82,17 @@
       0 24px 48px hsl(220 40% 10% / 0.1);
 
     --shadow-liquid: 0 12px 40px hsl(161 72% 39% / 0.14);
+
+    /* CIVIQ-style public shell (landing / auth) — matches github.com/Austin-Joshua/CIVIQ globals */
+    --pub-landing-from: hsl(210 40% 98%);
+    --pub-landing-to: hsl(161 72% 95%);
+    --pub-nav-bg: hsl(0 0% 100% / 0.72);
+    --pub-panel-bg: hsl(0 0% 100%);
+    --pub-input-bg: hsl(220 15% 96%);
+    --pub-visual-from: hsl(161 72% 39%);
+    --pub-visual-to: hsl(161 72% 20%);
+    --pub-card-bg: hsl(0 0% 100%);
+    --pub-card-border: hsl(220 14% 88%);
   }
 
   .dark {
@@ -85,8 +102,8 @@
     --surface-elevated: hsl(222 47% 10%);
 
     --text-primary: hsl(210 40% 98%);
-    --text-secondary: hsl(215 20% 65%);
-    --text-tertiary: hsl(215 16% 55%);
+    --text-secondary: hsl(215 16% 74%);
+    --text-tertiary: hsl(215 12% 62%);
 
     --accent-primary: hsl(161 72% 45%);
     --accent-hover: hsl(161 72% 52%);
@@ -115,6 +132,16 @@
     --shadow-liquid:
       0 10px 36px hsl(0 0% 0% / 0.55),
       inset 0 1px 0 hsl(210 40% 98% / 0.04);
+
+    --pub-landing-from: hsl(222 47% 2%);
+    --pub-landing-to: hsl(222 47% 5%);
+    --pub-nav-bg: hsl(222 47% 3% / 0.82);
+    --pub-panel-bg: hsl(222 47% 7%);
+    --pub-input-bg: hsl(222 47% 10%);
+    --pub-visual-from: hsl(161 72% 15%);
+    --pub-visual-to: hsl(161 94% 8%);
+    --pub-card-bg: hsl(222 47% 6%);
+    --pub-card-border: hsl(217 28% 18%);
   }
 
   body {
@@ -314,5 +341,102 @@
 
   .dark .app-card-elevated {
     box-shadow: var(--shadow-md);
+  }
+
+  .font-outfit {
+    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  }
+
+  .pub-page-gradient {
+    background: linear-gradient(to bottom, var(--pub-landing-from), var(--pub-landing-to));
+  }
+
+  .bg-pub-nav {
+    background-color: var(--pub-nav-bg);
+  }
+
+  .bg-pub-panel {
+    background-color: var(--pub-panel-bg);
+  }
+
+  .bg-pub-input {
+    background-color: var(--pub-input-bg);
+  }
+
+  .pub-auth-visual-bg {
+    background: linear-gradient(to bottom right, var(--pub-visual-from), var(--pub-visual-to));
+  }
+
+  .animate-civiq-pulse-slow {
+    animation: civiq-pulse-slow 6s ease-in-out infinite;
+  }
+
+  .shadow-pub-3xl {
+    box-shadow:
+      0 25px 50px -12px rgb(15 23 42 / 0.15),
+      0 0 0 1px rgb(15 23 42 / 0.04);
+  }
+
+  .dark .shadow-pub-3xl {
+    box-shadow:
+      0 25px 50px -12px rgb(0 0 0 / 0.55),
+      0 0 0 1px rgb(255 255 255 / 0.08);
+  }
+
+  /* Landing / marketing cards: stronger figure–ground separation in both themes */
+  .pub-marketing-card {
+    border-color: var(--pub-card-border);
+    background-color: var(--pub-card-bg);
+  }
+
+  .dark .text-gradient-pub-hero {
+    background-image: linear-gradient(to right, hsl(160 72% 56%), hsl(172 55% 74%), hsl(158 72% 58%));
+  }
+
+  .text-gradient-pub-hero {
+    background-image: linear-gradient(to right, hsl(160 72% 42%), hsl(172 55% 58%), hsl(158 72% 44%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .shadow-pub-cta {
+    box-shadow: 0 25px 50px -12px hsl(161 72% 39% / 0.28);
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .auth-flip-enter {
+    animation: authFlipEnter 0.45s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+}
+
+@keyframes authFlipEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes civiq-pulse-slow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.52;
+    transform: scale(1.03);
   }
 }

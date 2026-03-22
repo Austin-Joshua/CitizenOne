@@ -27,6 +27,8 @@ export const ThemeProvider = ({ children }) => {
       root.classList.remove('dark');
     }
     localStorage.setItem('citizen-one-v2-theme', theme);
+    const meta = document.getElementById('citizen-theme-color');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0b1220' : '#0f766e');
   }, [theme]);
 
   const toggleTheme = () => {

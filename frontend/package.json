@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "depcheck": "depcheck"
+    "depcheck": "depcheck",
+    "brand:transparent-logo": "node scripts/transparent-logo-bg.mjs public/branding/citizen-one-logo.png",
+    "brand:transparent-logo:white": "node scripts/transparent-logo-bg.mjs public/branding/citizen-one-logo.png --white"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
@@ -25,11 +27,12 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@vitejs/plugin-react": "^6.0.1",
+    "depcheck": "^1.4.7",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
-    "depcheck": "^1.4.7",
     "globals": "^17.4.0",
+    "sharp": "^0.34.5",
     "vite": "^8.0.1"
   }
 }

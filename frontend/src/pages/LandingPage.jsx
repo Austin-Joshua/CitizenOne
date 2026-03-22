@@ -1,474 +1,322 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowRight,
-  Shield,
-  FileCheck,
-  Building2,
-  Lock,
-  CheckCircle2,
-  Sun,
-  Moon,
-  Menu,
-  X,
-} from 'lucide-react';
-import { Button, Card, cn } from '../components/ui';
+import { ArrowRight, Globe, CheckCircle2, Cpu, Fingerprint, Bot, Sun, Moon } from 'lucide-react';
+import { cn } from '../components/ui';
 import { AppLogo } from '../components/brand/AppLogo';
 import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../context/I18nContext';
 import LanguageToggle from '../components/inclusive/LanguageToggle';
 
-const fade = {
-  initial: { opacity: 0, y: 10 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-40px' },
-  transition: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-};
-
 export default function LandingPage() {
   const { t } = useI18n();
   const { theme, toggleTheme } = useTheme();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   useDocumentTitle(t('landing.documentTitle'));
 
   const scrollTo = useCallback((id) => {
-    setMobileOpen(false);
     requestAnimationFrame(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }, []);
 
-  const capabilities = useMemo(
+  const navItems = useMemo(
     () => [
-      { title: t('public.capSchemeTitle'), desc: t('public.capSchemeDesc'), icon: FileCheck },
-      { title: t('public.capSecureTitle'), desc: t('public.capSecureDesc'), icon: Shield },
-      { title: t('public.capServiceTitle'), desc: t('public.capServiceDesc'), icon: Building2 },
+      { id: 'landing-platform', label: t('landing.navPlatform') },
+      { id: 'landing-solutions', label: t('landing.navSolutions') },
+      { id: 'landing-vision', label: t('landing.navVision') },
+      { id: 'landing-network', label: t('landing.navNetwork') },
+    ],
+    [t]
+  );
+
+  const valueProps = useMemo(
+    () => [
+      { icon: Cpu, title: t('landing.replicaVal1Title'), desc: t('landing.replicaVal1Desc') },
+      { icon: Fingerprint, title: t('landing.replicaVal2Title'), desc: t('landing.replicaVal2Desc') },
+      { icon: Globe, title: t('landing.replicaVal3Title'), desc: t('landing.replicaVal3Desc') },
     ],
     [t]
   );
 
   const platformFeatures = useMemo(
     () => [
-      { title: t('landing.platformFeat1Title'), desc: t('landing.platformFeat1Desc') },
-      { title: t('landing.platformFeat2Title'), desc: t('landing.platformFeat2Desc') },
-      { title: t('landing.platformFeat3Title'), desc: t('landing.platformFeat3Desc') },
+      { title: t('landing.replicaFeat1Title'), desc: t('landing.replicaFeat1Desc') },
+      { title: t('landing.replicaFeat2Title'), desc: t('landing.replicaFeat2Desc') },
+      { title: t('landing.replicaFeat3Title'), desc: t('landing.replicaFeat3Desc') },
     ],
-    [t]
-  );
-
-  const trustItems = useMemo(
-    () => [t('public.trustSession'), t('public.trustA11y'), t('public.trustPlans')],
     [t]
   );
 
   const stats = useMemo(
     () => [
-      { label: t('landing.statSecure'), value: t('landing.statSecureValue') },
-      { label: t('landing.statRoles'), value: t('landing.statRolesValue') },
-      { label: t('landing.statLanguages'), value: t('landing.statLanguagesValue') },
-      { label: t('landing.statDesk'), value: t('landing.statDeskValue') },
-    ],
-    [t]
-  );
-
-  const navItems = useMemo(
-    () => [
-      { id: 'landing-hero', label: t('landing.navPlatform') },
-      { id: 'landing-capabilities', label: t('landing.navCapabilities') },
-      { id: 'landing-impact', label: t('landing.navImpact') },
-      { id: 'landing-trust', label: t('landing.navTrust') },
+      t('landing.replicaStat1'),
+      t('landing.replicaStat2'),
+      t('landing.replicaStat3'),
+      t('landing.replicaStat4'),
     ],
     [t]
   );
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-canvas text-primary">
-      <header className="sticky top-0 z-40 border-b border-border-light bg-base/85 backdrop-blur-md supports-[backdrop-filter]:bg-base/70">
-        <div className="mx-auto flex h-[4.25rem] max-w-[1440px] items-center gap-3 px-4 sm:px-6 lg:px-20">
-          <Link
-            to="/"
-            className="min-w-0 shrink-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/45"
-            onClick={() => setMobileOpen(false)}
-          >
-            <AppLogo size="sm" className="sm:hidden" title={t('brand.short')} subtitle={t('brand.tagline')} />
-            <span className="hidden sm:block">
-              <AppLogo size="md" title={t('brand.short')} subtitle={t('brand.tagline')} />
-            </span>
+    <div
+      className={cn(
+        'font-outfit min-h-dvh min-h-screen overflow-x-hidden text-primary transition-colors duration-300 selection:bg-accent-primary/30',
+        'pub-page-gradient'
+      )}
+    >
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div className="animate-civiq-pulse-slow absolute -left-1/4 top-0 h-[min(1000px,220vw)] w-[min(1000px,220vw)] rounded-full bg-accent-primary/10 blur-[150px] dark:bg-accent-primary/15" />
+        <div
+          className="animate-civiq-pulse-slow absolute -right-1/4 bottom-0 h-[min(1000px,220vw)] w-[min(1000px,220vw)] rounded-full bg-teal-500/10 blur-[200px] dark:bg-teal-500/10"
+          style={{ animationDelay: '2s' }}
+        />
+      </div>
+
+      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-border-light bg-pub-nav backdrop-blur-2xl transition-colors duration-300 dark:border-white/5">
+        <div className="mx-auto flex h-[5.25rem] max-w-7xl items-center gap-2 px-4 sm:h-24 sm:gap-3 sm:px-6">
+          <Link to="/" className="flex shrink-0 items-center py-0.5 sm:py-1">
+            <CitizenOneLogo className="h-10 w-auto max-h-12 max-w-[min(100%,min(640px,86vw))] object-contain object-left sm:h-16 sm:max-h-[4.25rem] md:h-[4.25rem] md:max-h-[4.5rem] lg:h-[4.5rem] lg:max-h-20 xl:max-w-[min(100%,720px)]" />
           </Link>
 
-          <nav
-            className="mx-auto hidden min-w-0 flex-1 justify-center gap-1 lg:flex"
+          <div
+            className="scrollbar-none min-w-0 flex-1 overflow-x-auto"
+            role="navigation"
             aria-label={t('landing.menuLabel')}
           >
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => scrollTo(item.id)}
-                className="rounded-lg px-3 py-2 text-[13px] font-medium text-secondary transition-colors hover:bg-surface hover:text-primary"
-              >
-                {item.label}
-              </button>
-            ))}
-          </nav>
+            <ul className="flex h-[5.25rem] min-w-max items-center justify-center gap-4 px-1 sm:h-24 sm:gap-6 md:gap-8 lg:gap-10">
+              {navItems.map((item) => (
+                <li key={item.id} className="shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => scrollTo(item.id)}
+                    className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.2em] text-tertiary transition-colors hover:text-accent-primary"
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <LanguageToggle />
             <button
               type="button"
               onClick={toggleTheme}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border-light bg-base/80 text-secondary backdrop-blur transition-all hover:scale-105 hover:text-accent-primary dark:border-white/10 dark:bg-base/60"
               aria-label={theme === 'dark' ? t('topbar.themeToLight') : t('topbar.themeToDark')}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border-light bg-surface text-secondary transition-colors hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft/45"
             >
-              <span className="relative flex h-[18px] w-[18px] items-center justify-center">
-                <Sun
-                  size={17}
-                  className={cn(
-                    'absolute transition-opacity duration-150',
-                    theme === 'dark' ? 'opacity-0' : 'opacity-100'
-                  )}
-                  aria-hidden
-                />
-                <Moon
-                  size={17}
-                  className={cn(
-                    'absolute transition-opacity duration-150',
-                    theme === 'dark' ? 'opacity-100' : 'opacity-0'
-                  )}
-                  aria-hidden
-                />
-              </span>
+              {theme === 'dark' ? <Sun className="h-5 w-5" aria-hidden /> : <Moon className="h-5 w-5" aria-hidden />}
             </button>
-
-            <div className="hidden items-center gap-2 sm:flex">
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  {t('public.login')}
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button size="sm">{t('public.getStarted')}</Button>
-              </Link>
-            </div>
-
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-border-light bg-surface text-primary lg:hidden"
-              aria-expanded={mobileOpen}
-              aria-controls="landing-mobile-panel"
-              aria-label={mobileOpen ? t('landing.menuClose') : t('landing.menuOpen')}
-              onClick={() => setMobileOpen((o) => !o)}
+            <Link
+              to="/login"
+              className="whitespace-nowrap px-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary transition-colors hover:text-accent-primary sm:px-3 sm:text-xs md:text-sm"
             >
-              {mobileOpen ? <X size={20} strokeWidth={2} aria-hidden /> : <Menu size={20} strokeWidth={2} aria-hidden />}
-            </button>
+              {t('public.login')}
+            </Link>
+            <Link
+              to="/signup"
+              className="whitespace-nowrap rounded-xl border border-accent-primary/20 bg-accent-primary px-3 py-2 text-[10px] font-bold text-white shadow-lg shadow-accent-primary/25 transition-all active:scale-95 sm:px-4 sm:text-xs md:text-sm"
+            >
+              {t('public.getStarted')}
+            </Link>
           </div>
         </div>
-      </header>
+      </nav>
 
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            <motion.button
+      <main className="relative z-10 pt-40 sm:pt-44 lg:pt-48">
+        <section className="mx-auto mb-24 max-w-7xl px-4 text-center sm:mb-32 sm:px-6 lg:mb-60">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-accent-primary/20 bg-accent-primary/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-accent-primary dark:text-accent-primary">
+            <Bot className="h-3.5 w-3.5 fill-current" aria-hidden />
+            {t('landing.replicaEyebrow')}
+          </div>
+          <h1 className="mb-8 text-5xl font-black leading-[0.88] tracking-tighter text-primary min-[400px]:text-6xl sm:mb-10 sm:text-7xl md:text-8xl md:leading-[0.85] lg:text-[min(9rem,11vw)]">
+            <span className="block">{t('landing.replicaHeroL1')}</span>
+            <span className="block">{t('landing.replicaHeroL2')}</span>
+            <span className="text-gradient-pub-hero block">{t('landing.replicaHeroL3')}</span>
+          </h1>
+          <p className="mx-auto mb-12 max-w-3xl text-base font-medium leading-relaxed text-secondary sm:mb-16 sm:text-xl md:text-2xl">
+            {t('landing.replicaHeroDeck')}
+          </p>
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+            <Link
+              to="/signup"
+              className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-primary px-10 py-5 text-lg font-black text-white shadow-2xl transition-all hover:scale-105 active:scale-95 dark:bg-white dark:text-primary sm:w-auto sm:px-12 sm:py-6 sm:text-xl"
+            >
+              {t('landing.replicaPrimaryCta')}
+              <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" aria-hidden />
+            </Link>
+            <button
               type="button"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="fixed inset-0 z-40 bg-[#0f172a]/45 backdrop-blur-[2px] dark:bg-[#020617]/60 lg:hidden"
-              aria-label={t('landing.menuClose')}
-              onClick={() => setMobileOpen(false)}
-            />
-            <motion.div
-              id="landing-mobile-panel"
-              role="dialog"
-              aria-modal="true"
-              aria-label={t('landing.menuLabel')}
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed bottom-0 right-0 top-0 z-50 flex w-[min(100vw-3rem,20rem)] flex-col border-l border-border-light bg-base shadow-elevated-lg lg:hidden"
+              onClick={() => scrollTo('landing-solutions')}
+              className="w-full rounded-2xl border border-border-light bg-base/70 px-10 py-5 text-lg font-bold text-primary transition-all hover:border-border-light hover:bg-base dark:border-white/10 dark:bg-base/50 dark:text-primary dark:hover:border-white/20 sm:w-auto sm:px-12 sm:py-6 sm:text-xl"
             >
-              <div className="flex items-center justify-between border-b border-border-light px-4 py-4">
-                <span className="text-sm font-semibold text-primary">{t('brand.short')}</span>
-                <button
-                  type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-secondary hover:bg-surface"
-                  aria-label={t('landing.menuClose')}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <X size={18} strokeWidth={2} aria-hidden />
-                </button>
-              </div>
-              <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3" aria-label={t('landing.menuLabel')}>
-                {navItems.map((item, i) => (
-                  <motion.button
-                    key={item.id}
-                    type="button"
-                    custom={i}
-                    {...navFade}
-                    initial="initial"
-                    animate="animate"
-                    transition={{ ...navFade.transition, delay: 0.04 + i * 0.05 }}
-                    onClick={() => scrollTo(item.id)}
-                    className="rounded-xl px-3 py-3 text-left text-[15px] font-medium text-primary transition-colors hover:bg-surface"
-                  >
-                    {item.label}
-                  </motion.button>
-                ))}
-              </nav>
-              <div className="border-t border-border-light p-4 space-y-2">
-                <Link to="/login" className="block" onClick={() => setMobileOpen(false)}>
-                  <Button variant="secondary" className="w-full">
-                    {t('public.login')}
-                  </Button>
-                </Link>
-                <Link to="/signup" className="block" onClick={() => setMobileOpen(false)}>
-                  <Button className="w-full">{t('public.getStarted')}</Button>
-                </Link>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              {t('landing.replicaSecondaryCta')}
+            </button>
+          </div>
+        </section>
 
-      <main className="mx-auto max-w-[1440px] px-4 pb-20 pt-8 sm:px-6 lg:px-20 lg:pb-28 lg:pt-12">
-        <div className="mx-auto max-w-[1280px]">
-          <section id="landing-hero" className="grid gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-16">
-            <div className="space-y-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-primary">{t('landing.heroEyebrow')}</p>
-              <h1 className="text-[2rem] font-semibold leading-[1.12] tracking-tight text-primary sm:text-[2.35rem] lg:text-[2.75rem]">
-                <span className="block">{t('landing.heroLine1')}</span>
-                <span className="block">{t('landing.heroLine2')}</span>
-                <span className="block text-accent-primary">{t('landing.heroLine3')}</span>
-              </h1>
-              <p className="max-w-xl text-[15px] leading-relaxed text-secondary sm:text-lg">{t('landing.heroDeck')}</p>
-              <div className="flex flex-wrap gap-2">
-                <Button type="button" variant="secondary" size="sm" onClick={() => scrollTo('landing-capabilities')}>
-                  {t('landing.quickExplore')}
-                </Button>
-                <Button type="button" variant="secondary" size="sm" onClick={() => scrollTo('landing-impact')}>
-                  {t('landing.quickDesk')}
-                </Button>
-                <Button type="button" variant="secondary" size="sm" onClick={() => scrollTo('landing-trust')}>
-                  {t('landing.quickRoadmap')}
-                </Button>
+        <section id="landing-platform" className="mx-auto mb-24 max-w-7xl scroll-mt-24 px-4 sm:mb-32 sm:px-6 lg:mb-60">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+            {valueProps.map((item, i) => (
+              <div
+                key={i}
+                className="group pub-marketing-card rounded-[2rem] border p-8 shadow-xl transition-all hover:-translate-y-2 hover:border-accent-primary/30 hover:shadow-2xl sm:p-10 md:rounded-[2.5rem]"
+              >
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-primary/10 text-accent-primary transition-all group-hover:bg-accent-primary group-hover:text-white">
+                  <item.icon className="h-7 w-7" aria-hidden />
+                </div>
+                <h3 className="mb-3 text-xl font-black tracking-tight text-primary sm:text-2xl">{item.title}</h3>
+                <p className="font-medium leading-relaxed text-secondary">{item.desc}</p>
               </div>
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <Link to="/signup">
-                  <Button>
-                    {t('landing.register')} <ArrowRight className="ml-1.5 h-4 w-4" strokeWidth={2} aria-hidden />
-                  </Button>
-                </Link>
-                <Link to="/login">
-                  <Button variant="secondary">{t('landing.signInAlt')}</Button>
-                </Link>
-              </div>
-              <p className="text-sm text-secondary">{t('public.trustLine')}</p>
-              <ul className="flex flex-col gap-2 text-[13px] text-secondary sm:flex-row sm:flex-wrap sm:gap-x-6">
-                {trustItems.map((item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-semantic-success" strokeWidth={2} aria-hidden />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            ))}
+          </div>
+        </section>
 
-            <Card elevated className="!p-5 sm:!p-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-tertiary">{t('landing.atAGlance')}</p>
-              <ul className="mt-5 space-y-4 text-sm text-secondary">
-                <li className="flex gap-3">
-                  <Lock className="mt-0.5 h-4 w-4 shrink-0 text-accent-primary" strokeWidth={2} aria-hidden />
-                  <span>{t('landing.glanceAuth')}</span>
-                </li>
-                <li className="flex gap-3">
-                  <FileCheck className="mt-0.5 h-4 w-4 shrink-0 text-accent-primary" strokeWidth={2} aria-hidden />
-                  <span>{t('landing.glanceBenefits')}</span>
-                </li>
-                <li className="flex gap-3">
-                  <Shield className="mt-0.5 h-4 w-4 shrink-0 text-accent-primary" strokeWidth={2} aria-hidden />
-                  <span>{t('landing.glancePremium')}</span>
-                </li>
-              </ul>
-            </Card>
-          </section>
-
-          <section id="landing-capabilities" className="mt-20 scroll-mt-28 lg:mt-28">
-            <motion.p {...fade} className="text-[11px] font-semibold uppercase tracking-[0.12em] text-tertiary">
-              {t('landing.capabilitiesLabel')}
-            </motion.p>
-            <motion.h2 {...fade} className="ds-section-title mt-2 max-w-3xl">
-              {t('landing.capabilitiesHeading')}
-            </motion.h2>
-            <motion.p {...fade} className="ds-body mt-3 max-w-3xl">
-              {t('landing.capabilitiesSub')}
-            </motion.p>
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-              {capabilities.map((c) => (
-                <motion.div key={c.title} {...fade}>
-                  <Card elevated className="!h-full !p-6 transition-[box-shadow,transform] duration-200 hover:shadow-elevated-md">
-                    <c.icon className="h-7 w-7 text-accent-primary" strokeWidth={2} aria-hidden />
-                    <h3 className="mt-5 text-lg font-medium leading-snug text-primary">{c.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-secondary">{c.desc}</p>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          <section id="landing-platform" className="mt-20 scroll-mt-28 lg:mt-28">
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-end lg:gap-16">
+        <section
+          id="landing-solutions"
+          className="scroll-mt-28 border-y border-border-light py-16 dark:border-white/5 sm:scroll-mt-32 sm:py-24 lg:py-40"
+        >
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24 xl:gap-32">
               <div>
-                <motion.p {...fade} className="text-[11px] font-semibold uppercase tracking-[0.12em] text-tertiary">
-                  {t('landing.platformKicker')}
-                </motion.p>
-                <motion.h2 {...fade} className="mt-2 text-[1.65rem] font-semibold leading-tight tracking-tight text-primary sm:text-3xl lg:text-[2.125rem]">
-                  {t('landing.platformTitle')}
-                </motion.h2>
-                <motion.p {...fade} className="ds-body mt-4 max-w-xl">
-                  {t('landing.platformLead')}
-                </motion.p>
+                <h2 className="mb-8 text-4xl font-black leading-[0.9] tracking-tighter text-primary sm:text-5xl md:text-6xl">
+                  {t('landing.replicaPlatformKicker')} <br />
+                  <span className="text-accent-primary">{t('landing.replicaPlatformAccent')}</span>
+                </h2>
+                <div className="space-y-8 sm:space-y-10">
+                  {platformFeatures.map((item, i) => (
+                    <div key={i} className="group flex gap-6 sm:gap-8">
+                      <div className="h-14 w-1.5 shrink-0 rounded-full bg-accent-primary/20 transition-colors group-hover:bg-accent-primary sm:h-16" />
+                      <div className="min-w-0">
+                        <h4 className="mb-2 text-lg font-black text-primary sm:text-xl">{item.title}</h4>
+                        <p className="text-base font-medium leading-relaxed text-secondary sm:text-lg">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-6">
-                {platformFeatures.map((f, i) => (
-                  <motion.div key={f.title} {...fade} transition={{ ...fade.transition, delay: i * 0.06 }}>
-                    <h4 className="text-[13px] font-semibold uppercase tracking-[0.08em] text-accent-primary">{f.title}</h4>
-                    <p className="mt-2 text-[15px] leading-relaxed text-secondary">{f.desc}</p>
-                  </motion.div>
-                ))}
+              <div
+                id="landing-vision"
+                className="relative pub-marketing-card scroll-mt-28 space-y-8 rounded-[2rem] border p-8 shadow-xl sm:scroll-mt-32 sm:rounded-[3rem] sm:p-10 lg:p-12"
+              >
+                <div className="absolute right-0 top-0 h-48 w-48 rounded-full bg-accent-primary/10 blur-[100px]" aria-hidden />
+                <div className="relative space-y-5 sm:space-y-6">
+                  {stats.map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 text-lg font-black tracking-tight text-accent-primary sm:gap-4 sm:text-xl">
+                      <CheckCircle2 className="h-6 w-6 shrink-0" aria-hidden />
+                      <span className="text-left">{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="relative border-t border-border-light pt-8 dark:border-white/5">
+                  <p className="mb-4 text-xs font-bold uppercase tracking-widest text-tertiary">
+                    {t('landing.replicaTrustedBy')}
+                  </p>
+                  <div className="flex gap-3 opacity-40 sm:gap-4">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="h-10 w-10 rounded-xl bg-secondary/30 dark:bg-white/10 sm:h-12 sm:w-12" />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section id="landing-impact" className="mt-20 scroll-mt-28 lg:mt-28">
-            <motion.h2 {...fade} className="ds-section-title">
-              {t('landing.impactHeading')}
-            </motion.h2>
-            <motion.p {...fade} className="ds-body mt-2 max-w-2xl">
-              {t('landing.impactLead')}
-            </motion.p>
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-5">
-              {stats.map((s) => (
-                <motion.div key={s.label} {...fade}>
-                  <Card className="!p-4 text-center sm:!p-5">
-                    <p className="text-xl font-semibold tracking-tight text-primary sm:text-2xl">{s.value}</p>
-                    <p className="mt-1.5 text-[11px] font-medium uppercase tracking-wide text-secondary sm:text-xs">{s.label}</p>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-            <motion.p {...fade} className="mt-8 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-tertiary">
-              {t('landing.trustRibbon')}
-            </motion.p>
-          </section>
+        <section id="landing-network" className="scroll-mt-28 px-4 py-16 text-center sm:scroll-mt-32 sm:py-24 lg:py-40">
+          <h2 className="mb-8 text-4xl font-black leading-none tracking-tighter text-primary sm:mb-12 sm:text-6xl md:text-7xl lg:text-8xl">
+            {t('landing.replicaCtaTitle')}{' '}
+            <span className="text-accent-primary">{t('landing.replicaCtaAccent')}</span>
+          </h2>
+          <p className="mx-auto mb-12 max-w-2xl text-base font-medium text-secondary sm:mb-16 sm:text-xl">
+            {t('landing.replicaCtaBody')}
+          </p>
+          <Link
+            to="/signup"
+            className="inline-flex rounded-[2rem] bg-accent-primary px-10 py-6 text-xl font-black text-white shadow-pub-cta transition-all hover:scale-105 hover:bg-accent-hover active:scale-95 sm:px-16 sm:py-8 sm:text-2xl"
+          >
+            {t('landing.replicaCtaButton')}
+          </Link>
+        </section>
 
-          <section id="landing-trust" className="mt-20 scroll-mt-28 lg:mt-28">
-            <motion.h2 {...fade} className="ds-section-title">
-              {t('landing.trustHeading')}
-            </motion.h2>
-            <motion.p {...fade} className="ds-body mt-3 max-w-3xl">
-              {t('public.dpiBody')}
-            </motion.p>
-            <motion.div {...fade} className="mt-8 rounded-2xl border border-border-light bg-surface/80 p-6 backdrop-blur-sm lg:p-8">
-              <h3 className="ds-card-title">{t('public.dpiHeading')}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-secondary">{t('public.footerTrust')}</p>
-              <p className="mt-3 text-sm leading-relaxed text-secondary">{t('public.footerPrivacy')}</p>
-            </motion.div>
-          </section>
-
-          <section id="landing-cta" className="mt-20 scroll-mt-28 lg:mt-28">
-            <motion.div
-              {...fade}
-              className="rounded-2xl border border-border-light bg-accent-primary/[0.07] px-6 py-12 text-center lg:px-16 lg:py-14"
-            >
-              <h2 className="text-xl font-semibold text-primary sm:text-2xl lg:text-[1.75rem]">{t('landing.ctaBandTitle')}</h2>
-              <p className="mx-auto mt-3 max-w-lg text-sm text-secondary sm:text-[15px]">{t('landing.ctaBandBody')}</p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
-                <Link to="/signup">
-                  <Button className="w-full min-w-[12rem] sm:w-auto">{t('public.getStarted')}</Button>
-                </Link>
-                <Link to="/login">
-                  <Button variant="secondary" className="w-full min-w-[12rem] sm:w-auto">
-                    {t('public.login')}
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-          </section>
-
-          <footer className="mt-20 border-t border-border-light pt-12 lg:mt-24 lg:pt-16">
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="lg:col-span-2">
-                <p className="text-lg font-semibold text-primary">{t('landing.footerBrand')}</p>
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-secondary">{t('landing.footerBlurb')}</p>
+        <footer className="border-t border-border-light bg-base/60 py-16 dark:border-white/5 dark:bg-base/50 sm:py-24 lg:py-32">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="mb-12 grid grid-cols-1 gap-12 text-center md:mb-20 md:grid-cols-4 md:gap-16 md:text-left">
+              <div className="md:col-span-2">
+                <div className="mb-6 flex justify-center md:justify-start">
+                  <AppLogo size="lg" lockup className="w-full max-w-2xl md:max-w-3xl" />
+                </div>
+                <p className="mx-auto max-w-sm font-medium leading-relaxed text-secondary md:mx-0">{t('landing.footerBlurb')}</p>
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-tertiary">{t('landing.footerColPlatform')}</p>
-                <ul className="mt-4 space-y-2 text-sm">
+                <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-primary">{t('landing.footerColPlatform')}</h4>
+                <ul className="space-y-3 text-sm font-bold text-secondary">
                   <li>
-                    <button
-                      type="button"
-                      onClick={() => scrollTo('landing-hero')}
-                      className="text-secondary transition-colors hover:text-primary"
-                    >
+                    <button type="button" onClick={() => scrollTo('landing-platform')} className="hover:text-accent-primary">
                       {t('landing.footerLinkOverview')}
                     </button>
                   </li>
                   <li>
-                    <button
-                      type="button"
-                      onClick={() => scrollTo('landing-capabilities')}
-                      className="text-secondary transition-colors hover:text-primary"
-                    >
-                      {t('landing.footerLinkCapabilities')}
+                    <button type="button" onClick={() => scrollTo('landing-solutions')} className="hover:text-accent-primary">
+                      {t('landing.navSolutions')}
                     </button>
                   </li>
                   <li>
-                    <button
-                      type="button"
-                      onClick={() => scrollTo('landing-impact')}
-                      className="text-secondary transition-colors hover:text-primary"
-                    >
-                      {t('landing.footerLinkImpact')}
-                    </button>
+                    <Link to="/signup" className="hover:text-accent-primary">
+                      {t('landing.footerLinkRoadmap')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/signup" className="hover:text-accent-primary">
+                      {t('landing.footerLinkIntegrations')}
+                    </Link>
                   </li>
                 </ul>
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-tertiary">{t('landing.footerColCompany')}</p>
-                <ul className="mt-4 space-y-2 text-sm">
+                <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-primary">{t('landing.footerColSolutions')}</h4>
+                <ul className="space-y-3 text-sm font-bold text-secondary">
                   <li>
-                    <Link to="/signup" className="text-secondary transition-colors hover:text-primary">
-                      {t('landing.footerLinkSignup')}
+                    <button type="button" onClick={() => scrollTo('landing-platform')} className="hover:text-accent-primary">
+                      {t('landing.footerLinkAbout')}
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" onClick={() => scrollTo('landing-solutions')} className="hover:text-accent-primary">
+                      {t('landing.footerLinkSustainability')}
+                    </button>
+                  </li>
+                  <li>
+                    <Link to="/signup" className="hover:text-accent-primary">
+                      {t('landing.footerLinkContact')}
                     </Link>
                   </li>
                   <li>
-                    <Link to="/login" className="text-secondary transition-colors hover:text-primary">
-                      {t('landing.footerLinkLogin')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/login/recovery" className="text-secondary transition-colors hover:text-primary">
-                      {t('landing.footerLinkRecovery')}
+                    <Link to="/login" className="hover:text-accent-primary">
+                      {t('landing.footerLinkPortalLogin')}
                     </Link>
                   </li>
                 </ul>
               </div>
             </div>
-            <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border-light pt-8 text-[13px] text-secondary sm:flex-row">
-              <p>{t('landing.footerDemo')}</p>
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-                <span className="cursor-default">{t('landing.footerLegalPrivacy')}</span>
-                <span className="cursor-default">{t('landing.footerLegalSafety')}</span>
-                <span className="cursor-default">{t('landing.footerLegalNotice')}</span>
+            <div className="flex flex-col items-center justify-between gap-8 border-t border-border-light pt-10 opacity-80 dark:border-white/5 dark:opacity-50 md:flex-row md:pt-16">
+              <p className="text-center text-[10px] font-bold uppercase tracking-widest text-tertiary md:text-left">{t('landing.footerDemo')}</p>
+              <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-tertiary sm:gap-10">
+                <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-accent-primary">
+                  {t('landing.footerLegalPrivacy')}
+                </button>
+                <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-accent-primary">
+                  {t('landing.footerLegalSafety')}
+                </button>
+                <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-accent-primary">
+                  {t('landing.footerLegalNotice')}
+                </button>
               </div>
             </div>
-          </footer>
-        </div>
+          </div>
+        </footer>
       </main>
     </div>
   );

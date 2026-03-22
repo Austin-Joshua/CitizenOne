@@ -11,7 +11,7 @@ import {
   FileText,
   CheckCircle2,
   Bell,
-  Zap,
+  LayoutGrid,
   FolderOpen,
   Inbox,
 } from 'lucide-react';
@@ -263,7 +263,7 @@ const DashboardPage = () => {
                 to="/app/benefits"
                 className="flex items-center gap-3 rounded-xl border border-border-light px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-surface"
               >
-                <Zap className="h-4 w-4 text-accent-primary" aria-hidden />
+                <LayoutGrid className="h-4 w-4 text-accent-primary" aria-hidden />
                 {t('dashboardPage.quickActionSchemes')}
               </Link>
               <Link

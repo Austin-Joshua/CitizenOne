@@ -13,9 +13,9 @@ export default function PublicLayout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-canvas text-primary">
+    <div className="min-h-dvh min-h-screen overflow-x-hidden bg-canvas text-primary">
       <AnimatePresence mode="wait">
-        <motion.div key={location.pathname} {...fade} className="min-h-screen">
+        <motion.div key={location.pathname} {...fade} className="min-h-dvh min-h-screen overflow-x-hidden">
           <Outlet />
         </motion.div>
       </AnimatePresence>
