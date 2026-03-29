@@ -1,0 +1,516 @@
+@import "tailwindcss";
+
+/* Full-viewport shells (public + app) without clipping wide in-app tables */
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@theme {
+  --color-canvas: var(--canvas);
+  --color-base: var(--base);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-tertiary: var(--text-tertiary);
+
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-tertiary: var(--accent-tertiary);
+  --color-border-light: var(--border-light);
+  --color-glass-base: var(--glass-base);
+  --color-glass-stroke: var(--glass-stroke);
+
+  --color-semantic-success: var(--semantic-success);
+  --color-semantic-success-muted: var(--semantic-success-muted);
+  --color-semantic-warning: var(--semantic-warning);
+  --color-semantic-warning-muted: var(--semantic-warning-muted);
+  --color-semantic-error: var(--semantic-error);
+  --color-semantic-error-muted: var(--semantic-error-muted);
+}
+
+@layer base {
+  /*
+   * Surface / accent HSL values aligned with CIVIQ globals.css
+   * (github.com/Austin-Joshua/CIVIQ — :root / .dark); names stay Citizen One–specific.
+   */
+  :root {
+    --radius-shell: 1.25rem;
+
+    --canvas: hsl(180 20% 98%);
+    --base: hsl(0 0% 100%);
+    --surface: hsl(161 20% 96%);
+    --surface-elevated: hsl(0 0% 100%);
+
+    --text-primary: hsl(220 40% 10%);
+    --text-secondary: hsl(220 12% 36%);
+    --text-tertiary: hsl(220 10% 44%);
+
+    --accent-primary: hsl(161 72% 39%);
+    --accent-hover: hsl(161 72% 44%);
+    --accent-soft: hsl(161 55% 48%);
+    --accent-secondary: hsl(161 72% 44%);
+    --accent-tertiary: hsl(161 55% 48%);
+
+    --border-light: hsl(220 15% 92%);
+
+    --semantic-success: hsl(142 76% 31%);
+    --semantic-success-muted: hsl(142 76% 31% / 0.12);
+    --semantic-warning: hsl(32 95% 44%);
+    --semantic-warning-muted: hsl(32 95% 44% / 0.12);
+    --semantic-error: hsl(0 84% 60%);
+    --semantic-error-muted: hsl(0 84% 60% / 0.12);
+
+    --glass-base: hsl(0 0% 100% / 0.72);
+    --glass-stroke: hsl(220 15% 92% / 0.65);
+
+    --shadow-xs: 0 1px 2px hsl(220 40% 10% / 0.045);
+    --shadow-sm:
+      0 1px 2px hsl(220 40% 10% / 0.04),
+      0 1px 3px hsl(220 40% 10% / 0.06);
+    --shadow-md:
+      0 2px 6px hsl(220 40% 10% / 0.04),
+      0 4px 16px hsl(220 40% 10% / 0.07);
+    --shadow-lg:
+      0 4px 12px hsl(220 40% 10% / 0.06),
+      0 12px 28px hsl(220 40% 10% / 0.09);
+    --shadow-xl:
+      0 8px 20px hsl(220 40% 10% / 0.08),
+      0 24px 48px hsl(220 40% 10% / 0.1);
+
+    --shadow-liquid: 0 12px 40px hsl(161 72% 39% / 0.14);
+
+    /* CIVIQ-style public shell (landing / auth) — matches github.com/Austin-Joshua/CIVIQ globals */
+    --pub-landing-from: hsl(210 40% 98%);
+    --pub-landing-to: hsl(161 72% 95%);
+    --pub-nav-bg: hsl(0 0% 100% / 0.72);
+    --pub-panel-bg: hsl(0 0% 100%);
+    --pub-input-bg: hsl(220 15% 96%);
+    --pub-visual-from: hsl(161 72% 39%);
+    --pub-visual-to: hsl(161 72% 20%);
+    --pub-card-bg: hsl(0 0% 100%);
+    --pub-card-border: hsl(220 14% 88%);
+    --pub-auth-footer-bg: hsl(220 18% 92%);
+    --pub-auth-footer-border: hsl(220 14% 78%);
+    --pub-landing-footer-bg: hsl(220 22% 93%);
+    --pub-landing-footer-border: hsl(220 14% 82%);
+  }
+
+  .dark {
+    --canvas: hsl(222 47% 2%);
+    --base: hsl(222 47% 4%);
+    --surface: hsl(217 33% 8%);
+    --surface-elevated: hsl(222 47% 10%);
+
+    --text-primary: hsl(210 40% 98%);
+    --text-secondary: hsl(215 16% 74%);
+    --text-tertiary: hsl(215 12% 62%);
+
+    --accent-primary: hsl(161 72% 45%);
+    --accent-hover: hsl(161 72% 52%);
+    --accent-soft: hsl(161 60% 58%);
+    --accent-secondary: hsl(161 72% 52%);
+    --accent-tertiary: hsl(161 60% 58%);
+
+    --border-light: hsl(217 33% 12%);
+
+    --semantic-success: hsl(152 69% 55%);
+    --semantic-success-muted: hsl(152 69% 55% / 0.14);
+    --semantic-warning: hsl(43 96% 65%);
+    --semantic-warning-muted: hsl(43 96% 65% / 0.14);
+    --semantic-error: hsl(0 91% 71%);
+    --semantic-error-muted: hsl(0 91% 71% / 0.14);
+
+    --glass-base: hsl(222 47% 4% / 0.78);
+    --glass-stroke: hsl(210 40% 98% / 0.1);
+
+    --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.4);
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.45), 0 2px 8px hsl(0 0% 0% / 0.35);
+    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.45), 0 8px 24px hsl(0 0% 0% / 0.35);
+    --shadow-lg: 0 8px 24px hsl(0 0% 0% / 0.5), 0 16px 40px hsl(0 0% 0% / 0.4);
+    --shadow-xl: 0 12px 32px hsl(0 0% 0% / 0.55), 0 24px 56px hsl(0 0% 0% / 0.45);
+
+    --shadow-liquid:
+      0 10px 36px hsl(0 0% 0% / 0.55),
+      inset 0 1px 0 hsl(210 40% 98% / 0.04);
+
+    --pub-landing-from: hsl(222 47% 2%);
+    --pub-landing-to: hsl(222 47% 5%);
+    --pub-nav-bg: hsl(222 47% 3% / 0.82);
+    --pub-panel-bg: hsl(222 47% 7%);
+    --pub-input-bg: hsl(222 47% 10%);
+    --pub-visual-from: hsl(161 72% 15%);
+    --pub-visual-to: hsl(161 94% 8%);
+    --pub-card-bg: hsl(222 47% 6%);
+    --pub-card-border: hsl(217 28% 18%);
+    --pub-auth-footer-bg: hsl(222 34% 14%);
+    --pub-auth-footer-border: hsl(217 22% 24%);
+  }
+
+  body {
+    @apply bg-canvas text-primary antialiased selection:bg-accent-soft/15 selection:text-primary;
+    font-family:
+      'Inter',
+      'Noto Sans Devanagari',
+      'Noto Sans Tamil',
+      'Noto Sans Telugu',
+      'Noto Sans Malayalam',
+      'Noto Sans Kannada',
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
+    font-size: 15px;
+    line-height: 1.625;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  h1 {
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    color: var(--text-primary);
+  }
+
+  h2,
+  h3 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+  }
+
+  html[data-easy-mode] body {
+    font-size: 1.125rem;
+    line-height: 1.65;
+  }
+
+  html[data-easy-mode] {
+    --text-primary: #0c1222;
+    --text-secondary: #334155;
+    --border-light: #cbd5e1;
+  }
+
+  html[data-easy-mode].dark {
+    --text-primary: #f9fafb;
+    --text-secondary: #e5e7eb;
+    --border-light: #4b5563;
+  }
+
+  html[data-connectivity-lite] .backdrop-blur-md,
+  html[data-connectivity-lite] .backdrop-blur-xl,
+  html[data-connectivity-lite] .backdrop-blur-\[1px\] {
+    backdrop-filter: none;
+  }
+
+  html[data-connectivity-lite] .glass-panel,
+  html[data-connectivity-lite] .glass-elevated {
+    backdrop-filter: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-soft);
+    outline-offset: 2px;
+  }
+
+  html.theme-switching body {
+    transition: background-color 0.22s ease, color 0.18s ease;
+  }
+
+  .a11y-large-text body {
+    font-size: 17px;
+    line-height: 1.62;
+  }
+
+  .a11y-high-contrast {
+    --text-primary: #0a0f18;
+    --text-secondary: #1e293b;
+    --border-light: #94a3b8;
+    --canvas: #ffffff;
+  }
+
+  .a11y-high-contrast.dark {
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+    --border-light: #9ca3af;
+    --canvas: #000000;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .app-main-canvas {
+    background-color: var(--canvas);
+  }
+
+  .app-sidebar-surface {
+    @apply border-r border-border-light bg-base;
+  }
+
+  .shadow-xs {
+    box-shadow: var(--shadow-xs);
+  }
+
+  .shadow-elevated-sm {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shadow-elevated-md {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-elevated-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-elevated-xl {
+    box-shadow: var(--shadow-xl);
+  }
+
+  .app-card {
+    @apply border border-border-light bg-base;
+    border-radius: var(--radius-shell);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .app-card-elevated {
+    @apply border border-border-light bg-base;
+    border-radius: var(--radius-shell);
+    box-shadow: var(--shadow-md);
+  }
+
+  .glass-panel {
+    background-color: color-mix(in srgb, var(--glass-base) 88%, transparent);
+    @apply relative overflow-hidden border backdrop-blur-md;
+    border-radius: var(--radius-shell);
+    border-color: color-mix(in srgb, var(--glass-stroke) 70%, var(--border-light));
+    box-shadow: var(--shadow-sm);
+  }
+
+  .glass-elevated {
+    background-color: color-mix(in srgb, var(--glass-base) 92%, transparent);
+    @apply relative overflow-hidden border backdrop-blur-md;
+    border-radius: var(--radius-shell);
+    border-color: color-mix(in srgb, var(--glass-stroke) 75%, var(--border-light));
+    box-shadow: var(--shadow-md);
+  }
+
+  .glass-button {
+    @apply rounded-xl border border-border-light bg-surface text-primary font-medium transition-[background-color,box-shadow,border-color] duration-150 hover:bg-base;
+  }
+
+  .glass-button:hover {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .ds-page-title {
+    @apply text-[1.75rem] font-black leading-tight tracking-tighter text-primary sm:text-[1.875rem] lg:text-[2rem];
+  }
+
+  .ds-section-title {
+    @apply text-xl font-bold leading-snug tracking-tight text-primary sm:text-[1.375rem];
+  }
+
+  .ds-card-title {
+    @apply text-base font-bold leading-snug text-primary sm:text-[1.0625rem];
+  }
+
+  .ds-body {
+    @apply text-[15px] font-normal leading-relaxed text-secondary;
+  }
+
+  .ds-caption {
+    @apply text-[13px] font-medium leading-snug text-tertiary sm:text-xs;
+  }
+
+  .dark .glass-panel,
+  .dark .glass-elevated {
+    box-shadow: var(--shadow-md);
+  }
+
+  .dark .app-card {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .dark .app-card-elevated {
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Match body Indic coverage; Outfit/Inter alone can drop Noto and confuse rendering for hi/ta/ml/kn/te. */
+  .font-outfit {
+    font-family:
+      'Outfit',
+      'Inter',
+      'Noto Sans Devanagari',
+      'Noto Sans Tamil',
+      'Noto Sans Telugu',
+      'Noto Sans Malayalam',
+      'Noto Sans Kannada',
+      system-ui,
+      sans-serif;
+  }
+
+  /** Theme body copy — use instead of `text-secondary` next to `text-sm`/`text-base` (tailwind-merge can drop one). */
+  .pub-text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .pub-page-gradient {
+    background: linear-gradient(to bottom, var(--pub-landing-from), var(--pub-landing-to));
+  }
+
+  .bg-pub-nav {
+    background-color: var(--pub-nav-bg);
+  }
+
+  .bg-pub-panel {
+    background-color: var(--pub-panel-bg);
+  }
+
+  .bg-pub-input {
+    background-color: var(--pub-input-bg);
+  }
+
+  .pub-auth-visual-bg {
+    background: linear-gradient(to bottom right, var(--pub-visual-from), var(--pub-visual-to));
+  }
+
+  /** Band below the auth card: distinct from page gradient and form panel in light & dark */
+  .pub-auth-page-footer {
+    background-color: var(--pub-auth-footer-bg);
+    border: 1px solid var(--pub-auth-footer-border);
+    color: var(--text-primary);
+  }
+
+  .pub-auth-footer-muted {
+    color: var(--text-tertiary);
+  }
+
+  .pub-auth-footer-enter {
+    animation: pubAuthFooterEnter 0.42s cubic-bezier(0.23, 1, 0.32, 1) 0.06s both;
+  }
+
+  .pub-landing-footer {
+    background-color: var(--pub-landing-footer-bg);
+    border-top: 1px solid var(--pub-landing-footer-border);
+  }
+
+  .animate-civiq-pulse-slow {
+    animation: civiq-pulse-slow 6s ease-in-out infinite;
+  }
+
+  .shadow-pub-3xl {
+    box-shadow:
+      0 25px 50px -12px rgb(15 23 42 / 0.15),
+      0 0 0 1px rgb(15 23 42 / 0.04);
+  }
+
+  .dark .shadow-pub-3xl {
+    box-shadow:
+      0 25px 50px -12px rgb(0 0 0 / 0.55),
+      0 0 0 1px rgb(255 255 255 / 0.08);
+  }
+
+  /* Landing / marketing cards: stronger figure–ground separation in both themes */
+  .pub-marketing-card {
+    border-color: var(--pub-card-border);
+    background-color: var(--pub-card-bg);
+  }
+
+  .dark .text-gradient-pub-hero {
+    background-image: linear-gradient(to right, hsl(160 72% 56%), hsl(172 55% 74%), hsl(158 72% 58%));
+  }
+
+  .text-gradient-pub-hero {
+    background-image: linear-gradient(to right, hsl(160 72% 42%), hsl(172 55% 58%), hsl(158 72% 44%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /**
+   * Brand wordmark (Citizen / One): page-level `text-primary` must not override these.
+   */
+  .co-brand-citizen {
+    color: #0a0a0a;
+  }
+  .dark .co-brand-citizen {
+    color: #fafafa;
+  }
+  .co-brand-one {
+    color: #00aeef;
+  }
+  .dark .co-brand-one {
+    color: #22d3ee;
+  }
+  .co-brand-wordmark--onDark .co-brand-citizen {
+    color: #ffffff;
+  }
+  .co-brand-wordmark--onDark .co-brand-one {
+    color: #a5f3fc;
+  }
+
+  .shadow-pub-cta {
+    box-shadow: 0 25px 50px -12px hsl(161 72% 39% / 0.28);
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .auth-flip-enter {
+    animation: authFlipEnter 0.45s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+}
+
+@keyframes authFlipEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pubAuthFooterEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes civiq-pulse-slow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.52;
+    transform: scale(1.03);
+  }
+}

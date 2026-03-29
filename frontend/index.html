@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" id="citizen-theme-color" content="#0f766e" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('citizen-one-v2-theme');
+          var root = document.documentElement;
+          var meta = document.getElementById('citizen-theme-color');
+          if (t === 'dark') {
+            root.classList.add('dark');
+            root.style.colorScheme = 'dark';
+            if (meta) meta.setAttribute('content', '#0b1220');
+          } else {
+            root.classList.remove('dark');
+            root.style.colorScheme = 'light';
+            if (meta) meta.setAttribute('content', '#0f766e');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Tab / PWA: same Favicon.png as React (`CitizenOneLogo`); wordmark is text in the UI. -->
+    <link rel="icon" type="image/png" href="/Favicon.png" />
+    <link rel="apple-touch-icon" href="/Favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Citizen One — digital workspace for scheme discovery, documents, and service requests." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..900;1,14..32,400..900&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Telugu:wght@400;600;700&family=Noto+Sans+Malayalam:wght@400;600;700&family=Noto+Sans+Kannada:wght@400;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <title>CitizenOne</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

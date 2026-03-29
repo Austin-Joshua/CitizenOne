@@ -1,0 +1,38 @@
+[
+  {
+    "id": "free",
+    "name": "Free",
+    "priceMonthly": 0,
+    "currency": "USD",
+    "features": [
+      "Command center & activity",
+      "Benefit discovery & scheme guidance",
+      "Service requests & document vault",
+      "Standard notifications"
+    ]
+  },
+  {
+    "id": "premium",
+    "name": "Premium",
+    "priceMonthly": 29,
+    "currency": "USD",
+    "features": [
+      "Advanced recommendations & career tools",
+      "Priority notification handling",
+      "Extended analytics views",
+      "Organisation-ready controls"
+    ]
+  },
+  {
+    "id": "institutional",
+    "name": "Institutional",
+    "priceMonthly": null,
+    "currency": "USD",
+    "features": [
+      "Volume licensing & SSO (on request)",
+      "Dedicated support & onboarding",
+      "Custom integrations with government systems",
+      "No restriction on citizen-facing welfare discovery"
+    ]
+  }
+]

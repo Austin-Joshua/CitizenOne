@@ -1,0 +1,20 @@
+# Dependencies & build
+node_modules/
+dist/
+dist-ssr/
+
+# Local user store (seed from users.example.json on first API read; e2e/signups stay private)
+backend/src/data/users.json
+
+# Env & secrets (keep .env.example tracked)
+backend/.env
+*.local
+
+# Test / e2e artifacts
+test-results/
+playwright-report/
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
