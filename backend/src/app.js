@@ -112,7 +112,6 @@ app.get('/ready', async (req, res) => {
   } else {
     checks.push({ name: 'mongodb', ok: true, detail: 'disabled' });
   }
-
   const redisUrl = String(process.env.REDIS_URL || '').trim();
   if (redisUrl) {
     const t0 = Date.now();
@@ -128,6 +127,15 @@ app.get('/ready', async (req, res) => {
     } catch {
       checks.push({ name: 'redis', ok: false, latencyMs: Date.now() - t0 });
     }
+  }
+
+  // AgriFlux Integration Check
+  const tAgri = Date.now();
+  try {
+    const agriRes = await fetch('https://agriflux-backend.onrender.com/health', { signal: AbortSignal.timeout(3000) });
+    checks.push({ name: 'agriflux', ok: agriRes.ok, latencyMs: Date.now() - tAgri });
+  } catch {
+    checks.push({ name: 'agriflux', ok: false, detail: 'timeout_or_offline', latencyMs: Date.now() - tAgri });
   }
 
   const allOk = checks.every((c) => c.ok);

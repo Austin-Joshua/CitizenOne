@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Button, Badge, cn } from '../../components/ui';
-import { Sprout, LineChart, Sun, Droplets, Calendar, ArrowRight, ShieldAlert } from 'lucide-react';
+import { Sprout, LineChart, Sun, Droplets, Calendar, ArrowRight, ShieldAlert, ExternalLink, RefreshCw } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
 
 const TABS = [
@@ -19,7 +19,7 @@ export const FarmerWorkspace = () => {
              <Sprout size={28} strokeWidth={2.5} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-primary">Farmer Support Hub</h3>
+            <h3 className="text-xl font-bold text-primary tracking-tight">Farmer Support Hub</h3>
             <p className="text-sm text-secondary mt-1">Connect your farm data to external platforms and predict yield profitability.</p>
           </div>
         </div>
@@ -33,10 +33,10 @@ export const FarmerWorkspace = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'flex items-center gap-2 whitespace-nowrap rounded-[10px] px-3 py-2 text-[13px] font-medium transition-colors border',
+                  'flex items-center gap-2 whitespace-nowrap rounded-[10px] px-3 py-2 text-[13px] font-medium transition-all duration-200 border',
                   isActive
-                    ? 'bg-green-600 border-green-600 text-white shadow-sm hover:opacity-90'
-                    : 'bg-surface border-border-light text-secondary hover:bg-base/50 hover:text-primary'
+                    ? 'bg-green-600 border-green-600 text-white shadow-md hover:shadow-green-600/20'
+                    : 'bg-surface border-border-light text-secondary hover:bg-base/50 hover:text-primary hover:border-border'
                 )}
               >
                 <Icon size={16} aria-hidden />
@@ -56,20 +56,25 @@ export const FarmerWorkspace = () => {
 const AgriFluxPanel = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchStats = async (silent = false) => {
+    if (!silent) setLoading(true);
+    else setIsRefreshing(true);
+    try {
+      const res = await apiFetch('/api/farmer/stats');
+      if (res.ok) {
+        setStats(await res.json());
+      }
+    } catch (err) {
+      console.error('Failed to fetch farmer stats:', err);
+    } finally {
+      setLoading(false);
+      setIsRefreshing(false);
+    }
+  };
 
   React.useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await apiFetch('/api/farmer/stats');
-        if (res.ok) {
-          setStats(await res.json());
-        }
-      } catch (err) {
-        console.error('Failed to fetch farmer stats:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchStats();
   }, []);
 
@@ -78,40 +83,55 @@ const AgriFluxPanel = () => {
   };
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
-      <Card elevated className="!p-6 flex flex-col justify-center items-center text-center">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-green-400 to-emerald-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-green-500/20">
+    <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+      <Card elevated className="!p-6 flex flex-col justify-center items-center text-center relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-emerald-500 to-green-600" />
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-green-500 to-emerald-600 text-white flex items-center justify-center mb-5 shadow-lg shadow-green-500/20 rotate-3 transition-transform hover:rotate-0">
           <Sprout size={32} />
         </div>
-        <h3 className="font-bold text-lg text-primary">AgriFlux Integration</h3>
+        <h3 className="font-bold text-xl text-primary mb-1">AgriFlux Connected</h3>
+        <p className="text-sm text-secondary mb-6 px-4">Your CitizenOne profile is synchronized with the AgriFlux ecosystem for real-time market data.</p>
         
         {loading ? (
-          <div className="animate-pulse space-y-2 mt-2 w-full">
-            <div className="h-4 bg-base rounded w-3/4 mx-auto"></div>
-            <div className="h-3 bg-base rounded w-1/2 mx-auto"></div>
+          <div className="animate-pulse space-y-3 mt-2 w-full max-w-xs">
+            <div className="h-10 bg-base rounded-xl"></div>
+            <div className="h-10 bg-base rounded-xl"></div>
           </div>
         ) : (
-          <div className="mt-2 mb-6 space-y-3 w-full">
-            <div className="p-3 bg-base rounded-xl border border-border-light flex justify-between items-center">
-              <span className="text-xs font-semibold text-secondary uppercase">Total Reports</span>
-              <span className="text-sm font-bold text-primary">{stats?.totalReports || '---'}</span>
+          <div className="mt-2 mb-6 space-y-3 w-full max-w-xs">
+            <div className="p-3 bg-gradient-to-r from-surface to-base/30 rounded-xl border border-border-light flex justify-between items-center transition-all hover:border-green-500/30">
+              <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">Total Reports</span>
+              <span className="text-sm font-black text-primary">{stats?.totalReports || '---'}</span>
             </div>
-            <div className="p-3 bg-base rounded-xl border border-border-light flex justify-between items-center">
-              <span className="text-xs font-semibold text-secondary uppercase">Recent Metrics</span>
-              <span className="text-sm font-bold text-primary truncate max-w-[120px]">{stats?.recentMetrics || '---'}</span>
+            <div className="p-3 bg-gradient-to-r from-surface to-base/30 rounded-xl border border-border-light flex justify-between items-center transition-all hover:border-green-500/30">
+              <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">Recent Metrics</span>
+              <span className="text-sm font-black text-primary truncate max-w-[120px]">{stats?.recentMetrics || '---'}</span>
             </div>
-            <Badge variant="outline" className="text-[10px] bg-green-500/5 text-green-600 border-green-500/20">
-              Status: {stats?.status || 'Syncing...'}
-            </Badge>
+            <div className="flex items-center justify-between px-1">
+              <Badge variant="outline" className="text-[9px] bg-green-500/5 text-green-600 border-green-500/20 px-2 py-0.5">
+                {stats?.status || 'Online'}
+              </Badge>
+              <span className="text-[10px] text-tertiary">Synced: {stats?.lastSync || 'Just now'}</span>
+            </div>
           </div>
         )}
 
-        <div className="flex flex-col gap-2 w-full">
-          <Button className="bg-green-600 hover:bg-green-700 text-white w-full">
-            Sync Fresh Data
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <Button 
+            className="group bg-green-600 hover:bg-green-700 text-white w-full h-11"
+            onClick={() => fetchStats(true)}
+            disabled={isRefreshing}
+          >
+            <RefreshCw size={16} className={cn("mr-2 transition-transform", isRefreshing && "animate-spin")} />
+            {isRefreshing ? 'Syncing...' : 'Sync Fresh Data'}
           </Button>
-          <Button variant="outline" onClick={handleExternalJump} className="border-green-600 text-green-600 hover:bg-green-600/5 w-full font-bold">
-            View Extra Large Reports
+          <Button 
+            variant="outline" 
+            onClick={handleExternalJump} 
+            className="border-green-600/30 text-green-700 hover:bg-green-600/10 hover:border-green-600 w-full h-11 font-bold group"
+          >
+            <span>View Extra Large Reports</span>
+            <ExternalLink size={14} className="ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </Button>
         </div>
       </Card>

@@ -49,42 +49,55 @@ router.get('/stats', auth, async (req, res, next) => {
     const email = req.user?.email || '';
     if (!email) return res.status(400).json({ error: 'missing_user_email' });
 
-    // Node 24 native fetch
-    const response = await fetch(`https://agriflux-backend.onrender.com/api/integration/farmer-stats/${email}`, {
-      method: 'GET',
-      headers: {
-        'X-Integration-Key': 'agriflux_default_integration_secret'
-      }
-    });
+    // Node 24 native fetch with 10s timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    if (!response.ok) {
-      // Return default mock data for demo consistency if the external platform is unreachable
-      return res.json({
-        totalReports: "---",
-        recentMetrics: "---",
-        status: "Sync Pending",
+    try {
+      const response = await fetch(`https://agriflux-backend.onrender.com/api/integration/farmer-stats/${email}`, {
+        method: 'GET',
+        headers: {
+          'X-Integration-Key': 'agriflux_default_integration_secret'
+        },
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn(`AgriFlux API returned status ${response.status} for user ${email}`);
+        return res.json({
+          totalReports: "---",
+          recentMetrics: "---",
+          status: "Sync Pending",
+          lastSync: new Date().toLocaleTimeString(),
+          source: 'AgriFlux Cloud'
+        });
+      }
+
+      const data = await response.json();
+      res.json({
+        totalReports: data.totalReports || "12",
+        recentMetrics: data.recentMetrics || "Low moisture",
+        status: "Synchronized",
         lastSync: new Date().toLocaleTimeString(),
         source: 'AgriFlux Cloud'
       });
+    } catch (fetchErr) {
+      if (fetchErr.name === 'AbortError') {
+        console.error('AgriFlux integration timeout');
+      } else {
+        console.error('AgriFlux integration fail:', fetchErr.message);
+      }
+      res.json({
+        totalReports: "---",
+        recentMetrics: "---",
+        status: "Timeout/Offline",
+        source: 'AgriFlux Cloud'
+      });
     }
-
-    const data = await response.json();
-    res.json({
-      totalReports: data.totalReports || "12",
-      recentMetrics: data.recentMetrics || "Low moisture",
-      status: "Synchronized",
-      lastSync: new Date().toLocaleTimeString(),
-      source: 'AgriFlux Cloud'
-    });
   } catch (err) {
-    console.error('AgriFlux integration fail:', err.message);
-    // Graceful fallback
-    res.json({
-      totalReports: "---",
-      recentMetrics: "---",
-      status: "Offline",
-      source: 'AgriFlux Cloud'
-    });
+    next(err);
   }
 });
 

@@ -682,6 +682,36 @@ const DashboardPage = () => {
         />
       )}
 
+      {/* ── FARMER QUICK HUB (Special Polishing) ───────────────────────── */}
+      {user?.role === 'farmer' && (
+        <motion.section variants={item}>
+          <Card elevated className="!p-4 bg-gradient-to-r from-green-600/5 to-emerald-600/5 border-l-4 border-green-500">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="p-2.5 bg-green-500/10 text-green-600 rounded-xl">
+                  <Sprout size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-primary">AgriFlux Integrated Hub</h3>
+                  <p className="text-sm text-secondary">Your agricultural dashboard is synchronized. Check your latest yield metrics.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-green-500/5 text-green-600 border-green-500/20 px-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 animate-pulse" />
+                  Live Sync
+                </Badge>
+                <Link to="/app/farmer">
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+                    Open Farmer Hub
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </Card>
+        </motion.section>
+      )}
+
       <motion.section variants={item} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
         {/* Applications card */}
         <MetricBlock
