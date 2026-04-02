@@ -165,10 +165,11 @@ export const AuthProvider = ({ children }) => {
     return data.user;
   };
 
-  const signup = async ({ name, email, password, role = 'citizen', plan = 'free', remember = true }) => {
+  const signup = async (form) => {
+    const { remember = true, ...rest } = form;
     const response = await apiFetch('/api/auth/signup', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password, role, plan }),
+      body: JSON.stringify(rest),
     });
 
     const data = await response.json().catch(() => ({}));

@@ -84,9 +84,13 @@ const signupValidators = [
     .withMessage('Name is required (max 120 characters)'),
   body('email').trim().isEmail().normalizeEmail().withMessage('Valid email is required'),
   body('password').isLength({ min: 8, max: 128 }).withMessage('Password must be 8–128 characters'),
-  body('role').optional().isIn(['citizen', 'student', 'organization']).withMessage('Invalid role'),
+  body('role').optional().isIn(['citizen', 'student', 'organization', 'farmer']).withMessage('Invalid role'),
   body('plan').optional().isIn(['free', 'premium']).withMessage('Invalid plan'),
+  body('phone').optional().trim().isLength({ max: 20 }),
+  body('farmName').optional().trim().isLength({ max: 120 }),
+  body('location').optional().trim().isLength({ max: 200 }),
 ];
+  
 
 const loginValidators = [
   body('email').trim().isEmail().normalizeEmail().withMessage('Valid email is required'),
@@ -128,7 +132,7 @@ router.post('/signup', signupLimiter, signupValidators, handleValidation, async 
       return res.status(409).json({ message: 'Email already in use' });
     }
 
-    const allowedRole = ['citizen', 'student', 'organization'].includes(String(role).toLowerCase())
+    const allowedRole = ['citizen', 'student', 'organization', 'farmer'].includes(String(role).toLowerCase())
       ? String(role).toLowerCase()
       : 'citizen';
     const allowedPlan = ['free', 'premium'].includes(plan) ? plan : 'free';
@@ -141,6 +145,9 @@ router.post('/signup', signupLimiter, signupValidators, handleValidation, async 
       password: hashed,
       role: allowedRole,
       plan: allowedPlan,
+      phone: req.body.phone || undefined,
+      farmName: req.body.farmName || undefined,
+      location: req.body.location || undefined,
       preferences: {
         largeText: false,
         highContrast: false,

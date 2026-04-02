@@ -24,6 +24,9 @@ const SignupPage = () => {
     role: 'citizen',
     plan: 'free',
     remember: true,
+    farmName: '',
+    phone: '',
+    location: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -160,7 +163,8 @@ const SignupPage = () => {
                       value={form.role}
                       onChange={(e) => onChange('role', e.target.value)}
                     >
-                      <option value="citizen">{t('auth.signup.roleCitizen')}</option>
+                      <option value="citizen">{t('auth.signup.roleCitizen', 'Citizen')}</option>
+                      <option value="farmer">{t('auth.signup.roleFarmer', 'Farmer (AgriFlux)')}</option>
                       <option value="student">{t('auth.signup.roleStudent')}</option>
                       <option value="organization">{t('auth.signup.roleOrg')}</option>
                     </select>
