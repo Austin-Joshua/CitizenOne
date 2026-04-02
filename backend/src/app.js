@@ -77,10 +77,29 @@ apiStack.use(apiRouter);
 app.use('/api', apiStack);
 app.use('/api/v1', apiStack);
 
+const cluster = require('cluster');
+const os = require('os');
+
+/**
+ * Handle uncaught exceptions and unhandled rejections globally 
+ * to prevent the entire process from crashing silently.
+ */
+process.on('uncaughtException', (err) => {
+  logger.error('💥 [CRITICAL ERROR] UNCAUGHT EXCEPTION', { message: err.message, stack: err.stack });
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  logger.error('🔥 [CRITICAL ERROR] UNHANDLED REJECTION', { message: err.message, stack: err.stack });
+  // Only exit the worker, primary will restart it
+  process.exit(1);
+});
+
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     service: 'citizen-one-api',
+    worker: process.pid,
     version: process.env.npm_package_version || '1.0.0',
   });
 });
@@ -175,16 +194,36 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-if (require.main === module) {
-  try {
-    assertProductionConfig();
-  } catch (e) {
-    console.error(e.message);
-    process.exit(1);
-  }
-  app.listen(PORT, () => {
-    logger.info('server_listening', { port: PORT });
-  });
+
+/**
+ * Cluster Deployment:
+ * Spawns a worker for every CPU core to handle high traffic and provide 
+ * automatic zero-downtime restarts.
+ */
+if (cluster.isPrimary && isProd) {
+    const numCPUs = os.cpus().length;
+    logger.info('cluster_primary_active', { pid: process.pid, workers: numCPUs });
+
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+
+    cluster.on('exit', (worker, code, signal) => {
+        logger.warn('cluster_worker_died', { pid: worker.process.pid, code, signal });
+        cluster.fork();
+    });
+} else {
+    if (require.main === module || !cluster.isPrimary) {
+        try {
+            assertProductionConfig();
+        } catch (e) {
+            console.error(e.message);
+            process.exit(1);
+        }
+        app.listen(PORT, () => {
+            logger.info('server_listening', { port: PORT, worker: process.pid });
+        });
+    }
 }
 
 module.exports = app;

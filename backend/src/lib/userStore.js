@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { isDatabaseEnabled } = require('./db/config');
+const { isDatabaseEnabled, isMongoEnabled } = require('./db/config');
 const { getPool } = require('./db/pool');
+const { getDb } = require('./db/mongoClient');
 
 const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
 const USERS_EXAMPLE = path.join(__dirname, '..', 'data', 'users.example.json');
@@ -37,7 +38,8 @@ function mapPgRowToUser(row) {
   return {
     id: row.id,
     email: row.email,
-    password: row.password_hash,
+    phone: row.phone, // Support AgriFlux phone field
+    password: row.password_hash || row.password,
     name: row.name,
     role: row.role,
     plan: row.plan,
@@ -73,6 +75,13 @@ function userToPgParams(u) {
 
 async function getUsers() {
   if (!isDatabaseEnabled()) return readUsersJson();
+  
+  if (isMongoEnabled()) {
+    const db = await getDb();
+    const rows = await db.collection('users').find({}).sort({ createdAt: 1 }).toArray();
+    return rows.map(mapPgRowToUser);
+  }
+
   const { rows } = await getPool().query(
     `SELECT id, email, password_hash, name, role, plan, preferences, scheme_profile,
             email_verified, mfa_enrolled, totp_secret, stripe_customer_id, institution_onboarding_status, webauthn_credentials
@@ -85,6 +94,13 @@ async function findUserById(id) {
   if (!isDatabaseEnabled()) {
     return readUsersJson().find((u) => u.id === id) || null;
   }
+  
+  if (isMongoEnabled()) {
+    const db = await getDb();
+    const row = await db.collection('users').findOne({ id: String(id) });
+    return mapPgRowToUser(row);
+  }
+
   const { rows } = await getPool().query(
     `SELECT id, email, password_hash, name, role, plan, preferences, scheme_profile,
             email_verified, mfa_enrolled, totp_secret, stripe_customer_id, institution_onboarding_status, webauthn_credentials
@@ -99,6 +115,13 @@ async function findUserByEmail(email) {
   if (!isDatabaseEnabled()) {
     return readUsersJson().find((u) => String(u.email).toLowerCase() === normalized) || null;
   }
+
+  if (isMongoEnabled()) {
+    const db = await getDb();
+    const row = await db.collection('users').findOne({ email: { $regex: new RegExp(`^${normalized}$`, 'i') } });
+    return mapPgRowToUser(row);
+  }
+
   const { rows } = await getPool().query(
     `SELECT id, email, password_hash, name, role, plan, preferences, scheme_profile,
             email_verified, mfa_enrolled, totp_secret, stripe_customer_id, institution_onboarding_status, webauthn_credentials
@@ -115,8 +138,28 @@ async function createUser(user) {
     writeUsersJson(users);
     return user;
   }
+
   const u = { ...user };
   if (!u.id) u.id = crypto.randomUUID();
+
+  if (isMongoEnabled()) {
+    const db = await getDb();
+    const toInsert = {
+        ...u,
+        password_hash: u.password, // Preserve password field name for compatibility
+        createdAt: new Date()
+    };
+    try {
+        await db.collection('users').insertOne(toInsert);
+    } catch (err) {
+        if (err.code === 11000) {
+            throw new Error('An account with this email already exists');
+        }
+        throw err;
+    }
+    return u;
+  }
+
   await getPool().query(
     `INSERT INTO users (id, email, password_hash, name, role, plan, preferences, scheme_profile, email_verified, mfa_enrolled, totp_secret, stripe_customer_id, institution_onboarding_status, webauthn_credentials)
      VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,$10,$11,$12,$13,$14::jsonb)`,
@@ -134,6 +177,20 @@ async function updateUser(id, patch) {
     writeUsersJson(users);
     return users[index];
   }
+
+  if (isMongoEnabled()) {
+    const db = await getDb();
+    const mongoPatch = { ...patch };
+    if (patch.password) mongoPatch.password_hash = patch.password;
+    mongoPatch.updatedAt = new Date();
+    
+    await db.collection('users').updateOne(
+        { id: String(id) },
+        { $set: mongoPatch }
+    );
+    return findUserById(id);
+  }
+
   const current = await findUserById(id);
   if (!current) return null;
   const next = { ...current, ...patch };
