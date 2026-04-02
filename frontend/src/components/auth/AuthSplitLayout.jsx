@@ -60,10 +60,10 @@ export function AuthSplitLayout({
           <div
             className={cn(
               'relative z-10 w-full overflow-hidden rounded-[1.75rem] border border-border-light bg-pub-panel shadow-pub-3xl dark:border-white/5 sm:rounded-[2.5rem]',
-              'lg:max-h-[min(720px,92dvh)]'
+              'lg:min-h-[720px]'
             )}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2 lg:min-h-[min(720px,92dvh)]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:min-h-[720px]">
               <div className="pub-auth-visual-bg relative hidden overflow-hidden lg:block">
                 <Link
                   to={backTo}
@@ -96,7 +96,7 @@ export function AuthSplitLayout({
 
               <div
                 className={cn(
-                  'flex min-h-0 max-h-[min(90dvh,840px)] flex-col overflow-hidden bg-pub-panel lg:max-h-none lg:min-h-[min(720px,92dvh)]',
+                  'flex flex-col bg-pub-panel',
                   'px-6 pt-6 sm:px-8 lg:px-12 lg:pt-12 xl:px-14 xl:pt-14',
                   footer ? 'pb-0' : 'pb-8 sm:pb-10 lg:pb-14'
                 )}

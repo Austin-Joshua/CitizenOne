@@ -94,19 +94,18 @@ const SignupPage = () => {
       footer={switchFooter}
     >
       <div className="mx-auto w-full min-w-0 max-w-md">
-        <div className="mb-5 lg:mb-7">
-          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-accent-primary">{t('auth.signup.eyebrow')}</p>
-          <h1 className="mb-3 text-3xl font-black tracking-tighter text-primary sm:text-4xl lg:text-[2.125rem] lg:leading-tight">
+        <div className="mb-4 lg:mb-6">
+          <p className="mb-1 text-[10px] font-black uppercase tracking-[0.28em] text-accent-primary">{t('auth.signup.eyebrow')}</p>
+          <h1 className="mb-2 text-2xl font-black tracking-tighter text-primary sm:text-3xl lg:text-[2rem] lg:leading-tight">
             {t('auth.signup.heading')}
           </h1>
           <div
             className={cn(
-              'space-y-2.5 rounded-xl border border-border-light/80 bg-pub-input/40 px-3.5 py-3 dark:border-white/10 sm:px-4 sm:py-3.5',
+              'space-y-1.5 rounded-xl border border-border-light/80 bg-pub-input/40 px-3.5 py-2.5 dark:border-white/10 sm:px-4',
               denseAuth && 'tracking-wide'
             )}
           >
-            <p className="pub-text-secondary text-sm font-medium leading-relaxed">{t('auth.signup.intro')}</p>
-            <p className="pub-text-secondary text-sm font-medium leading-relaxed">{t('auth.signup.introStaff')}</p>
+            <p className="pub-text-secondary text-xs sm:text-sm font-medium leading-relaxed">{t('auth.signup.intro')}</p>
           </div>
         </div>
 
