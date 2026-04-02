@@ -147,12 +147,15 @@ async function createUser(user) {
     const toInsert = {
         ...u,
         emailVerified: u.emailVerified !== undefined ? u.emailVerified : false,
-        password_hash: u.password, // Preserve password field name for compatibility
+        password: u.password,       // Modern AgriFlux compatibility
+        password_hash: u.password,  // Legacy CitizenOne compatibility
         createdAt: new Date()
     };
     try {
         await db.collection('users').insertOne(toInsert);
+        console.log(`[USERSTORE] Registered user ${u.email} in MongoDB.`);
     } catch (err) {
+        console.error('[USERSTORE] Registration failed for', u.email, err.message);
         if (err.code === 11000) {
             throw new Error('An account with this email already exists');
         }

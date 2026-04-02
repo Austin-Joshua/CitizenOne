@@ -95,8 +95,8 @@
     --pub-card-border: hsl(220 14% 88%);
     --pub-auth-footer-bg: hsl(220 18% 92%);
     --pub-auth-footer-border: hsl(220 14% 78%);
-    --pub-landing-footer-bg: hsl(220 22% 93%);
-    --pub-landing-footer-border: hsl(220 14% 82%);
+    --pub-landing-footer-bg: hsl(161 72% 98%); /* Subtle teal-tinted light background */
+    --pub-landing-footer-border: hsl(161 72% 39% / 0.12);
   }
 
   .dark {
@@ -148,6 +148,9 @@
     --pub-card-border: hsl(217 28% 18%);
     --pub-auth-footer-bg: hsl(222 34% 14%);
     --pub-auth-footer-border: hsl(217 22% 24%);
+
+    --pub-landing-footer-bg: hsl(217 33% 4%); /* Deep dark matching theme surface */
+    --pub-landing-footer-border: hsl(217 33% 12%);
   }
 
   body {
