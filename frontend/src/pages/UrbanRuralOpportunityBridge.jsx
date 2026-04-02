@@ -31,6 +31,7 @@ const MIGRATION_STEPS = [
   'Connect with local support groups.',
 ];
 
+export default function UrbanRuralOpportunityBridge() {
   const [village, setVillage] = useState('');
   const [city, setCity] = useState('Chennai');
   const [interest, setInterest] = useState('');

@@ -115,6 +115,11 @@ export const WORKSPACE_MODULES = {
       </Card>
     ),
   },
+  women: {
+    title: 'Women Empowerment Hub',
+    description: 'Dedicated resources, opportunities, safety tracking, and AI mentorship for women.',
+    body: null, // this gets replaced with dynamic content in WorkspaceViews.jsx
+  },
   assistant: {
     titleKey: 'modules.assistant.title',
     descriptionKey: 'modules.assistant.description',
@@ -239,6 +244,16 @@ export const WORKSPACE_MODULES = {
     titleKey: 'modules.sms.title',
     descriptionKey: 'modules.sms.description',
     Body: SmsWorkspaceBody,
+  },
+  student: {
+    title: 'Student Hub',
+    description: 'Exam roadmaps, foundation awareness, and AI career guidance.',
+    body: null, // Gets replaced in WorkspaceViews.jsx
+  },
+  farmer: {
+    title: 'Farmer Assistance',
+    description: 'AgriFlux integration, yield insights, and market predictions.',
+    body: null, // Gets replaced in WorkspaceViews.jsx
   },
   integrations: {
     title: 'Integration readiness',

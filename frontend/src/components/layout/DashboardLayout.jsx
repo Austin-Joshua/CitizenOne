@@ -64,7 +64,7 @@ const DashboardLayout = () => {
       >
         {t('common.skipToContent')}
       </a>
-      <div className="flex min-h-screen bg-canvas font-sans text-[15px] leading-relaxed antialiased">
+      <div className="flex h-screen overflow-hidden bg-canvas font-sans text-[15px] leading-relaxed antialiased">
         <Sidebar mobileOpen={mobileNavOpen} onMobileClose={() => setMobileNavOpen(false)} />
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">

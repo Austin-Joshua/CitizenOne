@@ -98,7 +98,7 @@ const TopBar = ({ onMobileMenuClick }) => {
 
         <Link
           to="/app/dashboard"
-          className="flex min-w-0 max-w-[min(100%,min(90vw,28rem))] items-center sm:max-w-[min(100%,36rem)] md:max-w-[min(100%,42rem)] lg:max-w-none"
+          className="flex min-w-0 max-w-[min(100%,min(90vw,28rem))] items-center sm:max-w-[min(100%,36rem)] md:max-w-[min(100%,42rem)] lg:hidden"
           aria-label={t('auth.homeAria')}
         >
           <AppLogo size="lg" />

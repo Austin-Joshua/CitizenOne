@@ -10,6 +10,7 @@ import { IntelligentGuidanceWorkspace } from './workspace/IntelligentGuidanceWor
 import { SettingsInclusionBody } from './workspace/InclusiveHubBodies';
 import { AlertsWorkspace } from './workspace/AlertsWorkspace';
 import { ProgressWorkspace } from './workspace/ProgressWorkspace';
+import { WomenWorkspace } from './workspace/WomenWorkspace';
 import { useI18n } from '../context/I18nContext';
 
 // Improved Bar Chart Component
@@ -259,16 +260,15 @@ const WorkspaceViews = ({ moduleKey }) => {
       );
     }
 
+    if (moduleKey === 'women') {
+      return <WomenWorkspace />;
+    }
+
     if (moduleKey === 'alerts') {
       return <AlertsWorkspace alertFeed={alertFeed} />;
     }
 
     if (moduleKey === 'vault') {
-      const [searchQuery, setSearchQuery] = useState('');
-      const [sortBy, setSortBy] = useState('date');
-      const [categoryFilter, setCategoryFilter] = useState('');
-      const [uploadProgress, setUploadProgress] = useState(0);
-      const [isDragOver, setIsDragOver] = useState(false);
 
       const categories = ['ID Proof', 'Education', 'Financial', 'Other'];
 
@@ -891,6 +891,28 @@ const WorkspaceViews = ({ moduleKey }) => {
 
     if (moduleKey === 'progress') {
       return <ProgressWorkspace applications={applications} activitySummary={activitySummary} />;
+    }
+
+    if (moduleKey === 'women') {
+      return <WomenWorkspace />;
+    }
+
+    if (moduleKey === 'student') {
+      const StudentWorkspace = React.lazy(() => import('./workspace/StudentWorkspace'));
+      return (
+        <React.Suspense fallback={<div className="p-8 text-center text-sm text-secondary">Loading Student Hub...</div>}>
+          <StudentWorkspace />
+        </React.Suspense>
+      );
+    }
+
+    if (moduleKey === 'farmer') {
+      const FarmerWorkspace = React.lazy(() => import('./workspace/FarmerWorkspace'));
+      return (
+        <React.Suspense fallback={<div className="p-8 text-center text-sm text-secondary">Loading Farmer Support...</div>}>
+          <FarmerWorkspace />
+        </React.Suspense>
+      );
     }
 
     if (moduleKey === 'assistant') {

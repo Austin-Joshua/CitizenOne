@@ -22,6 +22,9 @@ function createApiRouter() {
   router.use('/institutions', require('../../routes/institutions'));
   router.use('/billing', require('../../routes/billing'));
   router.use('/life-events', require('../../routes/lifeEvents'));
+  router.use('/women', require('../../routes/womenRoutes'));
+  router.use('/student', require('../../routes/studentRoutes'));
+  router.use('/farmer', require('../../routes/farmerRoutes'));
 
   return router;
 }

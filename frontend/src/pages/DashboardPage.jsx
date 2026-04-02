@@ -77,10 +77,10 @@ const INSIGHT_DOTS = {
 /**
  * insights: Array<{ label: string, variant: 'green'|'yellow'|'red'|'blue' }>
  */
-const MetricBlock = ({ title, value, icon: Icon, accent, insights = [] }) => {
+const MetricBlock = ({ title, value, icon: Icon, accent, insights = [], to }) => {
   const a = METRIC_ACCENTS[accent] || METRIC_ACCENTS.primary;
-  return (
-    <Card elevated className="flex flex-col gap-3 !p-4 sm:!p-4">
+  const content = (
+    <Card elevated className={cn("flex flex-col gap-3 !p-4 sm:!p-4 h-full", to && "hover:bg-surface/60 transition-colors")}>
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-[11px] font-semibold uppercase tracking-wide text-secondary">{title}</h3>
         <div className={cn('rounded-xl p-2 shrink-0', a.iconWrap)}>
@@ -106,6 +106,11 @@ const MetricBlock = ({ title, value, icon: Icon, accent, insights = [] }) => {
       )}
     </Card>
   );
+  
+  if (to) {
+    return <Link to={to} className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 rounded-2xl">{content}</Link>;
+  }
+  return content;
 };
 
 // ─── Helper: format a benefit estimate into a short ₹ string ───────────────
@@ -681,6 +686,7 @@ const DashboardPage = () => {
           value={String(summary.applications)}
           icon={TrendingUp}
           accent="primary"
+          to="/app/progress"
           insights={[
             ...(summary.pendingApplications > 0
               ? [{ label: `${summary.pendingApplications} pending approval`, variant: 'yellow' }]
@@ -702,6 +708,7 @@ const DashboardPage = () => {
           value={String(summary.documents)}
           icon={Award}
           accent="secondary"
+          to="/app/vault"
           insights={[
             ...(summary.verifiedDocuments > 0
               ? [{ label: `${summary.verifiedDocuments} verified`, variant: 'green' }]
@@ -720,6 +727,7 @@ const DashboardPage = () => {
           value={String(summary.completedTasks)}
           icon={CheckCircle2}
           accent="tertiary"
+          to="/app/progress"
           insights={[
             ...(summary.completedTasks > 0
               ? [{ label: `${summary.completedTasks} tasks done`, variant: 'green' }]
@@ -737,6 +745,7 @@ const DashboardPage = () => {
           )}
           icon={ClipboardList}
           accent="neutral"
+          to="/app/services"
           insights={isStaff
             ? [
                 summary.staffServiceQueueCount > 0

@@ -16,13 +16,14 @@ import {
   ClipboardList,
   LayoutGrid,
   Compass,
+  Heart,
 } from 'lucide-react';
 import { cn } from '../ui';
 import { AppLogo } from '../brand/AppLogo';
 import { useI18n } from '../../context/I18nContext';
 import { useAuth } from '../../context/AuthContext';
 
-const SIDEBAR_W = 'w-[280px]';
+const SIDEBAR_W = 'w-[65vw] sm:w-[280px] max-w-[280px]';
 
 function pathMatches(pathname, prefix) {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
@@ -67,14 +68,14 @@ function SidebarContent({ onMobileClose }) {
 
   return (
     <>
-      <div className="flex items-start justify-between gap-2 border-b border-border-light px-4 py-4">
+      <div className="flex items-start justify-end lg:justify-between gap-2 border-b border-border-light px-4 py-4">
         <Link
           to="/app/dashboard"
           onClick={onMobileClose}
-          className="flex min-w-0 flex-1 flex-col gap-1 rounded-xl py-0.5 text-left transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35"
+          className="hidden lg:flex min-w-0 flex-1 flex-col gap-1 rounded-xl py-0.5 text-left transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/35"
           aria-label={t('auth.homeAria')}
         >
-          <AppLogo size="md" className="min-w-0 w-full max-w-full" subtitle={t('brand.subtitle')} />
+          <AppLogo size="md" className="min-w-0 w-full max-w-full" />
         </Link>
         <button
           type="button"
@@ -87,11 +88,14 @@ function SidebarContent({ onMobileClose }) {
       </div>
 
       <nav
-        className="flex flex-1 flex-col gap-0 overflow-y-auto overflow-x-hidden px-3 py-5"
+        className="flex flex-1 flex-col gap-0 overflow-y-auto overflow-x-hidden scrollbar-none px-3 py-5"
         aria-label={t('nav.mainNavigation')}
       >
         <NavGroup title={t('nav.sectionPrimaryServices')}>
           <NavItem to="/app/dashboard" icon={Home} label={t('nav.dashboard')} onNavigate={onMobileClose} end />
+          <NavItem to="/app/women" icon={Heart} label="Women Empowerment" onNavigate={onMobileClose} />
+          <NavItem to="/app/student" icon={BookOpen} label="Student Hub" onNavigate={onMobileClose} />
+          <NavItem to="/app/farmer" icon={Sprout} label="Farmer Support" onNavigate={onMobileClose} />
           <NavItem
             to="/app/benefits"
             icon={LayoutGrid}
@@ -107,22 +111,7 @@ function SidebarContent({ onMobileClose }) {
             matchPrefixes={['/app/progress', '/app/services']}
           />
           <NavItem to="/app/alerts" icon={Bell} label={t('nav.notifications')} onNavigate={onMobileClose} />
-          <NavItem
-            to="/app/urban-rural-bridge"
-            icon={Map}
-            label="Urban–Rural Bridge"
-            onNavigate={onMobileClose}
-          />
-          <NavItem to="/app/bureaucracy-ai" icon={Bot} label="Bureaucracy Simplifier" onNavigate={onMobileClose} />
-        </NavGroup>
-
-        <div className="my-5 h-px shrink-0 bg-border-light" aria-hidden />
-
-        <NavGroup title={t('nav.sectionTools')}>
-          <NavItem to="/app/assistant" icon={Bot} label={t('nav.aiAssistant')} onNavigate={onMobileClose} />
-          <NavItem to="/app/life-events" icon={Compass} label="Life Events" onNavigate={onMobileClose} />
           <NavItem to="/app/vault" icon={FolderOpen} label={t('nav.documents')} onNavigate={onMobileClose} />
-          <NavItem to="/app/analytics" icon={LineChart} label={t('nav.insights')} onNavigate={onMobileClose} />
         </NavGroup>
 
         <div className="my-5 h-px shrink-0 bg-border-light" aria-hidden />
@@ -132,10 +121,6 @@ function SidebarContent({ onMobileClose }) {
           <NavItem to="/app/settings" icon={Settings} label={t('nav.settings')} onNavigate={onMobileClose} />
           <NavItem to="/app/support" icon={LifeBuoy} label={t('nav.support')} onNavigate={onMobileClose} />
         </NavGroup>
-
-        <div className="my-5 h-px shrink-0 bg-border-light" aria-hidden />
-
-        <NavItem to="/app/navigator" icon={Map} label={t('nav.moreServices')} onNavigate={onMobileClose} />
 
         {showAdmin && (
           <>
@@ -178,7 +163,7 @@ const Sidebar = ({ mobileOpen, onMobileClose }) => {
       {mobileOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-30 bg-[#0f172a]/40 backdrop-blur-[1px] dark:bg-[#020617]/55 lg:hidden"
+          className="fixed inset-0 z-30 bg-[#0f172a]/10 dark:bg-[#020617]/20 lg:hidden"
           aria-label={t('nav.closeMenu')}
           onClick={onMobileClose}
         />
