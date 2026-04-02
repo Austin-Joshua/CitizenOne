@@ -53,18 +53,70 @@ export const FarmerWorkspace = () => {
   );
 };
 
-const AgriFluxPanel = () => (
-  <div className="grid gap-6 md:grid-cols-2">
-     <Card elevated className="!p-6 flex flex-col justify-center items-center text-center">
+const AgriFluxPanel = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await apiFetch('/api/farmer/stats');
+        if (res.ok) {
+          setStats(await res.json());
+        }
+      } catch (err) {
+        console.error('Failed to fetch farmer stats:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const handleExternalJump = () => {
+    window.open('https://agri-flux-sandy.vercel.app/login?source=citizenone', '_blank');
+  };
+
+  return (
+    <div className="grid gap-6 md:grid-cols-2">
+      <Card elevated className="!p-6 flex flex-col justify-center items-center text-center">
         <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-green-400 to-emerald-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-green-500/20">
           <Sprout size={32} />
         </div>
-        <h3 className="font-bold text-lg text-primary">AgriFlux Integration Ready</h3>
-        <p className="text-sm text-secondary mt-2 mb-6">Seamlessly sync your CitizenOne agricultural profile with the AgriFlux marketplace to receive wholesale seed pricing, direct logistics bridging, and live crop updates.</p>
-        <Button className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto px-8">Connect AgriFlux Account</Button>
-     </Card>
+        <h3 className="font-bold text-lg text-primary">AgriFlux Integration</h3>
+        
+        {loading ? (
+          <div className="animate-pulse space-y-2 mt-2 w-full">
+            <div className="h-4 bg-base rounded w-3/4 mx-auto"></div>
+            <div className="h-3 bg-base rounded w-1/2 mx-auto"></div>
+          </div>
+        ) : (
+          <div className="mt-2 mb-6 space-y-3 w-full">
+            <div className="p-3 bg-base rounded-xl border border-border-light flex justify-between items-center">
+              <span className="text-xs font-semibold text-secondary uppercase">Total Reports</span>
+              <span className="text-sm font-bold text-primary">{stats?.totalReports || '---'}</span>
+            </div>
+            <div className="p-3 bg-base rounded-xl border border-border-light flex justify-between items-center">
+              <span className="text-xs font-semibold text-secondary uppercase">Recent Metrics</span>
+              <span className="text-sm font-bold text-primary truncate max-w-[120px]">{stats?.recentMetrics || '---'}</span>
+            </div>
+            <Badge variant="outline" className="text-[10px] bg-green-500/5 text-green-600 border-green-500/20">
+              Status: {stats?.status || 'Syncing...'}
+            </Badge>
+          </div>
+        )}
 
-     <div className="space-y-4">
+        <div className="flex flex-col gap-2 w-full">
+          <Button className="bg-green-600 hover:bg-green-700 text-white w-full">
+            Sync Fresh Data
+          </Button>
+          <Button variant="outline" onClick={handleExternalJump} className="border-green-600 text-green-600 hover:bg-green-600/5 w-full font-bold">
+            View Extra Large Reports
+          </Button>
+        </div>
+      </Card>
+
+      <div className="space-y-4">
         <h3 className="font-semibold text-primary text-sm uppercase tracking-wide">Sync Capabilities</h3>
         {[
           { icon: LineChart, label: 'Live Market Pricing Output', desc: 'AgriFlux broadcasts real-time mandi prices back to your terminal.' },
@@ -81,9 +133,10 @@ const AgriFluxPanel = () => (
             </div>
           </div>
         ))}
-     </div>
-  </div>
-);
+      </div>
+    </div>
+  );
+};
 
 const YieldInsights = () => {
   const [cost, setCost] = useState('');
