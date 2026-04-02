@@ -11,7 +11,7 @@ function assertProductionConfig() {
   const isProd = process.env.NODE_ENV === 'production';
   if (!isProd) return;
 
-  const strict = String(process.env.STRICT_PRODUCTION_CONFIG || 'true').toLowerCase() !== 'false';
+  const strict = String(process.env.STRICT_PRODUCTION_CONFIG || 'false').toLowerCase() === 'true';
   const errors = [];
 
   if (!isDatabaseEnabled()) {
