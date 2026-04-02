@@ -702,10 +702,20 @@ const DashboardPage = () => {
                   Live Sync
                 </Badge>
                 <Link to="/app/farmer">
-                  <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                    Open Farmer Hub
+                  <Button variant="outline" size="sm" className="bg-white/50 dark:bg-black/20 text-green-700 dark:text-green-400 border-green-500/20">
+                    Local Dashboard
                   </Button>
                 </Link>
+                <a 
+                  href={`https://agri-flux-sandy.vercel.app/login?source=citizenone&identifier=${encodeURIComponent(user?.email || '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/20">
+                    <Zap size={14} className="mr-2" />
+                    Detailed AgriFlux Report
+                  </Button>
+                </a>
               </div>
             </div>
           </Card>
