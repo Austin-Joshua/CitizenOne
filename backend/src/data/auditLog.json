@@ -1,5 +1,41 @@
 [
   {
+    "id": "aud-113-1775106841141",
+    "ts": "2026-04-02T05:14:01.141Z",
+    "actorId": "2",
+    "actorEmail": null,
+    "action": "auth.logout",
+    "resourceType": null,
+    "resourceId": null,
+    "outcome": "success",
+    "ip": "::1",
+    "detail": null
+  },
+  {
+    "id": "aud-112-1775106273038",
+    "ts": "2026-04-02T05:04:33.038Z",
+    "actorId": "1",
+    "actorEmail": "john@example.com",
+    "action": "auth.login",
+    "resourceType": null,
+    "resourceId": null,
+    "outcome": "success",
+    "ip": "::1",
+    "detail": null
+  },
+  {
+    "id": "aud-111-1775106128895",
+    "ts": "2026-04-02T05:02:08.895Z",
+    "actorId": "2",
+    "actorEmail": "admin@citizenone.gov",
+    "action": "auth.login",
+    "resourceType": null,
+    "resourceId": null,
+    "outcome": "success",
+    "ip": "::1",
+    "detail": null
+  },
+  {
     "id": "aud-110-1775102835882",
     "ts": "2026-04-02T04:07:15.882Z",
     "actorId": "2",

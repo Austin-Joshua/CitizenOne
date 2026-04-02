@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": "SR-1775106633211",
+    "userId": "anonymous",
+    "type": "Incident Report",
+    "description": "stalking and threats locally",
+    "priority": "HIGH",
+    "status": "Pending Investigation",
+    "createdAt": "2026-04-02T05:10:33.211Z"
+  }
+]

@@ -1,5 +1,17 @@
 [
   {
+    "userId": "system",
+    "message": "Analyzed College Placements",
+    "createdAt": "2026-04-02T05:07:40.200Z",
+    "id": "act-7-1775106460206"
+  },
+  {
+    "userId": "1",
+    "message": "Generated Yield Market Prediction",
+    "createdAt": "2026-04-02T05:06:09.503Z",
+    "id": "act-6-1775106369505"
+  },
+  {
     "id": "act-5-1774018208287",
     "userId": "1",
     "type": "application",
