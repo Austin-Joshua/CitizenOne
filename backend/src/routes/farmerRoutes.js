@@ -1,8 +1,11 @@
 const express = require('express');
-const { requireUser } = require('../middlewares/requireAuth');
-const router = express.Router();
+const { auth } = require('../middlewares/auth');
+const { ActivityRepository } = require('../infrastructure/persistence/ActivityRepository');
 
-router.post('/yield-insight', requireUser, async (req, res, next) => {
+const router = express.Router();
+const activityRepo = new ActivityRepository();
+
+router.post('/yield-insight', auth, async (req, res, next) => {
   try {
     const { inputs, totalCost } = req.body;
     if (!inputs || typeof totalCost !== 'number') {
@@ -22,6 +25,12 @@ router.post('/yield-insight', requireUser, async (req, res, next) => {
     } else {
       recommendation = 'Your expenditure looks optimal. Focus on soil moisture retention strategies for the upcoming dry phase to secure yield.';
     }
+
+    activityRepo.record({ 
+       userId: req.user?.id || 'system', 
+       message: 'Generated Yield Market Prediction', 
+       createdAt: new Date().toISOString() 
+    }).catch(console.error);
 
     res.json({
       projectedRevenue: projectedRevenue.toFixed(2),

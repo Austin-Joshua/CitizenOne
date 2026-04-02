@@ -11,6 +11,8 @@ import { SettingsInclusionBody } from './workspace/InclusiveHubBodies';
 import { AlertsWorkspace } from './workspace/AlertsWorkspace';
 import { ProgressWorkspace } from './workspace/ProgressWorkspace';
 import { WomenWorkspace } from './workspace/WomenWorkspace';
+import { FarmerWorkspace } from './workspace/FarmerWorkspace';
+import { StudentWorkspace } from './workspace/StudentWorkspace';
 import { useI18n } from '../context/I18nContext';
 
 // Improved Bar Chart Component
@@ -262,6 +264,14 @@ const WorkspaceViews = ({ moduleKey }) => {
 
     if (moduleKey === 'women') {
       return <WomenWorkspace />;
+    }
+
+    if (moduleKey === 'farmer') {
+      return <FarmerWorkspace />;
+    }
+
+    if (moduleKey === 'student') {
+      return <StudentWorkspace />;
     }
 
     if (moduleKey === 'alerts') {

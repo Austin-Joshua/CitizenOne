@@ -17,6 +17,8 @@ import {
   LayoutGrid,
   Compass,
   Heart,
+  Sprout,
+  BookOpen,
 } from 'lucide-react';
 import { cn } from '../ui';
 import { AppLogo } from '../brand/AppLogo';

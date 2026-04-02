@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Card, Button, Badge, cn } from '../../components/ui';
-import { BookOpen, Target, BrainCircuit, Search, Rocket, FileText, Download, Award, ArrowRight } from 'lucide-react';
+import { BookOpen, Target, BrainCircuit, Search, Rocket, FileText, Download, Award, ArrowRight, GraduationCap } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
 
 const TABS = [
   { id: 'exam', label: 'Exam Roadmaps', icon: Target },
   { id: 'foundation', label: 'Foundation Awareness', icon: BookOpen },
   { id: 'opportunity', label: 'Student Opportunities', icon: Search },
+  { id: 'colleges', label: 'College Decision', icon: GraduationCap },
   { id: 'mentor', label: 'AI Study Mentor', icon: BrainCircuit },
 ];
 
@@ -46,8 +47,9 @@ export const StudentWorkspace = () => {
       {/* Tab Content */}
       {activeTab === 'exam' && <ExamSupport />}
       {activeTab === 'foundation' && <FoundationAwareness />}
-      {activeTab === 'opportunity' && <OpportunityDiscovery />}
-      {activeTab === 'mentor' && <AiMentor />}
+      { activeTab === 'opportunity' && <OpportunityDiscovery /> }
+      { activeTab === 'colleges' && <CollegeDecisionSystem /> }
+      { activeTab === 'mentor' && <AiMentor /> }
     </div>
   );
 };
@@ -225,3 +227,92 @@ const AiMentor = () => {
     </Card>
   );
 };
+
+const CollegeDecisionSystem = () => {
+  const [marks10, setMarks10] = useState('');
+  const [marks12, setMarks12] = useState('');
+  const [cutoff, setCutoff] = useState('');
+  const [results, setResults] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const simulateSearch = async (e) => {
+    e.preventDefault();
+    setIsSearching(true);
+    try {
+      const res = await apiFetch('/api/student/colleges', {
+        method: 'POST',
+        body: JSON.stringify({ marks10, marks12, cutoff })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setResults(data.matches);
+      } else {
+        alert('Failed to analyze eligibility.');
+      }
+    } catch {
+      alert('Network error.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_1.5fr]">
+      <Card elevated className="!p-5">
+        <h3 className="font-semibold text-primary mb-1 text-lg">College Decision System</h3>
+        <p className="text-sm text-secondary mb-4">Input your academic performance to discover the best-fit colleges and recommended courses you are eligible for.</p>
+        <form onSubmit={simulateSearch} className="space-y-4">
+          <div>
+             <label className="block text-xs font-semibold text-secondary uppercase tracking-wide mb-1">10th Marks (%)</label>
+             <input required type="number" step="0.1" value={marks10} onChange={e => setMarks10(e.target.value)} className="w-full rounded-lg border border-border-light bg-surface px-4 py-2 text-sm focus:border-accent-primary focus:outline-none" placeholder="e.g. 85.5" />
+          </div>
+          <div>
+             <label className="block text-xs font-semibold text-secondary uppercase tracking-wide mb-1">12th Marks (%)</label>
+             <input required type="number" step="0.1" value={marks12} onChange={e => setMarks12(e.target.value)} className="w-full rounded-lg border border-border-light bg-surface px-4 py-2 text-sm focus:border-accent-primary focus:outline-none" placeholder="e.g. 88.0" />
+          </div>
+          <div>
+             <label className="block text-xs font-semibold text-secondary uppercase tracking-wide mb-1">Entrance Cut-off Score</label>
+             <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} className="w-full rounded-lg border border-border-light bg-surface px-4 py-2 text-sm focus:border-accent-primary focus:outline-none" placeholder="e.g. 140" />
+          </div>
+          <Button type="submit" disabled={isSearching || !marks10 || !marks12} className="w-full">
+            {isSearching ? 'Analyzing Eligibility...' : 'Find Colleges'}
+          </Button>
+        </form>
+      </Card>
+
+      <div>
+        {results ? (
+          <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+             <div className="flex items-center gap-2 mb-2">
+               <GraduationCap className="text-accent-primary" size={24} />
+               <h3 className="font-semibold text-primary text-xl">Recommended Opportunities</h3>
+             </div>
+             <div className="grid gap-4">
+               {results.map((r, i) => (
+                 <Card key={i} elevated className="!p-4 border-l-4 border-l-accent-primary">
+                    <div className="flex justify-between items-start">
+                      <Badge variant="secondary">{r.type}</Badge>
+                      <Badge variant={r.eligibility === 'High Match' ? 'primary' : 'default'} className={r.eligibility === 'Guaranteed' ? 'bg-green-500 text-white' : ''}>{r.eligibility}</Badge>
+                    </div>
+                    <h4 className="font-bold text-primary mt-2">{r.name}</h4>
+                    <p className="text-sm text-secondary mt-1">Recommended Course: <span className="font-medium text-primary">{r.course}</span></p>
+                    <div className="mt-3 flex gap-2">
+                      <Button size="sm" variant="secondary" className="w-full sm:w-auto">View Cut-off Trends</Button>
+                    </div>
+                 </Card>
+               ))}
+             </div>
+          </div>
+        ) : (
+          <Card elevated className="!p-5 border-dashed bg-base/50 flex flex-col items-center justify-center min-h-[300px] text-center">
+             <GraduationCap size={48} className="text-secondary/40 mb-4" />
+             <p className="text-sm text-secondary max-w-sm">
+                Enter your academic scores on the left to receive personalized college placement and course recommendations matching your profile.
+             </p>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+};
+

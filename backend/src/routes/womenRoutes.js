@@ -1,7 +1,12 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { auth } = require('../middlewares/auth');
+const { ServiceRequestRepository } = require('../infrastructure/persistence/ServiceRequestRepository');
+const { ActivityRepository } = require('../infrastructure/persistence/ActivityRepository');
+
 const router = express.Router();
+const serviceRepo = new ServiceRequestRepository();
+const activityRepo = new ActivityRepository();
 
 // Mock AI responder for Skill-to-Income
 router.post(
@@ -47,9 +52,13 @@ router.post(
       });
     }
 
-    setTimeout(() => {
-      res.json({ success: true, pathways: opportunities });
-    }, 1200); // simulate thinking
+    activityRepo.record({ 
+       userId: req.user?.id || 'system', 
+       message: 'Used Skill-to-Income Engine', 
+       createdAt: new Date().toISOString() 
+    }).catch(console.error);
+
+    res.json({ success: true, pathways: opportunities });
   }
 );
 
@@ -70,9 +79,13 @@ router.post(
       reply = "For maternal and child health, we offer dedicated nutrition and financial subsidy schemes. Under the 'Mother & Child Support' tab, you can enroll in maternity benefits.";
     }
 
-    setTimeout(() => {
-      res.json({ reply });
-    }, 1500); // simulate thinking
+    activityRepo.record({ 
+       userId: req.user?.id || 'system', 
+       message: 'Consulted AI Mentor', 
+       createdAt: new Date().toISOString() 
+    }).catch(console.error);
+
+    res.json({ reply });
   }
 );
 
@@ -115,21 +128,57 @@ router.post(
       routeTo = 'Cyber Crime / Protective Services';
     }
 
-    setTimeout(() => {
-      res.json({
-        success: true,
-        guidance: {
-          classification,
-          routeTo,
-          steps,
-          helplines: [
-            { name: "Women's Helpline", number: "181" },
-            { name: "Police", number: "112" },
-            { name: "National Comm. for Women", number: "7827170170" }
-          ]
-        }
-      });
-    }, 2000);
+    // Persist as a Service Request so it surfaces to admin/dashboard
+    serviceRepo.prepend({
+      id: `SR-${Date.now()}`,
+      userId: req.user?.id || 'anonymous',
+      type: 'Incident Report',
+      description: desc,
+      priority: classification,
+      status: 'Pending Investigation',
+      createdAt: new Date().toISOString()
+    }).catch(console.error);
+
+    res.json({
+      success: true,
+      guidance: {
+        classification,
+        routeTo,
+        steps,
+        helplines: [
+          { name: "Women's Helpline", number: "181" },
+          { name: "Police", number: "112" },
+          { name: "National Comm. for Women", number: "7827170170" }
+        ]
+      }
+    });
+  }
+);
+
+router.post(
+  '/lawyers',
+  [body('caseType').isString().notEmpty()],
+  (req, res) => {
+    const type = req.body.caseType || '';
+    
+    let matches = [
+        { name: 'Adv. Priya Sharma', exp: '12 Years', cases: 145, success: '94%', type: 'Domestic Violence, Family Law', tags: ['Pro Bono Available', 'Fast Track Focus'] },
+        { name: 'Adv. Sunita Rao', exp: '8 Years', cases: 89, success: '88%', type: 'Corporate Harassment, POSH', tags: ['High Court Expert'] }
+    ];
+
+    if (type.includes('Divorce')) {
+        matches = [
+            { name: 'Adv. Meera Desai', exp: '15 Years', cases: 210, success: '91%', type: 'Divorce & Maintenance', tags: ['Senior Counsel', 'Mediation Expert'] },
+            ...matches
+        ];
+    } else if (type.includes('Cyber')) {
+        matches = [
+            { name: 'Adv. Rohan Gupta', exp: '9 Years', cases: 112, success: '96%', type: 'Cyber Crime, Harassment', tags: ['IT Law Specialist'] },
+            ...matches
+        ];
+    }
+
+    res.json({ matches });
   }
 );
 

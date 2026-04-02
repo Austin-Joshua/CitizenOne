@@ -29,6 +29,9 @@ import {
   AlertTriangle,
   FileWarning,
   Compass,
+  Heart,
+  Sprout,
+  BookOpen,
 } from 'lucide-react';
 import { Card, Button, Badge, cn } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
@@ -821,6 +824,43 @@ const DashboardPage = () => {
                 )}
               </div>
             </div>
+
+            {/* Farmer Module Summary Card */}
+            <div className="mt-8 border-t border-border-light pt-6">
+              <div className="rounded-2xl border-2 border-green-500/20 bg-green-500/5 p-5 transition-colors hover:border-green-500/40">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/20 text-green-600">
+                      <Sprout className="h-5 w-5" strokeWidth={2} />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-primary">AgriFlux Market Insights</h3>
+                      <p className="text-sm text-secondary">Your linked farm profile shows updated mandi prices.</p>
+                    </div>
+                  </div>
+                  <Link to="/app/farmer" className="inline-flex items-center gap-1 rounded-xl bg-green-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-green-700">
+                    Open AgriFlux <ArrowRight size={12} />
+                  </Link>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                  <div className="rounded-xl border border-border-light bg-surface p-3">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-secondary">Daily Highlight</p>
+                    <p className="mt-1 text-sm font-semibold text-primary">Wheat +2.4%</p>
+                  </div>
+                  <div className="rounded-xl border border-border-light bg-surface p-3">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-secondary">Input Cost</p>
+                    <p className="mt-1 text-sm font-semibold text-primary">₹14,200</p>
+                  </div>
+                  <div className="col-span-2 rounded-xl border border-border-light bg-surface p-3 sm:col-span-2 flex items-center justify-between">
+                     <div>
+                       <p className="text-[10px] font-bold uppercase tracking-wider text-secondary">Agri AI Warning</p>
+                       <p className="mt-0.5 text-xs font-medium text-amber-600">High fertilizer spending detected.</p>
+                     </div>
+                     <AlertTriangle className="h-5 w-5 text-amber-500" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </Card>
         </motion.div>
 
@@ -961,6 +1001,27 @@ const DashboardPage = () => {
               >
                 <Compass className="h-4 w-4 text-accent-primary" aria-hidden />
                 Life Event Navigator
+              </Link>
+              <Link
+                to="/app/women"
+                className="flex items-center gap-3 rounded-xl border border-border-light px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-surface"
+              >
+                <Heart className="h-4 w-4 text-pink-500" aria-hidden />
+                Women Empowerment Hub
+              </Link>
+              <Link
+                to="/app/student"
+                className="flex items-center gap-3 rounded-xl border border-border-light px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-surface"
+              >
+                <BookOpen className="h-4 w-4 text-blue-500" aria-hidden />
+                Student Hub
+              </Link>
+              <Link
+                to="/app/farmer"
+                className="flex items-center gap-3 rounded-xl border border-border-light px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-surface"
+              >
+                <Sprout className="h-4 w-4 text-green-500" aria-hidden />
+                Farmer Support
               </Link>
             </div>
           </Card>

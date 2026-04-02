@@ -109,6 +109,8 @@ function AppRoutes() {
                 <Route path="bureaucracy-ai" element={<BureaucracyAIPage />} />
                 <Route path="navigator" element={<WorkspaceViews moduleKey="navigator" />} />
                 <Route path="women" element={<WorkspaceViews moduleKey="women" />} />
+                <Route path="farmer" element={<WorkspaceViews moduleKey="farmer" />} />
+                <Route path="student" element={<WorkspaceViews moduleKey="student" />} />
                 <Route path="benefits" element={<WorkspaceViews moduleKey="benefits" />} />
                 <Route path="opportunities" element={<WorkspaceViews moduleKey="opportunities" />} />
                 <Route path="vault" element={<WorkspaceViews moduleKey="vault" />} />

@@ -12,7 +12,10 @@ import {
   ArrowRight,
   MessageSquare,
   BookOpen,
-  MapPin
+  MapPin,
+  Scale,
+  Briefcase,
+  PhoneCall
 } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
 
@@ -29,7 +32,7 @@ export const WomenWorkspace = () => {
   const [activeTab, setActiveTab] = useState('opportunities');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 rounded-3xl bg-gradient-to-br from-pink-50 to-transparent p-2 sm:p-6 dark:from-pink-950/20 border border-pink-500/10">
       <Card elevated className="!p-5">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-tertiary">Women Empowerment Hub</p>
@@ -489,6 +492,96 @@ const SafetyLegal = () => {
             </div>
           </Card>
         </div>
+      </div>
+      
+      {/* Lawyer Matching System */}
+      <h3 className="text-[14px] font-semibold uppercase tracking-wider text-tertiary border-b border-border-light pb-2 mt-8">Legal Representation Matching</h3>
+      <LawyerMatchingSystem />
+    </div>
+  );
+};
+
+const LawyerMatchingSystem = () => {
+  const [caseType, setCaseType] = useState('Domestic Violence');
+  const [isSearching, setIsSearching] = useState(false);
+  const [matches, setMatches] = useState(null);
+
+  const findLawyers = async (e) => {
+    e.preventDefault();
+    setIsSearching(true);
+    try {
+      const res = await apiFetch('/api/women/lawyers', {
+        method: 'POST',
+        body: JSON.stringify({ caseType })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMatches(data.matches);
+      } else {
+        alert('Failed to fetch legal professionals.');
+      }
+    } catch {
+      alert('Network error.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
+      <Card elevated className="!p-5 border border-border-light text-sm">
+        <h3 className="font-semibold text-primary mb-2 flex items-center gap-2"><Scale size={18} className="text-accent-primary" /> Find a Lawyer</h3>
+        <p className="text-secondary mb-4">Our intelligent system matches you with verified lawyers based on their past case expertise and success history.</p>
+        <form onSubmit={findLawyers} className="space-y-3">
+           <div>
+             <label className="block text-xs font-semibold text-secondary uppercase tracking-wide mb-1">Case Type / Issue</label>
+             <select value={caseType} onChange={e => setCaseType(e.target.value)} className="w-full rounded-lg border border-border-light bg-surface px-3 py-2 text-sm focus:border-accent-primary focus:outline-none">
+               <option value="Domestic Violence">Domestic Violence</option>
+               <option value="Sexual Harassment (Workplace)">Sexual Harassment (Workplace)</option>
+               <option value="Divorce & Maintenance">Divorce & Maintenance</option>
+               <option value="Cyber Harassment">Cyber Harassment</option>
+             </select>
+           </div>
+           <Button type="submit" disabled={isSearching} className="w-full">{isSearching ? 'Matching...' : 'Find Matches'}</Button>
+        </form>
+      </Card>
+      
+      <div className="space-y-4">
+        {matches ? (
+          matches.map((lawyer, i) => (
+            <Card key={i} elevated className="!p-4 border-l-4 border-l-pink-500">
+               <div className="flex justify-between items-start">
+                 <div>
+                   <h4 className="font-bold text-primary flex items-center gap-2">
+                     <Briefcase size={16} className="text-pink-600" /> {lawyer.name}
+                   </h4>
+                   <p className="text-xs text-secondary mt-1">{lawyer.type}</p>
+                 </div>
+                 <div className="text-right">
+                   <p className="text-xs uppercase font-semibold text-tertiary tracking-wide">Success Rate</p>
+                   <p className="text-xl font-bold text-green-600">{lawyer.success}</p>
+                 </div>
+               </div>
+               
+               <div className="mt-3 flex gap-4 text-sm text-secondary border-t border-border-light pt-3">
+                 <p><span className="font-medium text-primary">{lawyer.cases}</span> Cases Handled</p>
+                 <p><span className="font-medium text-primary">{lawyer.exp}</span> Experience</p>
+               </div>
+               
+               <div className="mt-3 flex items-center justify-between">
+                 <div className="flex gap-2">
+                   {lawyer.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
+                 </div>
+                 <Button size="sm" className="bg-pink-600 hover:bg-pink-700 text-white gap-2"><PhoneCall size={14} /> Request Consult</Button>
+               </div>
+            </Card>
+          ))
+        ) : (
+          <Card elevated className="!p-5 border-dashed bg-base/50 flex flex-col items-center justify-center h-full text-center min-h-[200px]">
+             <Scale size={32} className="text-secondary/40 mb-3" />
+             <p className="text-sm text-secondary">Select your case type to see highly recommended legal experts matching your profile.</p>
+          </Card>
+        )}
       </div>
     </div>
   );
