@@ -17,8 +17,11 @@ async function getMongoClient() {
   if (!uri) throw new Error('MONGO_URI is not set');
   
   client = new MongoClient(uri, {
-    maxPoolSize: 100, // Handle 100 simultaneous connections
+    maxPoolSize: 100,      // Handle 100 simultaneous connections
+    minPoolSize: 10,       // Maintain 10 idle connections for faster response times
     serverSelectionTimeoutMS: 5000, 
+    socketTimeoutMS: 45000, // 45s socket timeout
+    connectTimeoutMS: 30000 // 30s connection timeout
   });
   dbPromise = client.connect();
   await dbPromise;

@@ -146,6 +146,7 @@ async function createUser(user) {
     const db = await getDb();
     const toInsert = {
         ...u,
+        emailVerified: u.emailVerified !== undefined ? u.emailVerified : false,
         password_hash: u.password, // Preserve password field name for compatibility
         createdAt: new Date()
     };

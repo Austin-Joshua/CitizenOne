@@ -210,7 +210,8 @@ if (cluster.isPrimary && isProd) {
 
     cluster.on('exit', (worker, code, signal) => {
         logger.warn('cluster_worker_died', { pid: worker.process.pid, code, signal });
-        cluster.fork();
+        // Add a small delay before restarting a worker to prevent CPU spikes if crashing on start
+        setTimeout(() => cluster.fork(), 1000);
     });
 } else {
     if (require.main === module || !cluster.isPrimary) {
