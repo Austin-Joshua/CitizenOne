@@ -23,17 +23,21 @@ const SITUATION_SIGNALS = [
 ];
 
 export function IntelligentGuidanceWorkspace() {
+
   const { t } = useI18n();
   const { user } = useAuth();
   const [lifeEvent, setLifeEvent] = useState('');
+  const [situationInput, setSituationInput] = useState('');
   const [intel, setIntel] = useState(DEFAULT_INTEL);
   const [loadError, setLoadError] = useState('');
 
+  // Compose params for API
   const params = useMemo(() => {
     const p = new URLSearchParams();
     if (lifeEvent) p.set('lifeEvent', lifeEvent);
+    if (situationInput.trim()) p.set('situation', situationInput.trim());
     return p.toString();
-  }, [lifeEvent]);
+  }, [lifeEvent, situationInput]);
 
   useEffect(() => {
     let active = true;
@@ -62,6 +66,7 @@ export function IntelligentGuidanceWorkspace() {
     return [...rec].sort((a, b) => (b.prioritizedScore || 0) - (a.prioritizedScore || 0)).slice(0, 8);
   }, [intel.recommended]);
 
+
   return (
     <div className="space-y-6">
       <Card elevated className="!p-5">
@@ -73,6 +78,21 @@ export function IntelligentGuidanceWorkspace() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-tertiary">{t('guidance.modeEyebrow')}</p>
             <p className="mt-1 text-sm leading-relaxed text-secondary">{t('guidance.trustNote')}</p>
           </div>
+        </div>
+        <div className="mt-6">
+          <label htmlFor="situation-input" className="block text-xs font-medium text-tertiary mb-1">
+            {t('guidance.situationInputLabel', 'Describe your situation (e.g., I am a farmer, I just got married)')}
+          </label>
+          <input
+            id="situation-input"
+            type="text"
+            className="w-full rounded-lg border border-border-light bg-surface px-3 py-2 text-sm focus:border-accent-primary focus:ring-2 focus:ring-accent-primary/20"
+            placeholder={t('guidance.situationInputPlaceholder', 'Describe your situation...')}
+            value={situationInput}
+            onChange={e => setSituationInput(e.target.value)}
+            autoComplete="off"
+            maxLength={200}
+          />
         </div>
       </Card>
 

@@ -15,6 +15,7 @@ import {
   FolderOpen,
   ClipboardList,
   LayoutGrid,
+  Compass,
 } from 'lucide-react';
 import { cn } from '../ui';
 import { AppLogo } from '../brand/AppLogo';
@@ -106,12 +107,20 @@ function SidebarContent({ onMobileClose }) {
             matchPrefixes={['/app/progress', '/app/services']}
           />
           <NavItem to="/app/alerts" icon={Bell} label={t('nav.notifications')} onNavigate={onMobileClose} />
+          <NavItem
+            to="/app/urban-rural-bridge"
+            icon={Map}
+            label="Urban–Rural Bridge"
+            onNavigate={onMobileClose}
+          />
+          <NavItem to="/app/bureaucracy-ai" icon={Bot} label="Bureaucracy Simplifier" onNavigate={onMobileClose} />
         </NavGroup>
 
         <div className="my-5 h-px shrink-0 bg-border-light" aria-hidden />
 
         <NavGroup title={t('nav.sectionTools')}>
           <NavItem to="/app/assistant" icon={Bot} label={t('nav.aiAssistant')} onNavigate={onMobileClose} />
+          <NavItem to="/app/life-events" icon={Compass} label="Life Events" onNavigate={onMobileClose} />
           <NavItem to="/app/vault" icon={FolderOpen} label={t('nav.documents')} onNavigate={onMobileClose} />
           <NavItem to="/app/analytics" icon={LineChart} label={t('nav.insights')} onNavigate={onMobileClose} />
         </NavGroup>

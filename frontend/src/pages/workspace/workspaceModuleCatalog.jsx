@@ -120,6 +120,11 @@ export const WORKSPACE_MODULES = {
     descriptionKey: 'modules.assistant.description',
     body: null,
   },
+  urbanRuralBridge: {
+    title: 'Urban–Rural Opportunity Bridge',
+    description: 'Support for rural citizens to discover jobs, training, migration, and housing in cities.',
+    body: null,
+  },
   recommendations: {
     title: 'Recommendations',
     description: 'Premium adds extended analytics modules; core programme matching stays on the free plan.',

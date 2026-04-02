@@ -14,6 +14,7 @@ const PATH_TITLE_KEY = {
   '/app/profile': 'documentTitle.profile',
   '/app/services': 'documentTitle.services',
   '/app/navigator': 'documentTitle.navigator',
+  '/app/life-events': 'Life Events',
   '/app/benefits': 'documentTitle.benefits',
   '/app/opportunities': 'documentTitle.opportunities',
   '/app/vault': 'documentTitle.vault',
@@ -32,6 +33,7 @@ const PATH_TITLE_KEY = {
   '/app/settings': 'documentTitle.settings',
   '/app/subscription': 'documentTitle.subscription',
   '/app/admin': 'documentTitle.admin',
+  '/app/bureaucracy-ai': 'Bureaucracy Simplifier',
 };
 
 const DashboardLayout = () => {

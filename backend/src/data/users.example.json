@@ -3,7 +3,7 @@
     "id": "1",
     "name": "John Citizen",
     "email": "john@example.com",
-    "password": "$2b$12$IqHpxQS.9gM0m09wuG1n4e/PwWDxlkKtW5qRBtYGKo/DizImFU08a",
+    "password": "$2b$12$bTy7h5x79W/3MGTJwh7pu.T7EMuuK6KdB9m2V0S7S.PNNq7HZ94W6",
     "role": "citizen",
     "plan": "free",
     "preferences": {
@@ -17,7 +17,7 @@
     "id": "2",
     "name": "Admin One",
     "email": "admin@citizenone.gov",
-    "password": "$2b$12$uR3pA8r9sVRaXrS22b2QJuyLf8k2FnTxMkX30cIbpHMH/McrtqZ7S",
+    "password": "$2b$12$bTy7h5x79W/3MGTJwh7pu.T7EMuuK6KdB9m2V0S7S.PNNq7HZ94W6",
     "role": "admin",
     "plan": "premium",
     "preferences": {
@@ -31,7 +31,7 @@
     "id": "3",
     "name": "Community NGO",
     "email": "ngo@citizenone.org",
-    "password": "$2b$12$lvWPnLAkEMf7G0wELx7IB.VzouWXqxn/33G1fsy7grKMOZ.xVmgEu",
+    "password": "$2b$12$bTy7h5x79W/3MGTJwh7pu.T7EMuuK6KdB9m2V0S7S.PNNq7HZ94W6",
     "role": "organization",
     "plan": "premium",
     "preferences": {
@@ -45,7 +45,7 @@
     "id": "4",
     "name": "Case Officer",
     "email": "staff@citizenone.gov",
-    "password": "$2b$12$.kgNwzy24T2Am0oIDgPixOYlHEQPqDaAOHUifkw.49LMTWW3spJLi",
+    "password": "$2b$12$bTy7h5x79W/3MGTJwh7pu.T7EMuuK6KdB9m2V0S7S.PNNq7HZ94W6",
     "role": "staff",
     "plan": "premium",
     "preferences": {
@@ -59,7 +59,7 @@
     "id": "5",
     "name": "Student User",
     "email": "student@example.com",
-    "password": "$2b$12$1Rry54H4F4emNliiqZF.rOI/Bs3c07oq.tqSqenZgzs5y0oTBCoQK",
+    "password": "$2b$12$bTy7h5x79W/3MGTJwh7pu.T7EMuuK6KdB9m2V0S7S.PNNq7HZ94W6",
     "role": "student",
     "plan": "free",
     "preferences": {

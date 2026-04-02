@@ -16,6 +16,8 @@ const WorkspaceViews = lazy(() => import('./pages/WorkspaceViews'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const BillingPage = lazy(() => import('./pages/BillingPage'));
 const ServiceRequestsPage = lazy(() => import('./pages/ServiceRequestsPage'));
+const LifeEventNavigatorPage = lazy(() => import('./pages/LifeEventNavigatorPage'));
+const BureaucracyAIPage = lazy(() => import('./pages/BureaucracyAIPage'));
 
 const ProtectedRoute = ({ children }) => {
   const { t } = useI18n();
@@ -103,6 +105,8 @@ function AppRoutes() {
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="services" element={<ServiceRequestsPage />} />
+                <Route path="life-events" element={<LifeEventNavigatorPage />} />
+                <Route path="bureaucracy-ai" element={<BureaucracyAIPage />} />
                 <Route path="navigator" element={<WorkspaceViews moduleKey="navigator" />} />
                 <Route path="benefits" element={<WorkspaceViews moduleKey="benefits" />} />
                 <Route path="opportunities" element={<WorkspaceViews moduleKey="opportunities" />} />
@@ -143,6 +147,7 @@ function AppRoutes() {
                     </RoleRoute>
                   }
                 />
+                <Route path="urban-rural-bridge" element={<WorkspaceViews moduleKey="urbanRuralBridge" />} />
                 <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
               </Route>
 

@@ -34,6 +34,24 @@ router.get('/summary', auth, async (req, res) => {
     ? allApps.filter((a) => ['submitted', 'in_progress', 'under_review'].includes(a.status)).length
     : null;
 
+  // --- Sub-status breakdowns for insight cards ---
+  const pendingApplications = applications.filter((a) =>
+    ['submitted', 'in_progress', 'under_review', 'pending'].includes(a.status)
+  ).length;
+  const approvedApplications = applications.filter((a) =>
+    ['approved', 'completed'].includes(a.status)
+  ).length;
+  const rejectedApplications = applications.filter((a) =>
+    ['rejected', 'denied'].includes(a.status)
+  ).length;
+
+  const verifiedDocuments = documents.filter((d) =>
+    d.verified === true || d.status === 'verified' || d.status === 'approved'
+  ).length;
+  const pendingDocuments = documents.filter((d) =>
+    d.status === 'pending' || d.status === 'under_review' || (!d.verified && !d.status)
+  ).length;
+
   res.json({
     applications: applications.length,
     documents: documents.length,
@@ -42,6 +60,12 @@ router.get('/summary', auth, async (req, res) => {
     myOpenServiceRequests: myOpenRequests,
     staffServiceQueueCount: staffQueueCount,
     applicationQueueCount,
+    // insight breakdowns
+    pendingApplications,
+    approvedApplications,
+    rejectedApplications,
+    verifiedDocuments,
+    pendingDocuments,
   });
 });
 
