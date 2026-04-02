@@ -429,6 +429,7 @@
       "role": "Role",
       "plan": "Plan",
       "roleCitizen": "Resident",
+      "roleFarmer": "Farmer (AgriFlux)",
       "roleStudent": "Student",
       "roleOrg": "Organisation",
       "planFree": "Core",

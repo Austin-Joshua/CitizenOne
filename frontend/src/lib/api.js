@@ -3,7 +3,16 @@
  */
 export function getApiBase() {
   const raw = import.meta.env.VITE_API_URL;
-  if (raw == null || raw === '') return '';
+
+  // In production, we *must* have an API URL to avoid 'Failed to fetch' on Vercel.
+  // If missing, we'll try to infer it or at least log a clear warning to the console.
+  if (raw == null || raw === '') {
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('citizen-one'))) {
+       console.warn('VITE_API_URL is missing. API calls will likely fail. Set this in Vercel Dashboard.');
+    }
+    return '';
+  }
+
   return String(raw).replace(/\/$/, '');
 }
 

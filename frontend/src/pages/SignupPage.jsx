@@ -115,8 +115,7 @@ const SignupPage = () => {
           transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
         >
           <Card
-            elevated
-            className="!border-border-light !bg-pub-input/30 !p-5 !shadow-none dark:!border-white/10 sm:!p-6"
+            className="!border-0 !bg-transparent !p-0 !shadow-none"
           >
             <Badge variant="primary" className="mb-4 text-[10px] font-black uppercase tracking-widest">
               {t('auth.signup.badge')}
