@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: citizen-one-api
+    env: node
+    plan: free # Change this to starter or standard for production
+    rootDir: .
+    buildCommand: "cd backend && npm install"
+    startCommand: "cd backend && npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false # Set this in the Render dashboard after blueprint creation
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false # Set this to your Vercel frontend URL

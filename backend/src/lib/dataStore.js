@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const { isDatabaseEnabled } = require('./db/config');
+const { isDatabaseEnabled, isMongoEnabled } = require('./db/config');
 const { getPool } = require('./db/pool');
+const { getDb } = require('./db/mongoClient');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 
@@ -29,6 +30,15 @@ function writeCollectionJson(name, rows) {
  * @returns {Promise<any[]>}
  */
 async function readCollection(name) {
+  if (isMongoEnabled()) {
+    const db = await getDb();
+    const rows = await db.collection(name).find({}).toArray();
+    return rows.map((r) => {
+      const doc = { ...r };
+      delete doc._id; // remove mongoose internal id
+      return doc;
+    });
+  }
   if (!isDatabaseEnabled()) {
     return readCollectionJson(name);
   }
@@ -80,6 +90,19 @@ function auditRowToColumns(row) {
  * @param {any[]} rows
  */
 async function writeCollection(name, rows) {
+  if (isMongoEnabled()) {
+    const db = await getDb();
+    const col = db.collection(name);
+    await col.deleteMany({});
+    if (rows && rows.length > 0) {
+      const toInsert = rows.map((r) => ({
+        ...r,
+        id: String(r.id ?? `${name}-${Math.random()}`),
+      }));
+      await col.insertMany(toInsert);
+    }
+    return;
+  }
   if (!isDatabaseEnabled()) {
     writeCollectionJson(name, rows);
     return;

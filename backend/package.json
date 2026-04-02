@@ -7,6 +7,7 @@
     "start": "node src/app.js",
     "db:migrate": "node scripts/migrate.js",
     "db:import-json": "node scripts/import-json-to-pg.js",
+    "db:import-mongo": "node scripts/import-json-to-mongo.js",
     "security:audit": "npm audit --audit-level=high",
     "depcheck": "depcheck",
     "test": "jest"
@@ -23,13 +24,14 @@
     "express-rate-limit": "^8.3.1",
     "express-validator": "^7.3.1",
     "helmet": "^8.1.0",
+    "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.1.1",
     "morgan": "^1.10.1",
     "nodemailer": "^7.0.11",
     "otplib": "^12.0.1",
     "pg": "^8.16.3",
-    "stripe": "^20.1.0",
-    "ioredis": "^5.8.2"
+    "stripe": "^20.1.0"
   },
   "devDependencies": {
     "depcheck": "^1.4.7",

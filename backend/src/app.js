@@ -11,7 +11,8 @@ const { logger } = require('./infrastructure/logging/structuredLogger');
 const { assertProductionConfig } = require('./lib/productionCheck');
 const { stripeWebhook } = require('./routes/stripeWebhook');
 const { dbHealthCheck } = require('./lib/db/pool');
-const { isDatabaseEnabled } = require('./lib/db/config');
+const { isDatabaseEnabled, isPostgresEnabled, isMongoEnabled } = require('./lib/db/config');
+const { mongoHealthCheck } = require('./lib/db/mongoClient');
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -88,7 +89,7 @@ app.get('/ready', async (req, res) => {
   /** @type {{ name: string, ok: boolean, latencyMs?: number }[]} */
   const checks = [];
 
-  if (isDatabaseEnabled()) {
+  if (isPostgresEnabled()) {
     const t0 = Date.now();
     try {
       const ok = await dbHealthCheck();
@@ -98,6 +99,18 @@ app.get('/ready', async (req, res) => {
     }
   } else {
     checks.push({ name: 'postgres', ok: true, detail: 'disabled' });
+  }
+
+  if (isMongoEnabled()) {
+    const t0 = Date.now();
+    try {
+      const ok = await mongoHealthCheck();
+      checks.push({ name: 'mongodb', ok, latencyMs: Date.now() - t0 });
+    } catch {
+      checks.push({ name: 'mongodb', ok: false, latencyMs: Date.now() - Date.now() });
+    }
+  } else {
+    checks.push({ name: 'mongodb', ok: true, detail: 'disabled' });
   }
 
   const redisUrl = String(process.env.REDIS_URL || '').trim();
@@ -119,8 +132,17 @@ app.get('/ready', async (req, res) => {
 
   const allOk = checks.every((c) => c.ok);
   const postgresCheck = checks.find((c) => c.name === 'postgres');
-  const database =
-    !isDatabaseEnabled() ? 'disabled' : postgresCheck?.ok === true ? true : postgresCheck?.ok === false ? false : 'unknown';
+  const mongoCheck = checks.find((c) => c.name === 'mongodb');
+  
+  let database = 'unknown';
+  if (!isDatabaseEnabled()) {
+    database = 'disabled';
+  } else {
+    const isPgOk = postgresCheck ? postgresCheck.ok : true;
+    const isMongoOk = mongoCheck ? mongoCheck.ok : true;
+    if (isPgOk && isMongoOk) database = true;
+    else if (!isPgOk || !isMongoOk) database = false;
+  }
 
   if (!allOk) {
     return res.status(503).json({ status: 'not_ready', database, checks });
